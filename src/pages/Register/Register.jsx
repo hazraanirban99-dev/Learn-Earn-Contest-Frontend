@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import logo from '../../assets/desun-logo.png';
 
 import {
-  FiUser, FiPhone, FiMail, FiMapPin, FiBookOpen, FiLock,
-  FiCheckCircle, FiStar, FiArrowRight, FiRotateCcw
+  FiUser, 
+  FiPhone, 
+  FiMail, 
+  FiMapPin, 
+  FiBookOpen, 
+  FiLock,
+  FiCheckCircle, 
+  FiStar, 
+  FiArrowRight, 
+  FiRotateCcw
 } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
@@ -11,8 +19,15 @@ import { InputField, Button, SocialButton } from '../../components';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    fullName: '', contactNumber: '', email: '', gender: '',
-    address: '', interestedIn: '', password: '', confirmPassword: '', termsAccepted: false
+    fullName: '', 
+    contactNumber: '', 
+    email: '', 
+    gender: '',
+    address: '', 
+    interestedIn: '', 
+    password: '', 
+    confirmPassword: '', 
+    termsAccepted: false
   });
 
   const handleChange = (e) => {
@@ -45,7 +60,7 @@ const Register = () => {
     <div className="min-h-screen flex flex-col lg:flex-row bg-white font-sans text-gray-800">
 
       {/* Left Panel */}
-      <div className="flex-1 bg-gradient-to-b from-[#6ca518] to-[#467008] p-8 md:p-14 lg:p-20 text-white flex flex-col justify-between hidden lg:flex">
+<div className="hidden lg:flex flex-1 bg-linear-to-b from-[#6ca518] to-[#467008] p-8 md:p-14 lg:p-20 text-white flex-col justify-between">
         <div className="font-bold tracking-widest text-[13px] uppercase">DESUN ACADEMY</div>
 
         <div className="my-10">
@@ -58,7 +73,7 @@ const Register = () => {
 
           <div className="space-y-8">
             <div className="flex items-start gap-4">
-              <div className="w-[42px] h-[42px] rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+              <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
                 <FiCheckCircle size={20} />
               </div>
               <div className="pt-0.5">
@@ -67,7 +82,7 @@ const Register = () => {
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-[42px] h-[42px] rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+              <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
                 <FiStar size={20} />
               </div>
               <div className="pt-0.5">
@@ -82,9 +97,9 @@ const Register = () => {
           <div className="h-px w-full bg-white/20 mb-8 max-w-sm"></div>
           <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
-              <img src="https://i.pravatar.cc/100?img=11" alt="Scholar" className="w-[40px] h-[40px] rounded-full border-2 border-[#4a770a]" />
-              <img src="https://i.pravatar.cc/100?img=12" alt="Scholar" className="w-[40px] h-[40px] rounded-full border-2 border-[#4a770a]" />
-              <img src="https://i.pravatar.cc/100?img=13" alt="Scholar" className="w-[40px] h-[40px] rounded-full border-2 border-[#4a770a]" />
+              <img src="https://i.pravatar.cc/100?img=11" alt="Scholar" className="w-10 h-10 rounded-full border-2 border-[#4a770a]" />
+              <img src="https://i.pravatar.cc/100?img=12" alt="Scholar" className="w-10 h-10 rounded-full border-2 border-[#4a770a]" />
+              <img src="https://i.pravatar.cc/100?img=13" alt="Scholar" className="w-10 h-10 rounded-full border-2 border-[#4a770a]" />
             </div>
             <div className="text-sm font-medium text-white/90">
               Join 40,000+ scholars worldwide.
@@ -95,7 +110,7 @@ const Register = () => {
 
       {/* Right Panel - Form */}
       <div className="flex-1 p-6 md:p-12 lg:py-12 lg:px-24 overflow-y-auto w-full lg:w-auto flex flex-col items-center">
-        <div className="w-full max-w-[480px]">
+        <div className="w-full max-w-120">
 
           {/* Header Area exactly matching the image */}
           <div className="flex flex-col items-center mb-10 mt-4">
@@ -176,7 +191,7 @@ const Register = () => {
               <input
                 type="checkbox" id="terms" name="termsAccepted"
                 checked={formData.termsAccepted} onChange={handleChange}
-                className="mt-1 w-[18px] h-[18px] rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-[#f4f7eb]"
+                className="mt-1 w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-[#f4f7eb]"
               />
               <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer flex-1">
                 I agree to the <a href="#terms" className="text-[#6aa315] font-semibold hover:underline">Terms of Service</a> and <a href="#privacy" className="text-[#6ca518] font-semibold hover:underline">Privacy Policy</a>.
