@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import logo from '../../assets/desun-logo.png';
+
 import {
   FiUser, FiPhone, FiMail, FiMapPin, FiBookOpen, FiLock,
   FiCheckCircle, FiStar, FiArrowRight, FiRotateCcw
@@ -99,7 +101,7 @@ const Register = () => {
           <div className="flex flex-col items-center mb-10 mt-4">
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-0.5">
-                <img src="/src/assets/Desun Logo (1)(1)-Photoroom (1).png" alt="logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none' }} />
+                <img src={logo} alt="logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none' }} />
               </div>
               <div>
                 <div className="font-black text-xl tracking-tighter text-black">DESUN ACADEMY</div>
