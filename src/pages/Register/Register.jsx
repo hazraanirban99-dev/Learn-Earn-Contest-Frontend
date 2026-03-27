@@ -156,8 +156,9 @@ const Register = () => {
             />
 
             <InputField
-              label="Interested In" type="text" name="interestedIn" value={formData.interestedIn}
-              onChange={handleChange} placeholder="e.g. Data Science, Design, Management" icon={FiBookOpen} required
+              label="Interested In" type="select" name="interestedIn" value={formData.interestedIn}
+              onChange={handleChange} placeholder="Select your field of interest" icon={FiBookOpen} required
+              options={['Web Development', 'UI/UX', 'Digital Marketing']}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
