@@ -1,12 +1,15 @@
 import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
-const InputField = ({ label, type, name, value, onChange, placeholder, icon: Icon, required, options }) => {
+const InputField = ({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight }) => {
   const isTextArea = type === 'textarea';
 
   return (
     <div className="flex flex-col gap-1.5 w-full mb-4">
-      <label className="text-xs font-bold text-gray-800 tracking-wide">{label}</label>
+      <div className="flex justify-between items-center">
+        <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">{label}</label>
+        {labelRight && <div className="text-[10px] font-bold text-[#689c19] hover:underline cursor-pointer">{labelRight}</div>}
+      </div>
       <div className={`flex rounded-lg bg-[#f4f7eb] focus-within:ring-2 focus-within:ring-[#8cc63f] overflow-hidden transition-all relative ${isTextArea ? 'min-h-25 items-start pt-4' : 'h-13 items-center'}`}>
         {Icon && (
           <div className={`pl-4 pr-3 flex items-center justify-center text-gray-400 pointer-events-none ${isTextArea ? 'mt-0.5' : ''}`}>
@@ -41,7 +44,7 @@ const InputField = ({ label, type, name, value, onChange, placeholder, icon: Ico
             onChange={onChange}
             placeholder={placeholder}
             required={required}
-            className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5`}
+            className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5 pt-1`}
           />
         ) : (
           <input

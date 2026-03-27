@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import logo from '../../assets/desun-logo.png';
-
 import {
-  FiUser, 
-  FiPhone, 
-  FiMail, 
-  FiMapPin, 
-  FiBookOpen, 
-  FiLock,
-  FiCheckCircle, 
-  FiStar, 
-  FiArrowRight, 
-  FiRotateCcw
+  FiUser, FiPhone, FiMail, FiMapPin, FiBookOpen, FiLock,
+  FiCheckCircle, FiStar, FiArrowRight, FiRotateCcw
 } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
@@ -57,8 +49,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-white font-sans text-gray-800">
-
+    <div className="min-h-screen bg-gradient-to-r from-[#fbc111] to-[#8cc63f] p-1.5 md:p-2 lg:p-3">
+      <div className="min-h-full flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl relative">
+      
       {/* Left Panel */}
       <div className="hidden lg:flex flex-1 bg-linear-to-b from-[#6ca518] to-[#467008] p-8 md:p-14 lg:p-20 text-white flex-col justify-between">
         <div>
@@ -114,22 +107,22 @@ const Register = () => {
       <div className="flex-1 p-6 md:p-12 lg:py-12 lg:px-24 overflow-y-auto w-full lg:w-auto flex flex-col items-center bg-[#e5faa7] lg:bg-white transition-colors duration-300">
         <div className="w-full max-w-120">
 
-          {/* Header Area exactly matching the image */}
+          {/* Header Area correctly matching the image */}
           <div className="flex flex-col items-center mb-10 mt-4">
             <div className="flex items-center gap-3">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-0.5">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-0.5 shadow-sm">
                 <img src={logo} alt="logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none' }} />
               </div>
               <div>
-                <div className="font-black text-xl tracking-tighter text-black">DESUN ACADEMY</div>
-                <div className="text-[10px] bg-[#fbc111] text-black px-1.5 py-0.5 rounded font-bold inline-block leading-none mt-0.5">Get Placed by Skills</div>
+                <div className="font-black text-xl tracking-tighter text-black uppercase">DESUN ACADEMY</div>
+                <div className="text-[10px] bg-[#fbc111] text-black px-1.5 py-0.5 rounded font-bold inline-block leading-none mt-0.5 uppercase">Get Placed by Skills</div>
               </div>
             </div>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-[28px] font-bold text-gray-900 mb-1">Create Account</h2>
-            <p className="text-gray-500 text-[15px]">Start your journey toward academic mastery today.</p>
+            <h2 className="text-[32px] font-black text-gray-900 mb-1 leading-tight tracking-tight">Create Account</h2>
+            <p className="text-gray-500 text-[15px] font-semibold opacity-80">Start your journey toward academic mastery today.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -145,11 +138,11 @@ const Register = () => {
 
             <InputField
               label="Email Address" type="email" name="email" value={formData.email}
-              onChange={handleChange} placeholder="aloknandy@gmail.com" icon={FiMail} required
+              onChange={handleChange} placeholder="scholar@desun.edu" icon={FiMail} required
             />
 
             <div className="mb-4">
-              <label className="text-xs font-bold text-gray-800 tracking-wide block mb-3">Gender</label>
+              <label className="text-[11px] font-bold text-gray-800 tracking-tight block mb-3 uppercase">Gender</label>
               <div className="flex gap-6 ml-1">
                 {['Male', 'Female', 'Other'].map(g => (
                   <label key={g} className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-gray-600 transition-colors hover:text-gray-900">
@@ -193,7 +186,7 @@ const Register = () => {
               <input
                 type="checkbox" id="terms" name="termsAccepted"
                 checked={formData.termsAccepted} onChange={handleChange}
-                className="mt-1 w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-[#f4f7eb]"
+                className="mt-1 w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
               />
               <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer flex-1">
                 I agree to the <a href="#terms" className="text-[#6aa315] font-semibold hover:underline">Terms of Service</a> and <a href="#privacy" className="text-[#6ca518] font-semibold hover:underline">Privacy Policy</a>.
@@ -202,14 +195,14 @@ const Register = () => {
 
             <Button
               type="submit" disabled={!formData.termsAccepted} text="Create Account"
-              icon={FiArrowRight} variant="primary" className="mt-2"
+              icon={FiArrowRight} variant="primary" className="mt-2 py-4 shadow-xl shadow-[#8cc63f]/25"
             />
           </form>
 
           <div className="relative my-10">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-400 font-bold tracking-widest text-[10px] uppercase">OR REGISTER WITH</span>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
+            <div className="relative flex justify-center text-[10px] font-black tracking-widest text-gray-400">
+              <span className="bg-[#e5faa7] lg:bg-white px-5 uppercase">OR REGISTER WITH</span>
             </div>
           </div>
 
@@ -218,10 +211,11 @@ const Register = () => {
             <SocialButton text="Apple" icon={FaApple} iconColor="text-black" onClick={() => console.log('Apple login clicked')} />
           </div>
 
-          <p className="text-center text-[13px] font-medium text-gray-600 mt-10 mb-8">
-            Already have an account? <a href="#login" className="text-[#6ca518] font-bold hover:underline ml-1">Log in here</a>
+          <p className="text-center text-[15px] font-bold text-gray-500 mt-14 mb-8">
+            Already have an account? <Link to="/login" className="text-[#6ca518] hover:underline font-bold ml-1 transition-colors">Log in here</Link>
           </p>
 
+        </div>
         </div>
       </div>
     </div>
