@@ -49,7 +49,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#fbc111] to-[#8cc63f] p-1.5 md:p-2 lg:p-3">
+    <div className="min-h-screen bg-linear-to-r from-[#fbc111] to-[#8cc63f] p-1.5 md:p-2 lg:p-3">
       <div className="min-h-full flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl relative">
       
       {/* Left Panel */}

@@ -27,14 +27,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#fbc111] to-[#8cc63f] p-1.5 md:p-2 lg:p-3">
+    <div className="min-h-screen bg-linear-to-r from-[#fbc111] to-[#8cc63f] p-1.5 md:p-2 lg:p-3">
       <div className="min-h-full flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl relative">
         
         {/* Left Panel - Branding */}
-        <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#f0f9e1] via-[#f7fcea] to-white p-16 lg:p-24 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex flex-1 bg-linear-to-br from-[#f0f9e1] via-[#f7fcea] to-white p-16 lg:p-24 flex-col justify-between relative overflow-hidden">
           {/* Subtle decorative background elements matching the design circles */}
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full border-[48px] border-[#8cc63f]/5"></div>
-          <div className="absolute -bottom-12 -left-12 w-72 h-72 rounded-full border-[36px] border-[#8cc63f]/10"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full border-48 border-[#8cc63f]/5"></div>
+          <div className="absolute -bottom-12 -left-12 w-72 h-72 rounded-full border-36 border-[#8cc63f]/10"></div>
 
           <div className="relative z-10">
             <div className="text-[#fbc111] font-bold text-lg tracking-tight mb-20 uppercase">Desun Academy</div>
@@ -44,7 +44,7 @@ const Login = () => {
               <span className="text-[#8cc63f]">Atelier</span>
             </h1>
             
-            <p className="text-gray-600 text-[17px] mt-8 max-w-[360px] leading-relaxed font-semibold opacity-90">
+            <p className="text-gray-600 text-[17px] mt-8 max-w-90 leading-relaxed font-semibold opacity-90">
               Step into a curated digital space where learning is an art form. Your journey to mastery begins here.
             </p>
           </div>
@@ -61,7 +61,7 @@ const Login = () => {
 
         {/* Right Panel - Form Area */}
         <div className="flex-1 p-8 md:p-16 lg:p-24 flex flex-col items-center justify-center bg-[#e5faa7] lg:bg-white transition-colors duration-500">
-          <div className="w-full max-w-[420px]">
+          <div className="w-full max-w-105">
             
             {/* Header Area simplified (no hover transformation) */}
             <div className="flex flex-col items-center mb-10">
@@ -112,7 +112,7 @@ const Login = () => {
                   name="keepLoggedIn"
                   checked={formData.keepLoggedIn}
                   onChange={handleChange}
-                  className="w-[18px] h-[18px] rounded border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
+                  className="w-4.5 h-4.5 rounded border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
                 />
                 <label htmlFor="keepLoggedIn" className="text-sm text-gray-700 font-bold cursor-pointer hover:text-black transition-colors uppercase tracking-tight">
                   Keep me logged in
