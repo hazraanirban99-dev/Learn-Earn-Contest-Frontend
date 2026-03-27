@@ -109,7 +109,7 @@ const Register = () => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 p-6 md:p-12 lg:py-12 lg:px-24 overflow-y-auto w-full lg:w-auto flex flex-col items-center">
+      <div className="flex-1 p-6 md:p-12 lg:py-12 lg:px-24 overflow-y-auto w-full lg:w-auto flex flex-col items-center bg-[#e5faa7] lg:bg-white transition-colors duration-300">
         <div className="w-full max-w-120">
 
           {/* Header Area exactly matching the image */}
@@ -166,7 +166,7 @@ const Register = () => {
             </div>
 
             <InputField
-              label="Address" type="text" name="address" value={formData.address}
+              label="Address" type="textarea" name="address" value={formData.address}
               onChange={handleChange} placeholder="Enter your full address" icon={FiMapPin} required
             />
 
