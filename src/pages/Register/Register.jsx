@@ -53,41 +53,43 @@ const Register = () => {
       return;
     }
     console.log("Form Submitted Successfully:", formData);
-    alert("Registration successful! Check console for data.");
+    alert("Registration successful!");
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-white font-sans text-gray-800">
 
       {/* Left Panel */}
-<div className="hidden lg:flex flex-1 bg-linear-to-b from-[#6ca518] to-[#467008] p-8 md:p-14 lg:p-20 text-white flex-col justify-between">
-        <div className="font-bold tracking-widest text-[13px] uppercase">DESUN ACADEMY</div>
+      <div className="hidden lg:flex flex-1 bg-linear-to-b from-[#6ca518] to-[#467008] p-8 md:p-14 lg:p-20 text-white flex-col justify-between">
+        <div>
+          <div className="font-bold tracking-widest text-[13px] uppercase">DESUN ACADEMY</div>
 
-        <div className="my-10">
-          <h1 className="text-[52px] font-bold mb-4 leading-tight tracking-tight text-white">
-            Enter the <br /><span className="text-[#fbc111]">Scholastic Atelier.</span>
-          </h1>
-          <p className="text-white/90 text-[15px] mb-12 max-w-sm leading-relaxed font-light">
-            Join a community of forward-thinkers. Our curated learning environment bridges the gap between traditional prestige and digital innovation.
-          </p>
+          <div className="mt-16 mb-10">
+            <h1 className="text-[52px] font-bold mb-4 leading-tight tracking-tight text-white">
+              Enter the <br /><span className="text-[#fbc111]">Scholastic Atelier.</span>
+            </h1>
+            <p className="text-white/90 text-[15px] mb-12 max-w-sm leading-relaxed font-light">
+              Join a community of forward-thinkers. Our curated learning environment bridges the gap between traditional prestige and digital innovation.
+            </p>
 
-          <div className="space-y-8">
-            <div className="flex items-start gap-4">
-              <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
-                <FiCheckCircle size={20} />
+            <div className="space-y-8">
+              <div className="flex items-start gap-4">
+                <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+                  <FiCheckCircle size={20} />
+                </div>
+                <div className="pt-0.5">
+                  <h3 className="font-bold text-[15px] text-white">Premium Certifications</h3>
+                  <p className="text-white/70 text-sm mt-0.5">Industry-recognized credentials designed by experts.</p>
+                </div>
               </div>
-              <div className="pt-0.5">
-                <h3 className="font-bold text-[15px] text-white">Premium Certifications</h3>
-                <p className="text-white/70 text-sm mt-0.5">Industry-recognized credentials designed by experts.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
-                <FiStar size={20} />
-              </div>
-              <div className="pt-0.5">
-                <h3 className="font-bold text-[15px] text-white">Editorial Learning</h3>
-                <p className="text-white/70 text-sm mt-0.5">High-end content that feels like a premium journal.</p>
+              <div className="flex items-start gap-4">
+                <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+                  <FiStar size={20} />
+                </div>
+                <div className="pt-0.5">
+                  <h3 className="font-bold text-[15px] text-white">Editorial Learning</h3>
+                  <p className="text-white/70 text-sm mt-0.5">High-end content that feels like a premium journal.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -143,7 +145,7 @@ const Register = () => {
 
             <InputField
               label="Email Address" type="email" name="email" value={formData.email}
-              onChange={handleChange} placeholder="scholar@desun.edu" icon={FiMail} required
+              onChange={handleChange} placeholder="aloknandy@gmail.com" icon={FiMail} required
             />
 
             <div className="mb-4">
