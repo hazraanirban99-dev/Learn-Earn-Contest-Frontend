@@ -1,3 +1,11 @@
-export { default as InputField } from './Input/InputField';
-export { default as Button } from './Button/Button';
-export { default as SocialButton } from './SocialButton/SocialButton';
+import InputField from './Input/InputField';
+import Button from './Button/Button';
+import SocialButton from './SocialButton/SocialButton';
+import AuthForm from './Forms/AuthForm';
+
+export {
+  InputField,
+  Button,
+  SocialButton,
+  AuthForm
+};
