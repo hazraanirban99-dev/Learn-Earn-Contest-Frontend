@@ -7,10 +7,14 @@ import {
 } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { InputField, Button, SocialButton } from '../index';
 
 const AuthForm = ({ type }) => {
   const isRegister = type === 'register';
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -49,10 +53,14 @@ const AuthForm = ({ type }) => {
         return;
       }
       console.log("Registration Attempt:", formData);
-      alert("Registration successful!");
+      // Mock registration as login
+      login({ email: formData.email, name: formData.fullName });
+      navigate('/dashboard');
     } else {
       console.log("Login Attempt:", formData);
-      alert("Login Successful!");
+      // Mock login
+      login({ email: formData.email, name: 'Admin User' });
+      navigate('/dashboard');
     }
   };
 
