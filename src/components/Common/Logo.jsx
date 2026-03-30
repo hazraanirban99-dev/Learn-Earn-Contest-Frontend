@@ -19,7 +19,7 @@ const Logo = ({
   showText = true, 
   className = '', 
   imgClassName = '',
-  to = '/' 
+  to = null 
 }) => {
   const sizes = {
     xs: { img: 'w-8 h-8', text: 'text-xs', tagline: 'text-[7px]' },

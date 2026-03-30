@@ -1,29 +1,36 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
-export const LaunchCard = () => (
-  <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] rounded-[32px] p-8 text-white shadow-2xl shadow-[#8cc63f]/30 flex flex-col items-center text-center gap-6 relative overflow-hidden group h-full">
-    {/* Decorative Elements */}
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
-    
-    <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center border-2 border-white/30 backdrop-blur-md transition-all duration-500 shadow-xl">
-      <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
-    </div>
+export const LaunchCard = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] rounded-[32px] p-8 text-white shadow-2xl shadow-[#8cc63f]/30 flex flex-col items-center text-center gap-6 relative overflow-hidden group h-full">
+      {/* Decorative Elements */}
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
+      
+      <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center border-2 border-white/30 backdrop-blur-md transition-all duration-500 shadow-xl">
+        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </div>
 
-    <div className="space-y-3">
-      <h3 className="text-xl font-black uppercase tracking-tight leading-none">Launch Contest</h3>
-      <p className="text-white/90 text-sm font-semibold leading-relaxed px-2">
-        Create a new academic challenge and engage with thousands of students.
-      </p>
-    </div>
+      <div className="space-y-3">
+        <h3 className="text-xl font-black uppercase tracking-tight leading-none">Launch Contest</h3>
+        <p className="text-white/90 text-sm font-semibold leading-relaxed px-2">
+          Create a new academic challenge and engage with thousands of students.
+        </p>
+      </div>
 
-    <button className="w-full bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30">
-      Create New Contest
-    </button>
-  </div>
-);
+      <button 
+        onClick={() => navigate('/admin/contests/create')}
+        className="w-full bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30"
+      >
+        Create New Contest
+      </button>
+    </div>
+  );
+};
 
 export const AssistanceCard = () => (
   <div className="bg-[#e9f2db]/60 border-2 border-white rounded-[32px] p-8 flex flex-col gap-6 relative group overflow-hidden h-full shadow-sm">
