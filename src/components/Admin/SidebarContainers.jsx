@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDashboard } from '../../context/DashboardContext';
+import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
 export const LaunchCard = () => (
   <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] rounded-[32px] p-8 text-white shadow-2xl shadow-[#8cc63f]/30 flex flex-col items-center text-center gap-6 relative overflow-hidden group h-full">
@@ -48,7 +48,7 @@ export const AssistanceCard = () => (
 
 
 export const SkillTrajectory = () => {
-  const { skills } = useDashboard();
+  const { skills } = useAdminDashboard();
 
   return (
     <div className="bg-[#e9f2db]/40 rounded-[32px] p-6 sm:p-8 flex flex-col gap-8 h-full border-b-4 border-[#8cc63f]/10 group">

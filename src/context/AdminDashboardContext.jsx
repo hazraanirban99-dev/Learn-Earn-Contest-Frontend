@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { FiUsers, FiBarChart2, FiCalendar } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 
-const DashboardContext = createContext();
+const AdminDashboardContext = createContext();
 
-export const DashboardProvider = ({ children }) => {
+export const AdminDashboardProvider = ({ children }) => {
   // Mock data that mimics backend response - easy to replace with fetch() later
   const [stats, setStats] = useState([
     { title: 'Total Contests', value: '142', trend: '+12% VS LY', icon: FaTrophy, color: 'bg-green-50', accentColor: 'text-green-600' },
@@ -28,16 +28,16 @@ export const DashboardProvider = ({ children }) => {
   ]);
 
   return (
-    <DashboardContext.Provider value={{ stats, contests, enrollmentData, skills }}>
+    <AdminDashboardContext.Provider value={{ stats, contests, enrollmentData, skills }}>
       {children}
-    </DashboardContext.Provider>
+    </AdminDashboardContext.Provider>
   );
 };
 
-export const useDashboard = () => {
-  const context = useContext(DashboardContext);
+export const useAdminDashboard = () => {
+  const context = useContext(AdminDashboardContext);
   if (!context) {
-    throw new Error('useDashboard must be used within a DashboardProvider');
+    throw new Error('useAdminDashboard must be used within an AdminDashboardProvider');
   }
   return context;
 };

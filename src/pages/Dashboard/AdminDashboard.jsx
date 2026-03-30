@@ -1,18 +1,18 @@
 import React from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
-import StatCard from '../../components/Dashboard/StatCard';
-import EnrollmentChart from '../../components/Dashboard/EnrollmentChart';
-import RecentContestsTable from '../../components/Dashboard/RecentContestsTable';
+import StatCard from '../../components/Admin/StatCard';
+import EnrollmentChart from '../../components/Admin/EnrollmentChart';
+import RecentContestsTable from '../../components/Admin/RecentContestsTable';
 import { 
   LaunchCard, 
   AssistanceCard, 
   SkillTrajectory, 
   UpcomingContestCard 
-} from '../../components/Dashboard/SidebarContainers';
-import { useDashboard } from '../../context/DashboardContext';
+} from '../../components/Admin/SidebarContainers';
+import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
-const Dashboard = () => {
-  const { stats } = useDashboard();
+const AdminDashboard = () => {
+  const { stats } = useAdminDashboard();
   const [activeToggle, setActiveToggle] = React.useState('Monthly');
 
   return (
@@ -87,4 +87,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

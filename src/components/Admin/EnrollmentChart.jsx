@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDashboard } from '../../context/DashboardContext';
+import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
 const EnrollmentChart = () => {
-  const { enrollmentData } = useDashboard();
+  const { enrollmentData } = useAdminDashboard();
   const labels = ['WEEK 01', 'WEEK 04', 'WEEK 08', 'WEEK 12'];
 
   return (

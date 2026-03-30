@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/desun-logo.png';
+import { Logo } from '../index';
 import {
   FiUser, FiPhone, FiMail, FiMapPin, FiBookOpen, FiLock,
   FiArrowRight, FiRotateCcw, FiCheckCircle, FiStar
@@ -55,12 +55,12 @@ const AuthForm = ({ type }) => {
       console.log("Registration Attempt:", formData);
       // Mock registration as login
       login({ email: formData.email, name: formData.fullName });
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     } else {
       console.log("Login Attempt:", formData);
       // Mock login
       login({ email: formData.email, name: 'Admin User' });
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     }
   };
 
@@ -68,17 +68,11 @@ const AuthForm = ({ type }) => {
     <div className={`w-full ${isRegister ? 'max-w-120' : 'max-w-[420px]'}`}>
       {/* Header Area */}
       <div className="flex flex-col items-center mb-10 mt-4">
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center p-0.5">
-            <img src={logo} alt="Desun Logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none' }} />
-          </div>
-          <div>
-            <div className="font-black text-xl tracking-tight text-black flex flex-col justify-center leading-tight uppercase">
-              <span>DESUN ACADEMY</span>
-            </div>
-            <div className="text-[10px] bg-[#fbc111] text-black px-1.5 py-0.5 rounded font-bold inline-block leading-none mt-1.5 uppercase tracking-wide">Get Placed by Skills</div>
-          </div>
-        </div>
+        <Logo 
+          size="lg" 
+          className="mb-10" 
+          imgClassName="bg-white rounded-full shadow-sm flex items-center justify-center p-0.5" 
+        />
         
         <div className="text-center">
           <h2 className={`font-black text-black mb-1.5 tracking-tight leading-tight uppercase ${isRegister ? 'text-[32px]' : 'text-[34px]'}`}>

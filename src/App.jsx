@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import Dashboard from './pages/Dashboard/Dashboard';
+import AdminDashboard from './pages/Dashboard/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -12,13 +12,15 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        {/* Protected Dashboard Route */}
+        {/* Protected Admin Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          {/* Redirect old dashboard path to the new admin path */}
+          <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
 
-        {/* Redirect root to dashboard (if authenticated) or login */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Redirect root to admin dashboard (if authenticated) or login */}
+        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </Router>
   );

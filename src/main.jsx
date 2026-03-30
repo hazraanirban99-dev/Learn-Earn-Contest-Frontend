@@ -3,14 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
-import { DashboardProvider } from './context/DashboardContext'
+import { AdminDashboardProvider } from './context/AdminDashboardContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <DashboardProvider>
+      <AdminDashboardProvider>
         <App />
-      </DashboardProvider>
+      </AdminDashboardProvider>
     </AuthProvider>
   </StrictMode>,
 )

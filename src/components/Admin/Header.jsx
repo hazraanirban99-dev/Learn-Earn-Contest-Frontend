@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical } from 'react-icons/fi';
-import logo from '../../assets/desun-logo.png';
+import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2 } from 'react-icons/fi';
+import { Logo } from '../index';
 
 const Header = ({ onMenuClick }) => {
   const [activeTab, setActiveTab] = useState('Analytics');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const toggleRef = useRef(null);
+  const profileDropdownRef = useRef(null);
+  const profileToggleRef = useRef(null);
   const tabs = ['Analytics', 'Reports', 'Logs'];
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close only if the click is OUTSIDE both the dropdown AND the toggle button
       const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(event.target);
       const isOutsideToggle = toggleRef.current && !toggleRef.current.contains(event.target);
-      
       if (isOutsideDropdown && isOutsideToggle) {
         setIsMenuOpen(false);
+      }
+
+      const isOutsideProfile = profileDropdownRef.current && !profileDropdownRef.current.contains(event.target);
+      const isOutsideProfileToggle = profileToggleRef.current && !profileToggleRef.current.contains(event.target);
+      if (isOutsideProfile && isOutsideProfileToggle) {
+        setIsProfileOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -38,14 +45,8 @@ const Header = ({ onMenuClick }) => {
         </button>
 
         {/* Mobile Logo */}
-        <div className="lg:hidden flex items-center gap-2">
-          <img src={logo} alt="Desun Logo" className="w-8 h-8 object-contain" />
-          <div className="flex flex-col">
-            <span className="font-black text-slate-800 text-xs tracking-tighter uppercase whitespace-nowrap leading-tight">Desun Academy</span>
-            <span className="bg-[#fbc111] text-black text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none uppercase tracking-widest border border-yellow-400/20 whitespace-nowrap mt-0.5">
-              Get Placed by Skills
-            </span>
-          </div>
+        <div className="lg:hidden">
+          <Logo size="xs" />
         </div>
       </div>
 
@@ -120,7 +121,7 @@ const Header = ({ onMenuClick }) => {
               ))}
             </div>
 
-            {/* Profile Actions in Dropdown */}
+            {/* Quick Actions in Dropdown */}
             <div className="flex flex-col gap-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Quick Actions</p>
               <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all">
@@ -133,14 +134,57 @@ const Header = ({ onMenuClick }) => {
                 <span>Settings</span>
               </button>
             </div>
+
+            {/* Account Actions in Dropdown */}
+            <div className="flex flex-col gap-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Account</p>
+              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all">
+                <FiEdit size={18} />
+                <span>Edit Profile</span>
+              </button>
+              <button className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all">
+                <FiLogOut size={18} />
+                <span>Logout</span>
+              </button>
+              <button className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 transition-all">
+                <FiTrash2 size={18} />
+                <span>Delete Account</span>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* User Profile Avatar - Desktop Only */}
-        <div className="hidden lg:block w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[2px] cursor-pointer hover:scale-105 transition-transform">
-          <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold font-black">
-            <FiUser size={18} />
-          </div>
+        {/* User Profile Avatar - Desktop Only (with dropdown) */}
+        <div className="hidden lg:flex items-center gap-3 relative">
+          <span className="text-[14px] font-black text-[#fbc111] tracking-tight">Hi! Admin</span>
+          <button
+            ref={profileToggleRef}
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[2px] cursor-pointer hover:scale-105 transition-transform"
+          >
+            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold font-black">
+              <FiUser size={18} />
+            </div>
+          </button>
+
+          {/* Desktop Profile Dropdown */}
+          {isProfileOpen && (
+            <div ref={profileDropdownRef} className="absolute top-full right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 flex flex-col gap-2 z-[100]">
+              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] hover:bg-gray-50 px-3 py-2.5 rounded-xl transition-all">
+                <FiEdit size={18} />
+                <span>Edit Profile</span>
+              </button>
+              <button className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50 px-3 py-2.5 rounded-xl transition-all">
+                <FiLogOut size={18} />
+                <span>Logout</span>
+              </button>
+              <div className="h-px bg-gray-100 my-1" />
+              <button className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-2.5 rounded-xl transition-all">
+                <FiTrash2 size={18} />
+                <span>Delete Account</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/desun-logo.png';
+import { Logo } from '../index';
 import { 
   FiGrid, 
   FiClipboard, 
@@ -10,10 +10,10 @@ import {
 import { FaTrophy } from 'react-icons/fa';
 
 const Sidebar = ({ onClose }) => {
-  const [activeTab, setActiveTab] = React.useState('Dashboard');
+  const [activeTab, setActiveTab] = React.useState('Admin Dashboard');
 
   const navItems = [
-    { label: 'Dashboard', icon: FiGrid },
+    { label: 'Admin Dashboard', icon: FiGrid },
     { label: 'Manage Contests', icon: FaTrophy },
     { label: 'Assign Projects', icon: FiClipboard },
     { label: 'Review Submissions', icon: FiMessageSquare },
@@ -34,19 +34,7 @@ const Sidebar = ({ onClose }) => {
       </button>
 
       {/* 1. Full Branding Section */}
-      <div className="flex items-center gap-3.5 mb-16 px-1">
-        <div className="w-12 h-12 flex-shrink-0 group cursor-pointer">
-          <img src={logo} alt="Desun Logo" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
-        </div>
-        <div className="flex flex-col">
-          <h2 className="text-[18px] font-black text-slate-900 tracking-tight leading-tight uppercase whitespace-nowrap">DESUN ACADEMY</h2>
-          <div className="mt-1">
-            <span className="bg-[#fbc111] text-black text-[9px] font-black px-2 py-0.5 rounded shadow-sm leading-none uppercase tracking-widest border border-yellow-400/20 whitespace-nowrap">
-              Get Placed by Skills
-            </span>
-          </div>
-        </div>
-      </div>
+      <Logo size="md" className="mb-16 px-1" />
 
       {/* 2. Navigation Section */}
       <nav className="flex-1 flex flex-col gap-6">

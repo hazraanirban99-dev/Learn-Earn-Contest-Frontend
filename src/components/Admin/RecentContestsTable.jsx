@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDashboard } from '../../context/DashboardContext';
+import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
 const RecentContestsTable = () => {
-  const { contests } = useDashboard();
+  const { contests } = useAdminDashboard();
 
   return (
     <div className="bg-white rounded-[32px] p-8 lg:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 w-full group transition-all duration-300 hover:shadow-xl">
