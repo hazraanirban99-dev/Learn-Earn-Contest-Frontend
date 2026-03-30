@@ -11,7 +11,7 @@ const Navbar = ({ showAuth = true }) => {
     { label: 'Home', path: '#' },
     { label: 'Contests', path: '#' },
     { label: 'Courses', path: '#' },
-    { label: 'Academy', path: '#' },
+    { label: 'About Us', path: '#' },
   ];
 
   const isActive = (path) => location.pathname === path;
