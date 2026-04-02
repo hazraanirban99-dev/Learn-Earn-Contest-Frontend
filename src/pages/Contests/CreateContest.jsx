@@ -17,7 +17,7 @@ const CreateContest = () => {
               <span className="text-[#8cc63f]">›</span>
               <span className="text-[#8cc63f]">NEW SCHOLASTIC CHALLENGE</span>
             </nav>
-            <h1 className="text-5xl font-black text-slate-900 tracking-tight leading-none">
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
               Craft New Contest
             </h1>
             <div className="border-l-4 border-[#fbc111] pl-6 py-1 bg-yellow-50/30 rounded-r-xl max-w-xl">
@@ -84,22 +84,35 @@ const CreateContest = () => {
               </div>
             </div>
 
-            {/* Project Brief & Syllabus (Bottom Left) */}
-            <div className="space-y-6 pt-4">
-              <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
-                PROJECT BRIEF & SYLLABUS
-              </label>
-              <div className="border-4 border-dashed border-gray-100 bg-white rounded-[40px] p-12 flex flex-col items-center justify-center gap-6 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 group cursor-pointer">
-                <div className="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                  <FiUploadCloud size={32} className="text-yellow-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+              <div className="space-y-4 group">
+                <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
+                  CONTEST THUMBNAIL (JPG/PNG)
+                </label>
+                <div className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#fbc111]/40 hover:bg-[#fbc111]/5 cursor-pointer h-full">
+                  <div className="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                    <FiUploadCloud size={24} className="text-yellow-400" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Upload Thumbnail</p>
+                    <p className="text-gray-400 font-bold text-[10px]">16:9 Aspect Ratio / Max 5MB</p>
+                  </div>
                 </div>
-                <div className="text-center space-y-2">
-                  <p className="text-xl font-black text-slate-900 uppercase tracking-tight">Drag and drop assets here</p>
-                  <p className="text-gray-400 font-bold text-sm">PDF, JPG, or PNG up to 25MB</p>
+              </div>
+
+              <div className="space-y-4 group">
+                <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
+                  PROJECT BRIEF & SYLLABUS (PDF)
+                </label>
+                <div className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 cursor-pointer h-full">
+                  <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                    <FiUploadCloud size={24} className="text-[#8cc63f]" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Upload Syllabus</p>
+                    <p className="text-gray-400 font-bold text-[10px]">PDF format / Max 25MB</p>
+                  </div>
                 </div>
-                <button className="text-[#8cc63f] font-black uppercase text-sm tracking-widest border-b-2 border-[#8cc63f]/20 pb-1 hover:border-[#8cc63f] transition-all">
-                  Browse Files
-                </button>
               </div>
             </div>
           </div>

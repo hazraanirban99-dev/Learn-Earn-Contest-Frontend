@@ -8,17 +8,19 @@ import {
   FiUsers 
 } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ onClose }) => {
-  const [activeTab, setActiveTab] = React.useState('Admin Dashboard');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
-    { label: 'Admin Dashboard', icon: FiGrid },
-    { label: 'Manage Contests', icon: FaTrophy },
-    { label: 'Assign Projects', icon: FiClipboard },
-    { label: 'Review Submissions', icon: FiMessageSquare },
-    { label: 'Declare Winners', icon: FiAward },
-    { label: 'Manage Users', icon: FiUsers },
+    { label: 'Admin Dashboard', icon: FiGrid, path: '/admin/dashboard' },
+    { label: 'Manage Contests', icon: FaTrophy, path: '/admin/contests' },
+    { label: 'Assign Projects', icon: FiClipboard, path: '#' },
+    { label: 'Review Submissions', icon: FiMessageSquare, path: '/admin/submissions' },
+    { label: 'Declare Winners', icon: FiAward, path: '#' },
+    { label: 'Manage Users', icon: FiUsers, path: '#' },
   ];
 
   return (
@@ -39,11 +41,18 @@ const Sidebar = ({ onClose }) => {
       {/* 2. Navigation Section */}
       <nav className="flex-1 flex flex-col gap-6">
         {navItems.map((item, idx) => {
-          const isActive = activeTab === item.label;
+          // If we are on /admin/contests/create, we still want the "Manage Contests" tab to be highlighted
+          const isActive = location.pathname === item.path || 
+                          (location.pathname.startsWith('/admin/contests') && item.path === '/admin/contests');
+                          
           return (
             <button
               key={idx}
-              onClick={() => setActiveTab(item.label)}
+              onClick={() => {
+                if(item.path !== '#') {
+                   navigate(item.path);
+                }
+              }}
               className={`flex items-center justify-between group transition-all relative py-1.5 ${
                 isActive ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-slate-900'
               }`}
