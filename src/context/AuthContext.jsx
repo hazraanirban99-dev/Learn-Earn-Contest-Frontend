@@ -8,6 +8,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // =========================================================================
+    // 🚀 BACKEND API INTEGRATION: VERIFY SESSION 
+    // -------------------------------------------------------------------------
+    // Endpoint: GET /api/v1/auth/me (or your route to check login status)
+    // Here you should check if the user has a valid session/token with the backend
+    // and update `setUser(data.user)` if successful.
+    // =========================================================================
+
     // Check if user is logged in (mocking persistent session)
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -22,6 +30,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // =========================================================================
+    // 🚀 BACKEND API INTEGRATION: LOGOUT 
+    // -------------------------------------------------------------------------
+    // Endpoint: POST /api/v1/auth/logout (Optional)
+    // Perform any server-side invalidation if required, then clear cookies/storage.
+    // =========================================================================
+
     setUser(null);
     localStorage.removeItem('user');
   };

@@ -53,12 +53,80 @@ const AuthForm = ({ type }) => {
         return;
       }
       console.log("Registration Attempt:", formData);
-      // Mock registration as login
+      
+      // =========================================================================
+      // 🚀 BACKEND API INTEGRATION: REGISTRATION (USING FETCH)
+      // =========================================================================
+      /*
+      try {
+        const response = await fetch('http://YOUR_BACKEND_URL/api/v1/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            contactNumber: formData.contactNumber,
+            email: formData.email,
+            gender: formData.gender,
+            address: formData.address,
+            password: formData.password
+          })
+        });
+
+        const data = await response.json(); // Data from backend
+
+        if (response.ok) {
+          // Success: Use context login and redirect
+          login({ email: data.user.email, name: data.user.name, token: data.token });
+          navigate('/admin/dashboard');
+        } else {
+          alert(data.message || "Registration failed!");
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+        alert("Something went wrong with the server.");
+      }
+      */
+      
+      // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
       login({ email: formData.email, name: formData.fullName });
       navigate('/admin/dashboard');
     } else {
       console.log("Login Attempt:", formData);
-      // Mock login
+      
+      // =========================================================================
+      // 🚀 BACKEND API INTEGRATION: LOGIN (USING FETCH)
+      // =========================================================================
+      /*
+      try {
+        const response = await fetch('http://YOUR_BACKEND_URL/api/v1/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          })
+        });
+
+        const data = await response.json(); // Convert to JSON
+
+        if (response.ok) {
+          // Success: Save user data in context
+          login({ email: data.user.email, name: data.user.name, token: data.token });
+          navigate('/admin/dashboard');
+        } else {
+          alert(data.message || "Invalid email or password!");
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+        alert("Server connection failed.");
+      }
+      */
+      
+      // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
       login({ email: formData.email, name: 'Admin User' });
       navigate('/admin/dashboard');
     }

@@ -5,7 +5,38 @@ import { FaTrophy } from 'react-icons/fa';
 const AdminDashboardContext = createContext();
 
 export const AdminDashboardProvider = ({ children }) => {
-  // Mock data that mimics backend response - easy to replace with fetch() later
+  // =========================================================================
+  // 🚀 BACKEND API INTEGRATION: FETCH DASHBOARD DATA
+  // =========================================================================
+  // If you are fetching data from the backend to populate the dashboard, 
+  // you can do it exactly like this within a useEffect:
+  /*
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch('http://YOUR_BACKEND_URL/api/v1/dashboard/metrics');
+        // 👇 Must convert to JSON! 👇
+        const data = await response.json(); 
+        
+        if (response.ok) {
+          // Update your state variables with the fresh data:
+          setStats(data.stats);
+          setContests(data.recentContests);
+          setEnrollmentData(data.enrollmentChart);
+          setSkills(data.skillsDistribution);
+        } else {
+          console.error("Failed to fetch dashboard data:", data.message);
+        }
+      } catch (error) {
+        console.error("API Error fetching metrics:", error);
+      }
+    };
+    fetchDashboardData();
+  }, []);
+  */
+  // =========================================================================
+
+  // Mock data that mimics backend response - easily replaceable with fetch() later
   const [stats, setStats] = useState([
     { title: 'Total Contests', value: '142', trend: '+12% VS LY', icon: FaTrophy, color: 'bg-green-50', accentColor: 'text-green-600' },
     { title: 'Total Participants', value: '12,890', trend: '+2.4K NEW', icon: FiUsers, color: 'bg-amber-50', accentColor: 'text-amber-500' },

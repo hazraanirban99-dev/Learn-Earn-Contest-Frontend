@@ -205,7 +205,48 @@ const CreateContest = () => {
 
             {/* CTA Button */}
             <div className="pt-6">
-              <button className="w-full bg-gradient-to-br from-[#8cc63f] to-[#fbc111] p-[2px] rounded-[32px] shadow-2xl shadow-yellow-500/20 hover:scale-[1.02] active:scale-95 transition-all group">
+              <button 
+                onClick={async () => {
+                  // =========================================================================
+                  // 🚀 BACKEND API INTEGRATION: CREATE CONTEST (FETCH)
+                  // =========================================================================
+                  /*
+                  try {
+                    const response = await fetch('http://YOUR_BACKEND_URL/api/v1/contests', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        // 'Authorization': `Bearer ${token}` // If headers token is needed
+                      },
+                      body: JSON.stringify({
+                        title: "Your title state here", // bind these to your actual form states
+                        description: "Description state", 
+                        domain: domain,
+                        rigor: rigor,
+                        startDate: "Start Date state",
+                        endDate: "End Date state",
+                        award: "Award state"
+                      })
+                    });
+
+                    const data = await response.json(); 
+
+                    if (response.ok) {
+                      alert("Contest created successfully!");
+                      // Optionally navigate to contest list page here
+                    } else {
+                      alert(data.message || "Failed to create contest");
+                    }
+                  } catch (error) {
+                    console.error("API Error:", error);
+                    alert("Error reaching server");
+                  }
+                  */
+                  
+                  console.log("Create Contest Payload sent to API (Mocked)");
+                }}
+                className="w-full bg-gradient-to-br from-[#8cc63f] to-[#fbc111] p-[2px] rounded-[32px] shadow-2xl shadow-yellow-500/20 hover:scale-[1.02] active:scale-95 transition-all group"
+              >
                 <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] group-hover:from-[#a6d843] group-hover:to-[#fbc111] rounded-[30px] p-8 text-white flex flex-col items-center gap-4 transition-all duration-500">
                    <div className="flex items-center justify-between w-full">
                      <div className="text-left">
