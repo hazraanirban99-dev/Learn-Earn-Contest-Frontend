@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus } from 'react-icons/fi';
 import AdminLayout from '../../layouts/AdminLayout';
+import Button from '../../components/Button/Button';
 
 const CreateContest = () => {
   const [rigor, setRigor] = useState('Easy');
@@ -131,9 +132,9 @@ const CreateContest = () => {
                   onChange={(e) => setDomain(e.target.value)}
                   className="w-full bg-[#f1f8e8] border-2 border-white rounded-[20px] px-6 py-5 text-slate-800 font-black appearance-none outline-none focus:bg-white focus:border-[#8cc63f]/20 transition-all cursor-pointer shadow-sm"
                 >
-                  <option>Development</option>
-                  <option>Design</option>
-                  <option>Data Science</option>
+                  <option>MERN</option>
+                  <option>UI/UX</option>
+                  <option>DIGITAL MARKETING</option>
                 </select>
                 <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#8cc63f]">
                   <FiChevronDown size={20} strokeWidth={3} />
@@ -199,8 +200,8 @@ const CreateContest = () => {
                   <div className="w-8 h-8 rounded-full border-2 border-yellow-500 flex items-center justify-center text-yellow-500 bg-yellow-50">
                     <FiAward size={16} strokeWidth={3} />
                   </div>
-                  <label className="text-[11px] font-black uppercase tracking-widest text-yellow-500">
-                    AWARD & RECOGNITION
+                  <label className="text-[11px] font-black uppercase tracking-widest text-[#fbc111]">
+                    AWARD AND RECOGNITION
                   </label>
                 </div>
 
@@ -218,62 +219,12 @@ const CreateContest = () => {
 
             {/* CTA Button */}
             <div className="pt-6">
-              <button 
+              <Button 
+                text="Finalize & Create Contest"
                 onClick={async () => {
-                  // =========================================================================
-                  // 🚀 BACKEND API INTEGRATION: CREATE CONTEST (FETCH)
-                  // =========================================================================
-                  /*
-                  try {
-                    const response = await fetch('http://YOUR_BACKEND_URL/api/v1/contests', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        // 'Authorization': `Bearer ${token}` // If headers token is needed
-                      },
-                      body: JSON.stringify({
-                        title: "Your title state here", // bind these to your actual form states
-                        description: "Description state", 
-                        domain: domain,
-                        rigor: rigor,
-                        startDate: "Start Date state",
-                        endDate: "End Date state",
-                        award: "Award state"
-                      })
-                    });
-
-                    const data = await response.json(); 
-
-                    if (response.ok) {
-                      alert("Contest created successfully!");
-                      // Optionally navigate to contest list page here
-                    } else {
-                      alert(data.message || "Failed to create contest");
-                    }
-                  } catch (error) {
-                    console.error("API Error:", error);
-                    alert("Error reaching server");
-                  }
-                  */
-                  
                   console.log("Create Contest Payload sent to API (Mocked)");
                 }}
-                className="w-full bg-gradient-to-br from-[#8cc63f] to-[#fbc111] p-[2px] rounded-[32px] shadow-2xl shadow-yellow-500/20 hover:scale-[1.02] active:scale-95 transition-all group"
-              >
-                <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] group-hover:from-[#a6d843] group-hover:to-[#fbc111] rounded-[30px] p-8 text-white flex flex-col items-center gap-4 transition-all duration-500">
-                   <div className="flex items-center justify-between w-full">
-                     <div className="text-left">
-                       <h4 className="text-2xl font-black uppercase tracking-tight leading-none">Finalize & Create Contest</h4>
-                       <p className="text-[9px] font-black uppercase tracking-widest opacity-80 mt-2">EXECUTE DEPLOYMENT TO ACTIVE CURRICULUM</p>
-                     </div>
-                     <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform duration-500">
-                       <svg className="w-6 h-6 rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                       </svg>
-                     </div>
-                   </div>
-                </div>
-              </button>
+              />
             </div>
           </div>
         </div>
