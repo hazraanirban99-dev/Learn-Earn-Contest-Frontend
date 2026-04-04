@@ -264,14 +264,35 @@ export default function ReviewSubmissions() {
                </div>
             </div>
 
-            {/* Project Abstract */}
-            <div className="space-y-4 pt-4">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-900">Project Abstract</h3>
-              <div className="pl-6 border-l-4 border-[#fbc111] py-2">
-                <p className="text-gray-600 font-bold text-base md:text-lg leading-relaxed">
-                  {submission.abstract}
-                </p>
+            {/* Narrative Feedback Section (Moved from right column) */}
+            <div className="bg-[#f8faf6]/30 rounded-[32px] p-6 sm:p-8 border border-[#8cc63f]/10 flex flex-col gap-5">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-[#8cc63f]/10 rounded-xl text-[#8cc63f]">
+                  <FiList size={20} />
+                </div>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Technical & Narrative Feedback</h3>
               </div>
+
+              <div className="bg-white border-2 border-slate-100 focus-within:border-[#8cc63f]/20 rounded-2xl overflow-hidden transition-all flex flex-col min-h-[200px] shadow-sm">
+                <div className="flex gap-4 px-4 py-2.5 border-b border-gray-50 bg-gray-50/50">
+                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiBold size={14} /></button>
+                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiItalic size={14} /></button>
+                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiList size={14} /></button>
+                </div>
+                <textarea 
+                  value={reviewDraft}
+                  onChange={(e) => setReviewDraft(e.target.value)}
+                  placeholder="Record your executive evaluation and narrative feedback here..."
+                  className="w-full h-full min-h-[160px] bg-transparent p-5 text-sm font-semibold text-slate-700 outline-none resize-none placeholder:text-gray-400"
+                />
+              </div>
+
+              <button 
+                onClick={handleSubmitReview}
+                className="w-full sm:w-fit bg-[#8cc63f] hover:bg-[#7db534] text-white py-4 px-10 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Submit Final Review <FiSend size={18} />
+              </button>
             </div>
           </div>
 
@@ -517,36 +538,7 @@ export default function ReviewSubmissions() {
               </div>
             </div>
 
-            {/* Narrative Feedback Card */}
-            <div className="bg-white rounded-[32px] p-6 lg:p-8 shadow-sm flex flex-col gap-5 flex-1">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-50 rounded-xl text-purple-600 hidden sm:block">
-                  <FiList size={20} className="text-purple-500" />
-                </div>
-                <h3 className="text-lg font-black text-slate-900">Narrative Feedback</h3>
-              </div>
 
-              <div className="bg-[#f8faf6]/50 border-2 border-transparent focus-within:border-[#8cc63f]/20 rounded-2xl overflow-hidden transition-all flex flex-col flex-1 min-h-[160px]">
-                <div className="flex gap-4 px-4 py-2 border-b border-gray-100 bg-white/60">
-                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiBold size={14} /></button>
-                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiItalic size={14} /></button>
-                  <button className="text-gray-400 hover:text-slate-900 transition-colors"><FiList size={14} /></button>
-                </div>
-                <textarea 
-                  value={reviewDraft}
-                  onChange={(e) => setReviewDraft(e.target.value)}
-                  placeholder="Write your professional evaluation here..."
-                  className="w-full h-full min-h-[120px] bg-transparent p-4 text-sm font-semibold text-slate-700 outline-none resize-none placeholder:text-gray-400"
-                />
-              </div>
-
-              <button 
-                onClick={handleSubmitReview}
-                className="w-full mt-2 bg-[#fbc111] hover:bg-[#e6b110] text-[#4d3a00] hover:text-black py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
-              >
-                Submit Final Review <FiSend size={18} />
-              </button>
-            </div>
             
           </div>
         </div>

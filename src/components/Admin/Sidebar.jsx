@@ -17,10 +17,9 @@ const Sidebar = ({ onClose }) => {
   const navItems = [
     { label: 'Admin Dashboard', icon: FiGrid, path: '/admin/dashboard' },
     { label: 'Manage Contests', icon: FaTrophy, path: '/admin/contests' },
-    { label: 'Assign Projects', icon: FiClipboard, path: '#' },
     { label: 'Review Submissions', icon: FiMessageSquare, path: '/admin/submissions' },
-    { label: 'Declare Winners', icon: FiAward, path: '#' },
-    { label: 'Manage Users', icon: FiUsers, path: '#' },
+    { label: 'Declare Winners', icon: FiAward, path: '/admin/winners' },
+    { label: 'Manage Users', icon: FiUsers, path: '/admin/users' },
   ];
 
   return (

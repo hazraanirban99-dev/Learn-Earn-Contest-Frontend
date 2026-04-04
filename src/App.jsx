@@ -2,31 +2,37 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import AdminDashboard from './pages/Dashboard/AdminDashboard';
-import { CreateContest, ManageContests, ReviewSubmissions } from './pages/Contests';
+import { CreateContest, ManageContests, ReviewSubmissions, DeclareWinners } from './pages/Contests';
+import { ManageUsers } from './pages/Users';
 import ProtectedRoute from './components/ProtectedRoute';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   console.log("App checking contests route");
   return (
     <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-        {/* Protected Admin Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/contests" element={<ManageContests />} />
-          <Route path="/admin/contests/create" element={<CreateContest />} />
-          <Route path="/admin/submissions" element={<ReviewSubmissions />} />
-          {/* Redirect old dashboard path to the new admin path */}
-          <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
-        </Route>
+      <UserProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Protected Admin Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/contests" element={<ManageContests />} />
+            <Route path="/admin/contests/create" element={<CreateContest />} />
+            <Route path="/admin/submissions" element={<ReviewSubmissions />} />
+            <Route path="/admin/winners" element={<DeclareWinners />} />
+            <Route path="/admin/users" element={<ManageUsers />} />
+            {/* Redirect old dashboard path to the new admin path */}
+            <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+          </Route>
 
-        {/* Redirect root to admin dashboard (if authenticated) or login */}
-        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-      </Routes>
+          {/* Redirect root to admin dashboard (if authenticated) or login */}
+          <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+        </Routes>
+      </UserProvider>
     </Router>
   );
 }

@@ -89,9 +89,8 @@ const Header = ({ onMenuClick }) => {
           <FiMoreVertical size={20} className="pointer-events-none" />
         </button>
 
-        {/* --- MOBILE DROPDOWN MENU --- */}
         {isMenuOpen && (
-          <div ref={dropdownRef} className="absolute top-full right-0 mt-3 w-64 bg-white rounded-[24px] shadow-2xl border border-gray-100 p-6 flex flex-col gap-6 lg:hidden animate-in slide-in-from-top-2 duration-200 z-[100]">
+          <div ref={dropdownRef} className="absolute top-full right-0 mt-3 w-64 bg-white rounded-[24px] shadow-2xl border border-gray-100 p-6 flex flex-col gap-6 lg:hidden animate-in slide-in-from-top-2 duration-200 z-[100] max-h-[80vh] overflow-y-auto scrollbar-hide">
             {/* User Profile Section in Dropdown */}
             <div className="flex items-center gap-4 bg-[#8cc63f]/5 p-3 rounded-2xl border border-[#8cc63f]/10">
               <div className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[2px]">

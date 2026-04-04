@@ -47,9 +47,12 @@ export const AssistanceCard = () => (
       Our academy support team is available for real-time console help.
     </p>
 
-    <button className="w-full bg-white py-4 rounded-xl font-black text-[#8cc63f] text-sm hover:bg-[#8cc63f] hover:text-white transition-all shadow-md active:scale-95 border border-[#8cc63f]/10">
+    <a 
+      href="mailto:teamsupport@gmail.com?subject=Admin Support Request&body=Hi Support Team,"
+      className="w-full bg-white py-4 rounded-xl font-black text-[#8cc63f] text-sm hover:bg-[#8cc63f] hover:text-white transition-all shadow-md active:scale-95 border border-[#8cc63f]/10 text-center block"
+    >
       Contact Support
-    </button>
+    </a>
   </div>
 );
 
@@ -88,7 +91,9 @@ export const SkillTrajectory = () => {
   );
 };
 
-export const UpcomingContestCard = () => (
+export const UpcomingContestCard = () => {
+  const navigate = useNavigate();
+  return (
   <div className="bg-[#8cc63f] rounded-[32px] p-8 text-white flex flex-col gap-6 relative overflow-hidden group h-full shadow-2xl shadow-[#8cc63f]/30">
     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12 blur-xl transition-all group-hover:scale-150 duration-700" />
     <span className="bg-white/20 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full w-fit shadow-sm border border-white/20">
@@ -104,11 +109,15 @@ export const UpcomingContestCard = () => (
       </p>
     </div>
 
-    <button className="bg-white text-[#8cc63f] px-6 py-4.5 rounded-xl font-black text-sm flex items-center justify-between group-hover:bg-[#fbc111] group-hover:text-black transition-all shadow-xl active:scale-95 uppercase tracking-widest">
+    <button 
+      onClick={() => navigate('/admin/submissions')}
+      className="bg-white text-[#8cc63f] px-6 py-4.5 rounded-xl font-black text-sm flex items-center justify-between group-hover:bg-[#fbc111] group-hover:text-black transition-all shadow-xl active:scale-95 uppercase tracking-widest"
+    >
       Begin Review 
       <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
       </svg>
     </button>
   </div>
-);
+  );
+};

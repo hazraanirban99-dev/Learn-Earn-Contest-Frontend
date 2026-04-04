@@ -55,8 +55,7 @@ const ManageContests = () => {
   const [stats, setStats] = useState({
     active: 12,
     participants: 1402,
-    upcoming: 4,
-    completion: '88%'
+    upcoming: 4
   });
 
   // =========================================================================
@@ -159,12 +158,11 @@ const ManageContests = () => {
         </div>
 
         {/* --- Stat Cards --- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4">
           {[
             { icon: FaTrophy, val: stats.active, label: 'ACTIVE CONTESTS', color: 'text-[#8cc63f]' },
             { icon: FiUsers, val: stats.participants, label: 'TOTAL PARTICIPANTS', color: 'text-purple-500' },
             { icon: FiClipboard, val: stats.upcoming, label: 'UPCOMING LAUNCH', color: 'text-[#fbc111]' },
-            { icon: FiCheckCircle, val: stats.completion, label: 'COMPLETION RATE', color: 'text-emerald-500' },
           ].map((stat, idx) => (
             <div key={idx} className="bg-white p-6 md:p-8 rounded-[32px] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
               <stat.icon className={`w-6 h-6 ${stat.color} mb-6`} strokeWidth={2.5} />

@@ -15,9 +15,6 @@ const RecentContestsTable = () => {
             Overview of latest administrative entries 
           </p>
         </div>
-        <button className="text-[#8cc63f] font-black text-xs lg:text-sm hover:translate-x-1 transition-all flex items-center gap-2 group/btn uppercase tracking-widest bg-[#8cc63f]/5 px-4 py-2 rounded-xl">
-          View All History <FiArrowUpRight className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-        </button>
       </div>
 
       <div className="overflow-x-auto -mx-8 lg:-mx-10 px-8 lg:px-10 scrollbar-hide">
@@ -27,8 +24,7 @@ const RecentContestsTable = () => {
               <th className="pb-4 font-black">Contest Name</th>
               <th className="pb-4 font-black">Category</th>
               <th className="pb-4 font-black text-center">Status</th>
-              <th className="pb-4 font-black text-center">Participants</th>
-              <th className="pb-4 font-black text-right">Growth</th>
+              <th className="pb-4 font-black">Participants</th>
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-50/50">
@@ -47,10 +43,6 @@ const RecentContestsTable = () => {
                 </td>
                 <td className="py-6 font-black text-slate-900 text-[14px] lg:text-[16px] text-center">
                   {contest.participants}
-                </td>
-                <td className={`py-6 font-black text-[14px] lg:text-[16px] text-right ${contest.growth.startsWith('+') ? 'text-green-500' : 'text-gray-300'}`}>
-                  {contest.growth}
-                  {contest.growth.startsWith('+') && <span className="ml-1 text-[10px]">▲</span>}
                 </td>
               </tr>
             ))}

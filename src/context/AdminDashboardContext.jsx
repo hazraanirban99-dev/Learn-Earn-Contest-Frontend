@@ -39,9 +39,7 @@ export const AdminDashboardProvider = ({ children }) => {
   // Mock data that mimics backend response - easily replaceable with fetch() later
   const [stats, setStats] = useState([
     { title: 'Total Contests', value: '142', trend: '+12% VS LY', icon: FaTrophy, color: 'bg-green-50', accentColor: 'text-green-600' },
-    { title: 'Total Participants', value: '12,890', trend: '+2.4K NEW', icon: FiUsers, color: 'bg-amber-50', accentColor: 'text-amber-500' },
-    { title: 'Submission Overview', value: '85% Completion Rate', trend: 'TRENDING UP', icon: FiBarChart2, color: 'bg-purple-50', accentColor: 'text-purple-500' },
-    { title: 'Pending Evaluation', value: '43', trend: 'URGENT', icon: FiCalendar, color: 'bg-red-50', accentColor: 'text-red-500' }
+    { title: 'Total Participants', value: '12,890', trend: '+2.4K NEW', icon: FiUsers, color: 'bg-amber-50', accentColor: 'text-amber-500' }
   ]);
 
   const [contests, setContests] = useState([
