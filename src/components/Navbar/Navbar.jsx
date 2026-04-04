@@ -1,20 +1,39 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar = ({ showAuth = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
-    { label: 'Home', path: '#' },
-    { label: 'Contests', path: '#' },
-    { label: 'Courses', path: '#' },
-    { label: 'About Us', path: '#' },
+    { label: 'History', path: '/#history', id: 'history' },
+    { label: 'Vision', path: '/#vision', id: 'vision' },
+    { label: 'Courses', path: '/#courses', id: 'courses' },
+    { label: 'Benefits', path: '/#benefits', id: 'benefits' },
+    { label: 'Contact', path: '/#contact', id: 'contact' },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const handleNavClick = (e, link) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      const element = document.getElementById(link.id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsMobileMenuOpen(false);
+      }
+    } else {
+      // If NOT on home page, let the Link handle it (it will navigate to /#id)
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  const isActive = (path) => {
+    // Basic active state check for hash links
+    return location.hash === path.split('/')[1] || (location.pathname === '/' && location.hash === '');
+  };
 
   return (
     <nav className="sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
@@ -29,14 +48,13 @@ const Navbar = ({ showAuth = true }) => {
             <Link
               key={link.label}
               to={link.path}
-              className={`relative py-1 text-[14px] font-black uppercase tracking-[0.1em] transition-all duration-300 ${
-                isActive(link.path) 
-                ? 'text-[#8cc63f]' 
-                : 'text-gray-400 hover:text-slate-900'
+              onClick={(e) => handleNavClick(e, link)}
+              className={`relative py-1 text-[13px] font-black uppercase tracking-[0.1em] transition-all duration-300 hover:text-slate-900 ${
+                location.hash === `#${link.id}` ? 'text-[#8cc63f]' : 'text-gray-400'
               }`}
             >
               {link.label}
-              {isActive(link.path) && (
+              {location.hash === `#${link.id}` && (
                 <span className="absolute -bottom-1 left-0 w-full h-[2.5px] bg-[#8cc63f] rounded-full shadow-[0_2px_8px_rgba(140,198,63,0.4)]" />
               )}
             </Link>
@@ -49,13 +67,13 @@ const Navbar = ({ showAuth = true }) => {
             <div className="hidden lg:flex items-center gap-8">
               <Link 
                 to="/login" 
-                className="text-[14px] font-black text-[#fbc111] hover:text-[#e0ad0c] transition-colors uppercase tracking-widest"
+                className="text-[13px] font-black text-[#fbc111] hover:text-[#e0ad0c] transition-colors uppercase tracking-widest"
               >
                 Login
               </Link>
               <Link 
                 to="/register" 
-                className="bg-[#8cc63f] hover:bg-[#7ab332] text-white text-[13px] font-black px-7 py-3.5 rounded-2xl transition-all shadow-lg shadow-[#8cc63f]/20 hover:shadow-[#8cc63f]/30 active:scale-95 uppercase tracking-widest"
+                className="bg-[#8cc63f] hover:bg-[#7ab332] text-white text-[12px] font-black px-7 py-3.5 rounded-2xl transition-all shadow-lg shadow-[#8cc63f]/20 hover:shadow-[#8cc63f]/30 active:scale-95 uppercase tracking-widest"
               >
                 Sign Up
               </Link>
@@ -63,7 +81,7 @@ const Navbar = ({ showAuth = true }) => {
           ) : (
              <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#8cc63f] animate-pulse" />
-                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Academy Active</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Academy Active</span>
              </div>
           )}
 
@@ -85,9 +103,9 @@ const Navbar = ({ showAuth = true }) => {
               <Link
                 key={link.label}
                 to={link.path}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, link)}
                 className={`text-sm font-black uppercase tracking-widest py-2 ${
-                  isActive(link.path) ? 'text-[#8cc63f]' : 'text-gray-500'
+                  location.hash === `#${link.id}` ? 'text-[#8cc63f]' : 'text-gray-500'
                 }`}
               >
                 {link.label}

@@ -4,6 +4,7 @@ import Register from './pages/Register/Register';
 import AdminDashboard from './pages/Dashboard/AdminDashboard';
 import { CreateContest, ManageContests, ReviewSubmissions, DeclareWinners } from './pages/Contests';
 import { ManageUsers } from './pages/Users';
+import LandingPage from './pages/LandingPage/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider } from './context/UserContext';
 
@@ -14,6 +15,7 @@ function App() {
       <UserProvider>
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
@@ -28,9 +30,6 @@ function App() {
             {/* Redirect old dashboard path to the new admin path */}
             <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
           </Route>
-
-          {/* Redirect root to admin dashboard (if authenticated) or login */}
-          <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </UserProvider>
     </Router>
