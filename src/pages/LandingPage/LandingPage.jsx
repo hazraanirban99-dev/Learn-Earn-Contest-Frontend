@@ -4,6 +4,7 @@ import { FiChevronLeft, FiChevronRight, FiCheck, FiMail, FiPhone, FiMapPin, FiAr
 import { FaGraduationCap, FaNetworkWired, FaCertificate, FaRocket, FaTrophy } from 'react-icons/fa';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
+import Ratings from '../../components/Ratings/Ratings';
 import buildingHero from '../../assets/building.jpg.png';
 import award1 from '../../assets/award1.jpg';
 import award2 from '../../assets/award2.jpg';
@@ -14,7 +15,7 @@ import slide6 from '../../assets/slide6.jpg';
 import slide7 from '../../assets/slide7.jpg';
 import slide8 from '../../assets/slide8.jpg';
 import slide9 from '../../assets/slide9.jpg';
-import ceoHero from '../../assets/ceo.jpg';
+import ceoHero from '../../assets/ceo.png';
 
 const LandingPage = () => {
    // --- HERO CAROUSEL LOGIC ---
@@ -36,18 +37,30 @@ const LandingPage = () => {
       { id: 4, title: 'Quantum Computing Sprint', category: 'QUANTUM', date: 'Feb 10, 2025', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1470&auto=format&fit=crop' }
    ];
 
-   const [contests, setContests] = useState(initialContests);
+   const [contests, setContests] = useState([]);
    const [currentIndex, setCurrentIndex] = useState(0);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
 
-   // --- SIMULATED DYNAMIC BACKEND FETCH ---
+   // --- DYNAMIC BACKEND FETCH PREPARATION ---
    useEffect(() => {
       const fetchContests = async () => {
+         setLoading(true);
+         setError(null);
          try {
-            setTimeout(() => {
-               setContests(initialContests);
-            }, 800);
-         } catch (error) {
-            console.error("Error fetching contests:", error);
+            // Simulated API call - swap this with your actual endpoint
+            // const response = await fetch('YOUR_API_ENDPOINT/contests');
+            // const data = await response.json();
+            
+            // Simulating network delay
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            
+            setContests(initialContests);
+         } catch (err) {
+            console.error("Error fetching contests:", err);
+            setError("Failed to load contests. Please try again later.");
+         } finally {
+            setLoading(false);
          }
       };
       fetchContests();
@@ -128,12 +141,14 @@ const LandingPage = () => {
                      Welcome to the Scholastic Atelier—where tradition meets digital innovation. We cultivate minds for the modern world.
                   </p>
                   <div className="flex flex-wrap gap-4 pt-4">
-                     <button className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-[#8cc63f]/20 hover:-translate-y-1 active:scale-95">
+                     <a 
+                        href="https://www.desunacademy.in/?utm_source=Google_Ads&utm_medium=cpc&utm_campaign=General_Search_Campaign&utm_content=Ad_Group_2&gad_source=1&gad_campaignid=23217970928&gbraid=0AAAAAqQrhGxNXHDyVQLRoeP-ZuurKHd3A&gclid=Cj0KCQjw7cLOBhDmARIsAGsuA0nKkGyKauNtuuQ_9X_KiBKcpRDbAFU_PefBTWZNUCPdzKMlsZl9lD4aAmkHEALw_wcB"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-[#8cc63f]/20 hover:-translate-y-1 active:scale-95 block text-center"
+                     >
                         Explore Courses
-                     </button>
-                     <button className="bg-white hover:bg-gray-50 text-gray-500 border-2 border-gray-100 px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all hover:-translate-y-1 active:scale-95">
-                        Our Vision
-                     </button>
+                     </a>
                   </div>
                </div>
                
@@ -244,7 +259,10 @@ const LandingPage = () => {
 
                <div className="animate-marquee gap-6 px-6 transform-gpu">
                   {[...courses, ...courses].map((course, idx) => (
-                     <div key={idx} className="w-[280px] bg-white/60 border border-gray-100 p-8 rounded-[36px] hover:bg-white hover:shadow-xl transition-all cursor-pointer shrink-0 will-change-transform transform-gpu group">
+                     <div 
+                        key={idx} 
+                        className={`w-[280px] bg-white/60 border-2 ${idx % 2 === 0 ? 'border-[#8cc63f]' : 'border-[#fbc111]'} p-8 rounded-[36px] hover:bg-white hover:shadow-xl transition-all cursor-pointer shrink-0 will-change-transform transform-gpu group`}
+                     >
                         <h3 className="text-lg font-black text-[#5c8a14] mb-3 group-hover:translate-x-1 transition-transform">{course.title}</h3>
                         <p className="text-gray-400 font-bold text-[11px] leading-relaxed line-clamp-2">{course.desc}</p>
                      </div>
@@ -312,7 +330,7 @@ const LandingPage = () => {
 
                <div className="relative">
                   <div className="absolute top-10 left-0 w-full h-[6px] bg-[#e1edcf] hidden md:block rounded-full overflow-hidden">
-                     <div className="h-full bg-[#8cc63f] w-[100%] rounded-full opacity-60 animate-pulse"></div>
+                     <div className="h-full bg-[#fbc111] w-[100%] rounded-full opacity-60 animate-pulse"></div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
@@ -340,82 +358,110 @@ const LandingPage = () => {
             </div>
          </section>
 
-         {/* Upcoming Academic Contests Carousel - COMPACT VERTICAL CARDS */}
+
+         {/* Academic Contests Section with Loading/Error Handling */}
          <section className="py-12 bg-white/40 overflow-hidden">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
                <div>
                   <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Engage & Compete</span>
                   <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">Academic Contests</h2>
                </div>
-               <div className="flex gap-4">
-                  <button
-                     onClick={handlePrev}
-                     className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
-                  >
-                     <FiChevronLeft size={24} />
-                  </button>
-                  <button
-                     onClick={handleNext}
-                     className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
-                  >
-                     <FiChevronRight size={24} />
-                  </button>
-               </div>
+               {!loading && contests.length > 0 && (
+                  <div className="flex gap-4">
+                     <button
+                        onClick={handlePrev}
+                        className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
+                     >
+                        <FiChevronLeft size={24} />
+                     </button>
+                     <button
+                        onClick={handleNext}
+                        className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
+                     >
+                        <FiChevronRight size={24} />
+                     </button>
+                  </div>
+               )}
             </div>
 
-            <div className="relative h-[550px] max-w-[1440px] mx-auto flex items-center justify-center pt-8">
-               {/* LEFT CARD */}
-               <div
-                  className="absolute left-[5%] xl:left-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
-                  style={{ transform: 'translateX(-50%)' }}
-               >
-                  <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                     <img src={contests[getCardIndex(-1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
-                     <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)].title}</h3></div>
-                  </div>
+            {loading ? (
+               <div className="flex flex-col items-center justify-center py-24 space-y-4">
+                  <div className="w-12 h-12 border-4 border-[#8cc63f] border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-[#a68945] text-[10px] font-black uppercase tracking-widest animate-pulse">Fetching Contests...</p>
                </div>
-
-               {/* CENTER CARD (ACTIVE) */}
-               <div className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y">
-                  <div className="bg-white p-6 md:p-8 rounded-[48px] shadow-2xl border border-[#8cc63f]/10 flex flex-col items-center group">
-                     <div className="w-full h-[250px] md:h-[280px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
-                        <img
-                           src={contests[currentIndex].image}
-                           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 transform-gpu"
-                           alt="Active Contest"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                     </div>
-                     <div className="flex-1 space-y-4 text-center mt-6">
-                        <div className="flex items-center justify-center gap-3">
-                           <span className="text-[9px] font-black text-[#5c8a14] uppercase tracking-widest py-1 px-3 bg-[#8cc63f]/10 rounded-lg">
-                              {contests[currentIndex].category}
-                           </span>
-                           <FaTrophy className="text-[#fbc111] animate-bounce" size={18} />
-                        </div>
-                        <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                           {contests[currentIndex].title}
-                        </h3>
-                        <div className="flex items-center justify-center gap-3 py-3 border-t border-gray-50 mt-4">
-                           <FiMapPin className="text-[#8cc63f] size={14}" />
-                           <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex].date}</span>
-                        </div>
+            ) : error ? (
+               <div className="text-center py-24">
+                  <p className="text-red-500 font-bold mb-4">{error}</p>
+                  <button 
+                     onClick={() => window.location.reload()}
+                     className="bg-[#8cc63f] text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest"
+                  >
+                     Try Again
+                  </button>
+               </div>
+            ) : contests.length === 0 ? (
+               <div className="text-center py-24 text-gray-400">No active contests found.</div>
+            ) : (
+               <div className="relative h-[550px] max-w-[1440px] mx-auto flex items-center justify-center pt-8">
+                  {/* LEFT CARD */}
+                  <div
+                     className="absolute left-[5%] xl:left-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
+                     style={{ transform: 'translateX(-50%)' }}
+                  >
+                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
+                        <img src={contests[getCardIndex(-1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)].title}</h3></div>
                      </div>
                   </div>
-               </div>
 
-               {/* RIGHT CARD */}
-               <div
-                  className="absolute right-[5%] xl:right-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
-                  style={{ transform: 'translateX(50%)' }}
-               >
-                  <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                     <img src={contests[getCardIndex(1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
-                     <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)].title}</h3></div>
+                  {/* CENTER CARD (ACTIVE) */}
+                  <div className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y">
+                     <div className="bg-white p-6 md:p-8 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
+                        {/* Mixed border effect */}
+                        <div className="absolute -inset-[8px] rounded-[48px] bg-gradient-to-tr from-[#8cc63f] via-[#fbc111] to-[#8cc63f] -z-10 opacity-70"></div>
+                        <div className="bg-white rounded-[40px] absolute inset-0 -z-10"></div>
+                        
+                        <div className="w-full h-[250px] md:h-[280px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
+                           <img
+                              src={contests[currentIndex].image}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 transform-gpu"
+                              alt="Active Contest"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        </div>
+                        <div className="flex-1 space-y-4 text-center mt-6">
+                           <div className="flex items-center justify-center gap-3">
+                              <span className="text-[9px] font-black text-[#5c8a14] uppercase tracking-widest py-1 px-3 bg-[#8cc63f]/10 rounded-lg">
+                                 {contests[currentIndex].category}
+                              </span>
+                              <FaTrophy className="text-[#fbc111] animate-bounce" size={18} />
+                           </div>
+                           <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                              {contests[currentIndex].title}
+                           </h3>
+                           <div className="flex items-center justify-center gap-3 py-3 border-t border-gray-50 mt-4">
+                              <FiMapPin className="text-[#8cc63f] size={14}" />
+                              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex].date}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* RIGHT CARD */}
+                  <div
+                     className="absolute right-[5%] xl:right-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
+                     style={{ transform: 'translateX(50%)' }}
+                  >
+                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
+                        <img src={contests[getCardIndex(1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)].title}</h3></div>
+                     </div>
                   </div>
                </div>
-            </div>
+            )}
          </section>
+
+         <Ratings />
 
          <Footer />
       </div>
