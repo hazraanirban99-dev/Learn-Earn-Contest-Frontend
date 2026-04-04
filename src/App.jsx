@@ -6,6 +6,7 @@ import { CreateContest, ManageContests, ReviewSubmissions, DeclareWinners } from
 import { ManageUsers } from './pages/Users';
 import UserDashboard from './pages/Dashboard/UserDashboard';
 import AllContests from './pages/Contests/AllContests';
+import ContestDetails from './pages/Contests/ContestDetails';
 import LandingPage from './pages/LandingPage/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider } from './context/UserContext';
@@ -20,7 +21,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          
+
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -35,6 +36,7 @@ function App() {
             {/* Student Routes */}
             <Route path="/student/dashboard" element={<UserDashboard />} />
             <Route path="/student/contests" element={<AllContests />} />
+            <Route path="/student/contests/:id" element={<ContestDetails />} />
           </Route>
         </Routes>
       </UserProvider>

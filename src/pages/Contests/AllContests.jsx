@@ -3,6 +3,7 @@ import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const AllContests = () => {
    const [loading, setLoading] = useState(true);
@@ -306,9 +307,9 @@ const AllContests = () => {
                                     <button className="flex-1 bg-[#8cc63f] hover:bg-[#7ab332] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#8cc63f]/20 active:scale-95 text-center">
                                        Apply Now
                                     </button>
-                                    <button className="flex-1 bg-[#fbc111] hover:bg-[#e0ad0c] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center">
+                                    <Link to={`/student/contests/${contest.id}`} className="flex-1 bg-[#fbc111] hover:bg-[#e0ad0c] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center flex items-center justify-center">
                                        View Details
-                                    </button>
+                                    </Link>
                                  </div>
 
                               </div>
