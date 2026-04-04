@@ -2,11 +2,14 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
+import ApplyContestModal from '../../components/Modals/ApplyContestModal';
 import { FiBookOpen, FiDownload, FiCheckCircle, FiCalendar, FiDollarSign, FiAward, FiBriefcase } from 'react-icons/fi';
 
 const ContestDetails = () => {
     const { id } = useParams();
     const [timeLeft, setTimeLeft] = React.useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+    const [isApplyModalOpen, setIsApplyModalOpen] = React.useState(false);
+    const [hasApplied, setHasApplied] = React.useState(false);
 
     // Mock Contest Data (would eventually come from backend based on 'id')
     const contestData = {
@@ -196,9 +199,18 @@ const ContestDetails = () => {
                             <span>Min</span>
                         </div>
 
-                        <button className="bg-[#fbc111] hover:bg-[#ebaa00] text-white px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all shadow-xl shadow-[#fbc111]/30 active:scale-95 w-full mb-6">
-                            Apply for this Contest
-                        </button>
+                        {hasApplied ? (
+                            <button disabled className="bg-gray-200 text-gray-500 border border-gray-300 px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest w-full mb-6 cursor-not-allowed">
+                                ✅ Applied
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => setIsApplyModalOpen(true)}
+                                className="bg-[#fbc111] hover:bg-[#ebaa00] text-white px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all shadow-xl shadow-[#fbc111]/30 active:scale-95 w-full mb-6"
+                            >
+                                Apply for this Contest
+                            </button>
+                        )}
                         
                         <p className="text-[10px] text-gray-400 font-medium max-w-[250px] mx-auto leading-relaxed">
                             By applying, you agree to the official Desun Academy participation limits.
@@ -282,6 +294,17 @@ const ContestDetails = () => {
             </section>
 
             <Footer />
+
+            <ApplyContestModal 
+                isOpen={isApplyModalOpen} 
+                onClose={() => setIsApplyModalOpen(false)} 
+                contestId={id} 
+                onSuccess={() => {
+                    alert("Application Transmitted Successfully!");
+                    setIsApplyModalOpen(false);
+                    setHasApplied(true);
+                }} 
+            />
         </div>
     );
 };

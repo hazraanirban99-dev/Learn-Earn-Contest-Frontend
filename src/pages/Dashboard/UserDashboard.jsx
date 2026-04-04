@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
+import ContestCard from '../../components/Cards/ContestCard';
 import Ratings from '../../components/Ratings/Ratings';
 import { FiArrowRight } from 'react-icons/fi';
 import { FaStar, FaShieldAlt, FaUsers, FaRocket } from 'react-icons/fa';
@@ -122,42 +123,7 @@ const UserDashboard = () => {
          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                {popularContests.map((contest, idx) => (
-                  <div key={contest.id} className="bg-white p-8 pt-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-[#8cc63f]/5 transition-all flex flex-col h-full group relative overflow-hidden">
-                     {/* Alternating Top Line */}
-                     <div className={`absolute top-0 left-0 w-full h-2 ${idx % 2 === 0 ? 'bg-[#8cc63f]' : 'bg-[#fbc111]'}`}></div>
-                     
-                     {/* Card Header (Icon & Tag) */}
-                     <div className="flex justify-between items-start mb-6">
-                        <div className="w-12 h-12 bg-[#f8faf2] rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-gray-50">
-                           {contest.icon}
-                        </div>
-                        <span className={`px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase flex items-center gap-1.5 ${contest.statusColor}`}>
-                           <div className={`w-1.5 h-1.5 rounded-full ${contest.status === 'ONGOING' ? 'bg-emerald-500 animate-pulse' : contest.status === 'UPCOMING' ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
-                           {contest.status}
-                        </span>
-                     </div>
-                     
-                     {/* Card Body */}
-                     <div className="flex-1">
-                        <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-[#5c8a14] transition-colors line-clamp-2">
-                           {contest.title}
-                        </h3>
-                        <p className="text-sm font-bold text-gray-400 leading-relaxed line-clamp-3">
-                           {contest.desc}
-                        </p>
-                     </div>
-
-                     {/* Card Footer (Date/Winner & CTA) */}
-                     <div className="mt-8 pt-6 border-t border-gray-50 flex items-end justify-between">
-                        <div>
-                           <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-1">{contest.dateInfo}</p>
-                           <p className="text-sm font-black text-slate-800">{contest.dateValue}</p>
-                        </div>
-                        <button className="bg-[#fbc111]/10 hover:bg-[#fbc111] text-[#d4a017] hover:text-slate-900 px-5 py-2.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
-                           View Details
-                        </button>
-                     </div>
-                  </div>
+                  <ContestCard key={contest.id} contest={contest} index={idx} variant="dashboard" />
                ))}
             </div>
          )}

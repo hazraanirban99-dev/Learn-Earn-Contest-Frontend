@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
+import ContestCard from '../../components/Cards/ContestCard';
 import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
@@ -279,40 +280,7 @@ const AllContests = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                            {contests.map((contest, idx) => (
-                              <div key={contest.id} className="bg-white p-8 pt-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-[#8cc63f]/10 transition-all flex flex-col group relative overflow-hidden">
-
-                                 {/* Top Alternating Line just like Dashboard cards */}
-                                 <div className={`absolute top-0 left-0 w-full h-2 ${idx % 2 === 0 ? 'bg-[#8cc63f]' : 'bg-[#fbc111]'}`}></div>
-
-                                 {/* Header Row */}
-                                 <div className="flex justify-between items-start mb-6">
-                                    <div className="w-12 h-12 bg-[#f8faf2] rounded-2xl flex items-center justify-center text-xl text-[#8cc63f] shadow-sm border border-gray-50">
-                                       {contest.icon}
-                                    </div>
-                                    <span className={`px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase flex items-center gap-1.5 ${contest.status === 'ONGOING' ? 'text-emerald-500 bg-emerald-50' : 'text-blue-500 bg-blue-50'
-                                       }`}>
-                                       <div className={`w-1.5 h-1.5 rounded-full ${contest.status === 'ONGOING' ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'}`}></div>
-                                       {contest.status}
-                                    </span>
-                                 </div>
-
-                                 {/* Content */}
-                                 <div className="flex-1 mb-8">
-                                    <h3 className="text-xl font-black text-slate-800 mb-3 group-hover:text-[#5c8a14] transition-colors">{contest.title}</h3>
-                                    <p className="text-sm font-bold text-gray-500 leading-relaxed min-h-[60px]">{contest.desc}</p>
-                                 </div>
-
-                                 {/* Action Buttons */}
-                                 <div className="flex flex-wrap gap-4 mt-auto">
-                                    <button className="flex-1 bg-[#8cc63f] hover:bg-[#7ab332] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#8cc63f]/20 active:scale-95 text-center">
-                                       Apply Now
-                                    </button>
-                                    <Link to={`/student/contests/${contest.id}`} className="flex-1 bg-[#fbc111] hover:bg-[#e0ad0c] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center flex items-center justify-center">
-                                       View Details
-                                    </Link>
-                                 </div>
-
-                              </div>
+                              <ContestCard key={contest.id} contest={contest} index={idx} variant="full" />
                            ))}
                         </div>
                      </div>

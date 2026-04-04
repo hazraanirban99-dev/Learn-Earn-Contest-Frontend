@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 
 const HeroCarousel = ({ contests, loading }) => {
@@ -59,9 +60,12 @@ const HeroCarousel = ({ contests, loading }) => {
                    
                    {/* Optional Button */}
                    {contest.buttonText && (
-                     <button className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl shadow-[#8cc63f]/30">
+                     <Link 
+                       to={`/student/contests/${contest.id}`}
+                       className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl shadow-[#8cc63f]/30"
+                     >
                         {contest.buttonText} <FiArrowRight size={16} />
-                     </button>
+                     </Link>
                    )}
                 </div>
               </div>
