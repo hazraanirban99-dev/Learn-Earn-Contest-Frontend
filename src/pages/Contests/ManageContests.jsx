@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminLayout from '../../layouts/AdminLayout';
 import EditContestModal from '../../components/Admin/EditContestModal';
+import EnrolledParticipantsModal from '../../components/Admin/EnrolledParticipantsModal';
 import { 
   FiUsers, FiClipboard, FiCheckCircle, 
   FiCalendar, FiEdit2, FiTrash2, FiPlus, FiChevronLeft, FiChevronRight 
@@ -13,6 +14,8 @@ const ManageContests = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const editId = searchParams.get('edit');
   const [loading, setLoading] = useState(true);
+  const [viewParticipantsOpen, setViewParticipantsOpen] = useState(false);
+  const [viewParticipantsContest, setViewParticipantsContest] = useState(null);
 
   // =========================================================================
   // 🚀 BACKEND API INTEGRATION: FETCH CONTESTS
@@ -132,6 +135,14 @@ const ManageContests = () => {
           }} 
         />
       )}
+
+      {viewParticipantsOpen && (
+        <EnrolledParticipantsModal 
+          isOpen={viewParticipantsOpen}
+          onClose={() => setViewParticipantsOpen(false)}
+          contestTitle={viewParticipantsContest?.title}
+        />
+      )}
     <AdminLayout>
       <div className="flex flex-col gap-8 max-w-6xl mx-auto pb-20">
         {/* --- Header Section --- */}
@@ -248,7 +259,13 @@ const ManageContests = () => {
                     <FiTrash2 size={18} />
                   </button>
                   
-                  <button className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#8cc63f] hover:bg-[#7eb533] text-white text-[12px] font-black uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-md">
+                  <button 
+                    onClick={() => {
+                        setViewParticipantsContest(contest);
+                        setViewParticipantsOpen(true);
+                    }}
+                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#8cc63f] hover:bg-[#7eb533] text-white text-[12px] font-black uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-md"
+                  >
                       <FiUsers size={16} /> View All Enrolled Participants
                   </button>
                 </div>

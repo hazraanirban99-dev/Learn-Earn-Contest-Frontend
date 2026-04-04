@@ -103,7 +103,7 @@ export default function DeclareWinners() {
             <div className="bg-[#fcfdf8] rounded-[32px] p-6 shadow-sm border border-[#e8efe0] flex flex-col sm:flex-row items-center sm:items-stretch gap-5 hover:bg-white transition-colors h-full">
               <div className="relative shrink-0 flex items-center justify-center">
                  <img src={topWinners[1].avatar} alt={topWinners[1].name} className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl object-cover shadow-sm bg-gray-100" />
-                 <div className="absolute -top-2 -right-2 bg-slate-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-white">2nd</div>
+                 <div className="absolute -top-2 -right-2 bg-[#8cc63f] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-white">2nd</div>
               </div>
               <div className="flex-1 flex flex-col justify-center w-full text-center sm:text-left">
                 <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none mb-1">{topWinners[1].name}</h3>
@@ -152,9 +152,6 @@ export default function DeclareWinners() {
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button className="flex-1 sm:flex-none justify-center px-4 py-2 bg-[#f8faf6] hover:bg-[#e8efe0] text-[#5c8a14] text-xs font-black tracking-widest uppercase rounded-xl transition-colors flex items-center gap-2">
                  <FiDownload size={14} /> Export CSV
-              </button>
-              <button className="flex-1 sm:flex-none justify-center px-4 py-2 bg-[#f8faf6] hover:bg-[#e8efe0] text-[#5c8a14] text-xs font-black tracking-widest uppercase rounded-xl transition-colors flex items-center gap-2">
-                 <FiPrinter size={14} /> Print Report
               </button>
             </div>
           </div>
