@@ -43,8 +43,12 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] bg-[#f8faf2] border-b border-gray-100 shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 h-20 flex items-center justify-between">
+    <>
+      {/* Spacer to prevent layout collapse since nav is fixed */}
+      <div className="h-20 w-full bg-[#f8faf2]"></div>
+
+      <nav className="fixed top-0 left-0 w-full z-[100] bg-[#f8faf2] border-b border-gray-100 shadow-sm">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 h-20 flex items-center justify-between">
         
         {/* 1. BRANDING (Left) */}
         <div className="flex-shrink-0">
@@ -177,7 +181,8 @@ const UserNavbar = () => {
           </div>
         </div>
       )}
-    </nav>
+      </nav>
+    </>
   );
 };
 

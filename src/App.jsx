@@ -5,6 +5,7 @@ import AdminDashboard from './pages/Dashboard/AdminDashboard';
 import { CreateContest, ManageContests, ReviewSubmissions, DeclareWinners } from './pages/Contests';
 import { ManageUsers } from './pages/Users';
 import UserDashboard from './pages/Dashboard/UserDashboard';
+import AllContests from './pages/Contests/AllContests';
 import LandingPage from './pages/LandingPage/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider } from './context/UserContext';
@@ -33,6 +34,7 @@ function App() {
 
             {/* Student Routes */}
             <Route path="/student/dashboard" element={<UserDashboard />} />
+            <Route path="/student/contests" element={<AllContests />} />
           </Route>
         </Routes>
       </UserProvider>

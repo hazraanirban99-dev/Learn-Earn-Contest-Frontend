@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
+import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import Ratings from '../../components/Ratings/Ratings';
 import { FiArrowRight } from 'react-icons/fi';
 import { FaStar, FaShieldAlt, FaUsers, FaRocket } from 'react-icons/fa';
@@ -10,7 +11,6 @@ const UserDashboard = () => {
   const [heroContests, setHeroContests] = useState([]);
   const [popularContests, setPopularContests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heroIndex, setHeroIndex] = useState(0);
 
   // --- MOCK BACKEND DATA FETCHING ---
   // Replace this with actual backend API calls later.
@@ -27,19 +27,25 @@ const UserDashboard = () => {
             id: 101,
             title: "Master the Art of Innovation",
             subtitle: "Join a community of elite scholars and creators at Desun Academy. Transform your potential into mastery.",
-            thumbnailUrl: "https://images.unsplash.com/photo-1542621334-a254cf47733d?q=80&w=1470&auto=format&fit=crop"
+            thumbnailUrl: "https://images.unsplash.com/photo-1542621334-a254cf47733d?q=80&w=1470&auto=format&fit=crop",
+            tag: "Enrolling Now",
+            buttonText: "Explore Programs"
           },
           {
             id: 102,
             title: "Global Code Sprint",
             subtitle: "Compete globally in real-time algorithm challenges and win exclusive networking opportunities.",
-            thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1470&auto=format&fit=crop"
+            thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1470&auto=format&fit=crop",
+            tag: "Enrolling Now",
+            buttonText: "Explore Programs"
           },
           {
             id: 103,
             title: "UX/UI Atelier Challenge",
             subtitle: "Design the future interfaces of web3. Collaborative design sprints with industry veterans.",
-            thumbnailUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1400&auto=format&fit=crop"
+            thumbnailUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1400&auto=format&fit=crop",
+            tag: "Enrolling Now",
+            buttonText: "Explore Programs"
           }
         ];
 
@@ -90,74 +96,12 @@ const UserDashboard = () => {
     fetchData();
   }, []);
 
-  // Hero carousel auto-slide effect
-  useEffect(() => {
-    if (heroContests.length === 0) return;
-    const timer = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % heroContests.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [heroContests.length]);
-
   return (
     <div className="min-h-screen bg-[#f8faf2] font-sans selection:bg-[#8cc63f]/30">
       <UserNavbar />
 
       {/* --- HERO CAROUSEL SECTION --- */}
-      <section className="w-full">
-        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden shadow-2xl group">
-          {loading ? (
-             <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-[#8cc63f] border-t-transparent rounded-full animate-spin"></div>
-             </div>
-          ) : (
-            <>
-              {heroContests.map((contest, idx) => (
-                <div 
-                  key={contest.id}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    idx === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                  }`}
-                >
-                  {/* Thumbnail from Backend */}
-                  <img src={contest.thumbnailUrl} alt={contest.title} className="w-full h-full object-cover" />
-                  {/* Dark Gradient Overlay for Text Readability */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent"></div>
-                  
-                  {/* Content inside Carousel */}
-                  <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 max-w-3xl">
-                     <span className="inline-block bg-[#fbc111] text-slate-900 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-6 w-max shadow-lg shadow-[#fbc111]/20">
-                        Enrolling Now
-                     </span>
-                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-6 animate-in slide-in-from-bottom-4 duration-700">
-                        {contest.title}
-                     </h1>
-                     <p className="text-gray-300 font-bold text-sm md:text-base leading-relaxed mb-10 max-w-xl animate-in slide-in-from-bottom-6 duration-700 delay-100">
-                        {contest.subtitle}
-                     </p>
-                     <button className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl shadow-[#8cc63f]/30">
-                        Explore Programs <FiArrowRight size={16} />
-                     </button>
-                  </div>
-                </div>
-              ))}
-
-              {/* Dots indicator */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-2">
-                {heroContests.map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setHeroIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      idx === heroIndex ? 'w-8 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/60'
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
+      <HeroCarousel contests={heroContests} loading={loading} showSearchBar={false} />
 
       {/* --- POPULAR CONTESTS SECTION --- */}
       <section className="py-12 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto">
