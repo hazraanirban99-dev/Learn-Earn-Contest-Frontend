@@ -411,6 +411,7 @@ const StudentSubmission = () => {
             isLoading={isSubmitting}
             loadingText="Submitting..."
             onClick={handleSubmit}
+            className="w-max px-14"
           />
         </div>
       </div>
