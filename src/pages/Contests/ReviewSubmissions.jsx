@@ -3,6 +3,7 @@ import { FiCheckCircle, FiTrendingUp, FiUsers, FiBold, FiItalic, FiList, FiSend,
 import { toast } from 'react-toastify';
 import AdminLayout from '../../layouts/AdminLayout';
 import ContestUserFilter from '../../components/ContestFilters/ContestUserFilter';
+import desunLogo from '../../assets/desun-logo.png';
 
 export default function ReviewSubmissions() {
   const [loading, setLoading] = useState(false);
@@ -538,7 +539,14 @@ export default function ReviewSubmissions() {
               </div>
             </div>
 
-
+            {/* Faded Watermark Logo beneath scoring */}
+            <div className="flex flex-1 items-end justify-center pb-12 pt-8 pointer-events-none">
+              <img 
+                src={desunLogo} 
+                alt="Desun Watermark" 
+                className="w-48 lg:w-64 object-contain opacity-[0.12]" 
+              />
+            </div>
             
           </div>
         </div>
