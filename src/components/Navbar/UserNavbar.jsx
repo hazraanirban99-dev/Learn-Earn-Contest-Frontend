@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
+import ProfileModal from '../Modals/ProfileModal';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2 } from 'react-icons/fi';
 
 const UserNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -106,9 +108,15 @@ const UserNavbar = () => {
                      </div>
                   </div>
                   
-                  <Link to="/student/profile" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#8cc63f] hover:bg-gray-50 transition-colors">
+                  <button 
+                     onClick={() => {
+                         setIsDropdownOpen(false);
+                         setIsProfileModalOpen(true);
+                     }} 
+                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#8cc63f] hover:bg-gray-50 transition-colors"
+                  >
                      <FiSettings size={16} /> View Profile
-                  </Link>
+                  </button>
                   <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors">
                      <FiTrash2 size={16} /> Delete Account
                   </button>
@@ -159,13 +167,15 @@ const UserNavbar = () => {
           </div>
           
           <div className="flex flex-col gap-4 pt-4 border-t border-gray-50">
-            <Link 
-              to="/student/profile"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 text-sm font-black text-gray-500 uppercase tracking-widest"
+            <button 
+              onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsProfileModalOpen(true);
+              }}
+              className="flex items-center gap-3 text-sm font-black text-gray-500 uppercase tracking-widest text-left"
             >
               <FiSettings size={18} /> View Profile
-            </Link>
+            </button>
             <button 
               onClick={handleDelete}
               className="flex items-center gap-3 text-sm font-black text-red-500 uppercase tracking-widest text-left"
@@ -182,6 +192,12 @@ const UserNavbar = () => {
         </div>
       )}
       </nav>
+
+      {/* --- MOUNT PROFILE MODAL --- */}
+      <ProfileModal 
+         isOpen={isProfileModalOpen} 
+         onClose={() => setIsProfileModalOpen(false)} 
+      />
     </>
   );
 };
