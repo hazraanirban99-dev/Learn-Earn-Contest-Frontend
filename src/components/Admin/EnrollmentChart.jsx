@@ -16,7 +16,7 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
   const currentLabels = view === 'Weekly' ? weeklyLabels : monthlyLabels;
 
   return (
-    <div className="bg-white rounded-[32px] p-8 lg:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 relative overflow-hidden h-full group transition-all duration-500 hover:shadow-xl hover:border-[#8cc63f]/20">
+    <div className="bg-white rounded-[32px] p-8 lg:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 relative overflow-hidden h-full transition-all duration-500 hover:shadow-xl hover:border-[#8cc63f]/20">
       {/* Header Section */}
       <div className="flex justify-between items-start">
         <div className="space-y-1">
@@ -34,23 +34,29 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
         </button>
       </div>
 
-      {/* SVG Chart Section */}
-      <div className="flex-1 mt-6 relative h-[220px] flex items-end justify-between px-2 gap-2 lg:gap-3">
+      {/* SVG Chart Section - Fixed Height to prevent collapse */}
+      <div className="mt-8 relative h-[240px] w-full flex items-end justify-between px-2 gap-3 sm:gap-4 lg:gap-6 border-b border-gray-50/50">
         {currentData.map((height, index) => (
-          <div key={index} className="relative flex-1 group min-w-[8px] h-full flex items-end">
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-10 transition-all duration-300 opacity-0 group-hover:opacity-100 pointer-events-none scale-90 group-hover:scale-100">
-               <div className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-2xl whitespace-nowrap border border-white/10 uppercase tracking-widest">
-                  {Math.round(800 + height * 2.5)}
-                  <div className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-white/10" />
-                </div>
-            </div>
+          <div key={index} className="flex-1 h-full relative flex flex-col justify-end group">
             
+            {/* The Bar */}
             <div 
-              className={`w-full rounded-t-xl transition-all duration-700 group-hover:opacity-90 ease-out cursor-pointer shadow-sm ${
-                index === currentData.length - 1 ? 'bg-gradient-to-t from-[#8cc63f] to-[#a6d843] shadow-[0_15px_35px_-5px_rgba(140,198,63,0.5)] scale-110' : 'bg-[#e9f2db]/80 hover:bg-[#8cc63f]/30'
-              }`}
-              style={{ height: `${height}%` }}
-            />
+              className="relative w-full rounded-t-xl transition-all duration-300 ease-out origin-bottom shadow-sm group-hover:scale-y-105 group-hover:!bg-[#fbc111] group-hover:!bg-none group-hover:shadow-[0_10px_25px_rgba(251,193,17,0.4)]"
+              style={{ 
+                height: `${height}%`,
+                backgroundColor: '#a855f7',
+                backgroundImage: 'linear-gradient(to top, #a855f7, #c084fc)'
+              }}
+            >
+              {/* Tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-30 transition-all duration-300 opacity-0 group-hover:opacity-100 pointer-events-none scale-90 group-hover:scale-100">
+                 <div className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-2xl whitespace-nowrap border border-white/10 uppercase tracking-widest">
+                    {Math.round(800 + height * 2.5)}
+                    <div className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-white/10" />
+                  </div>
+              </div>
+            </div>
+
           </div>
         ))}
       </div>
@@ -58,7 +64,7 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
       {/* Grid Labels Section */}
       <div className="flex justify-between px-2 overflow-hidden">
         {currentLabels.map((label, idx) => (
-          <span key={idx} className={`text-[9px] lg:text-[10px] font-black tracking-widest uppercase transition-colors flex-1 text-center truncate px-0.5 ${idx === currentLabels.length - 1 ? 'text-[#8cc63f]' : 'text-gray-300'}`}>
+          <span key={idx} className="text-[9px] lg:text-[10px] font-black tracking-widest uppercase flex-1 text-center truncate px-0.5 text-[#a855f7] opacity-80">
             {label}
           </span>
         ))}
