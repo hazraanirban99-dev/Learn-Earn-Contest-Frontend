@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiCheckCircle, FiTrendingUp, FiUsers, FiBold, FiItalic, FiList, FiSend, FiChevronDown } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 import AdminLayout from '../../layouts/AdminLayout';
 
 export default function ReviewSubmissions() {
@@ -19,7 +20,9 @@ export default function ReviewSubmissions() {
     abstract: `"The 'Verdant Nexus' concept aims to integrate modular vertical gardening with affordable residential units, reducing the urban heat island effect while fostering community-based food production."`,
     githubLink: 'https://github.com/marcus-aurelius/eco-urban-design',
     liveUrl: 'https://eco-urban-nexus.netlify.app',
+    googleDriveLink: 'https://drive.google.com/drive/folders/shared-assets-link',
     pdfUrl: '/samples/project-detailed-plan.pdf',
+    username: 'marcus_aurelius',
     metrics: {
       innovation: 8,
       technical: 9,
@@ -85,11 +88,11 @@ export default function ReviewSubmissions() {
   // =========================================================================
 
   const handleSubmitReview = React.useCallback(async () => {
-    if(!reviewDraft.trim()) return alert('Please enter review narrative');
+    if(!reviewDraft.trim()) return toast.warning('Please enter review narrative');
     
     // MOCK SUBMIT
     console.log("Submitted Review:", { reviewDraft, metrics: submission.metrics, finalScore });
-    alert(`Review Submitted successfully! Final Score: ${finalScore}`);
+    toast.success(`Review Submitted successfully! Final Score: ${finalScore}`);
     setReviewDraft('');
   }, [reviewDraft, submission.metrics, finalScore]);
 
@@ -174,14 +177,6 @@ export default function ReviewSubmissions() {
                 className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                <button className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-5 py-2 rounded-xl text-xs font-bold hover:bg-white/30 transition-colors">
-                  View Fullscreen
-                </button>
-                <button className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-5 py-2 rounded-xl text-xs font-bold hover:bg-white/30 transition-colors">
-                  Download Assets
-                </button>
-              </div>
             </div>
 
             {/* Student Submission Links (Refined) */}
@@ -208,7 +203,7 @@ export default function ReviewSubmissions() {
                     </div>
                   </div>
 
-                  {/* Live Link */}
+                   {/* Live Link */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase">Live Deployment</label>
                     <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
@@ -222,6 +217,25 @@ export default function ReviewSubmissions() {
                         className="p-2 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors flex items-center gap-1.5"
                       >
                          {copiedLink === 'live' ? <span className="text-[9px] font-black text-green-600">COPIED</span> : null}
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Google Drive Link */}
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase">Google Drive Assets</label>
+                    <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                      <input 
+                        readOnly 
+                        value={submission.googleDriveLink}
+                        className="flex-1 bg-transparent px-2 py-1 text-xs font-bold text-slate-600 outline-none overflow-hidden text-ellipsis"
+                      />
+                      <button 
+                        onClick={() => copyToClipboard(submission.googleDriveLink, 'drive')}
+                        className="p-2 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors flex items-center gap-1.5"
+                      >
+                         {copiedLink === 'drive' ? <span className="text-[9px] font-black text-green-600">COPIED</span> : null}
                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                       </button>
                     </div>
@@ -241,7 +255,7 @@ export default function ReviewSubmissions() {
                   </div>
                   <a 
                     href={submission.pdfUrl}
-                    download
+                    download={`${submission.participantName}_${submission.username}.pdf`}
                     className="p-3 bg-[#8cc63f] hover:bg-[#7eb533] text-white rounded-xl transition-all shadow-md group-hover:scale-105"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>

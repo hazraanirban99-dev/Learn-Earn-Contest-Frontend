@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
 import ProfileModal from '../Modals/ProfileModal';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const UserNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,7 +42,7 @@ const UserNavbar = () => {
 
   const handleDelete = () => {
     // Delete logic placeholder
-    alert("Delete Profile Clicked!");
+    toast.info("Delete Profile Clicked!");
   };
 
   return (

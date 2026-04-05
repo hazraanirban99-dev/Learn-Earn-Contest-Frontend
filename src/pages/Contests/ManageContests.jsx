@@ -8,6 +8,7 @@ import {
   FiCalendar, FiEdit2, FiTrash2, FiPlus, FiChevronLeft, FiChevronRight 
 } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const ManageContests = () => {
   const navigate = useNavigate();
@@ -87,10 +88,38 @@ const ManageContests = () => {
   // =========================================================================
 
   const handleDelete = React.useCallback(async (id) => {
-    if (!window.confirm("Are you sure you want to delete this contest?")) return;
-    
-    // MOCK DELETE:
-    setContests(prev => prev.filter(c => c.id !== id));
+    // Custom Toast for Confirmation
+    const ConfirmToast = ({ closeToast }) => (
+      <div className="p-1">
+        <p className="text-sm font-black text-slate-800 mb-3 uppercase tracking-tight">Delete this contest?</p>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => {
+              setContests(prev => prev.filter(c => c.id !== id));
+              toast.success("Contest deleted successfully!");
+              closeToast();
+            }}
+            className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors"
+          >
+            Confirm
+          </button>
+          <button 
+            onClick={closeToast}
+            className="bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast />, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      theme: "light",
+      className: "border-2 border-[#fbc111] !bg-[#f3f4f6]"
+    });
   }, []);
 
   const getStatusColor = React.useCallback((status) => {

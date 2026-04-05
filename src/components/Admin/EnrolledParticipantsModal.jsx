@@ -43,7 +43,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle }) => {
           </div>
 
           {/* Table Container */}
-          <div className="bg-[#f4f7e9] rounded-[48px] p-4 sm:p-6 md:p-10 mb-8 border border-white/50">
+          <div className="bg-[#fcf3d9] rounded-[48px] p-4 sm:p-6 md:p-10 mb-8 border border-white/50 shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-separate border-spacing-y-4">
                 <thead>
@@ -83,13 +83,13 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle }) => {
                 Showing <span className="text-slate-700">1 to 4</span> of 248 participants
               </span>
               <div className="flex items-center gap-2">
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#e8efe0]/50 text-gray-400 hover:bg-gray-100 transition-all">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
                   <FiChevronLeft size={20} />
                 </button>
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#8cc63f] text-white font-black text-sm shadow-md shadow-[#8cc63f]/20">1</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#e8efe0]/50 text-slate-600 font-black text-sm hover:bg-white transition-all">2</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#e8efe0]/50 text-slate-600 font-black text-sm hover:bg-white transition-all">3</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#e8efe0]/50 text-gray-400 hover:bg-gray-100 transition-all">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-slate-600 font-black text-sm hover:bg-white transition-all border border-gray-100/50">2</button>
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-slate-600 font-black text-sm hover:bg-white transition-all border border-gray-100/50">3</button>
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
                   <FiChevronRight size={20} />
                 </button>
               </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FiX, FiCheckCircle, FiAward, FiPlusCircle, FiArrowRight, FiMinusCircle } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
     const [mode, setMode] = useState('individual'); // 'individual' or 'team'
@@ -34,7 +35,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
 
     const handleSubmit = async () => {
         if (!agreed) {
-            alert("You must agree to the Contest Rules before applying.");
+            toast.warning("You must agree to the Contest Rules before applying.");
             return;
         }
 
@@ -53,7 +54,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
 
         if (mode === 'team') {
             if (!teamName.trim()) {
-                alert("Please provide a team name.");
+                toast.warning("Please provide a team name.");
                 setIsSubmitting(false);
                 return;
             }

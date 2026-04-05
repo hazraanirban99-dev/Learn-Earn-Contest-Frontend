@@ -9,3 +9,42 @@ html, body {
   width: 100%;
   max-width: 100vw;
 }
+
+/* Custom React-Toastify Styles */
+.Toastify__toast {
+  background-color: #f3f4f6 !important; /* light grey background */
+  color: #000000 !important; /* deep black text */
+  border-width: 3px !important;
+  border-style: solid !important;
+  border-radius: 12px !important; /* nice rounded corners */
+}
+
+/* Success gets green border */
+.Toastify__toast--success {
+  border-color: #8cc63f !important; 
+}
+
+/* Error, Warning, Info (everything else) gets yellow border */
+.Toastify__toast--error,
+.Toastify__toast--warning,
+.Toastify__toast--info {
+  border-color: #fbc111 !important; 
+}
+
+/* Override the close button and progress bar colors for visibility */
+.Toastify__close-button {
+  color: #000000 !important;
+  opacity: 0.5;
+}
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+.Toastify__progress-bar--success {
+  background: #8cc63f !important;
+}
+.Toastify__progress-bar--error,
+.Toastify__progress-bar--warning,
+.Toastify__progress-bar--info {
+  background: #fbc111 !important;
+}

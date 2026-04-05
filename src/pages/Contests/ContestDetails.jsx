@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import ApplyContestModal from '../../components/Modals/ApplyContestModal';
@@ -255,7 +256,7 @@ const ContestDetails = () => {
                 onClose={() => setIsApplyModalOpen(false)}
                 contestId={id}
                 onSuccess={() => {
-                    alert("Application Transmitted Successfully!");
+                    toast.success("Application Transmitted Successfully!");
                     setIsApplyModalOpen(false);
                     setHasApplied(true);
                 }}

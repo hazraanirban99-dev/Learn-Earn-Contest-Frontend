@@ -10,6 +10,7 @@ import { FaApple } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { InputField, Button, SocialButton } from '../index';
+import { toast } from 'react-toastify';
 
 const AuthForm = ({ type }) => {
   const isRegister = type === 'register';
@@ -45,11 +46,11 @@ const AuthForm = ({ type }) => {
     e.preventDefault();
     if (isRegister) {
       if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match!");
+        toast.error("Passwords do not match!");
         return;
       }
       if (!formData.termsAccepted) {
-        alert("Please accept the Terms of Service.");
+        toast.error("Please accept the Terms of Service.");
         return;
       }
       console.log("Registration Attempt:", formData);
@@ -81,11 +82,11 @@ const AuthForm = ({ type }) => {
           login({ email: data.user.email, name: data.user.name, token: data.token });
           navigate('/admin/dashboard');
         } else {
-          alert(data.message || "Registration failed!");
+          toast.error(data.message || "Registration failed!");
         }
       } catch (error) {
         console.error("API Error:", error);
-        alert("Something went wrong with the server.");
+        toast.error("Something went wrong with the server.");
       }
       */
       
@@ -118,11 +119,11 @@ const AuthForm = ({ type }) => {
           login({ email: data.user.email, name: data.user.name, token: data.token });
           navigate('/admin/dashboard');
         } else {
-          alert(data.message || "Invalid email or password!");
+          toast.error(data.message || "Invalid email or password!");
         }
       } catch (error) {
         console.error("API Error:", error);
-        alert("Server connection failed.");
+        toast.error("Server connection failed.");
       }
       */
       

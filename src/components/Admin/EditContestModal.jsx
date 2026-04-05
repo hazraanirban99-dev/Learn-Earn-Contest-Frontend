@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FiX, FiBold, FiItalic, FiList, FiLink, FiAward, FiTrash2, FiUploadCloud, FiChevronDown } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const EditContestModal = ({ isOpen, onClose, contestId }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [isSaving, setIsSaving] = useState(false);
 
   // Handle closing by removing the query param
   const handleClose = () => {
@@ -57,6 +59,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
   // =========================================================================
 
   const handleSave = async () => {
+    setIsSaving(true);
     // =========================================================================
     // 🚀 BACKEND API INTEGRATION: UPDATE CONTEST (PUT)
     // =========================================================================
@@ -68,19 +71,25 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
         body: JSON.stringify(formData)
       });
       if(response.ok) {
-        alert("Contest updated successfully!");
+        toast.success("Contest updated successfully!");
         handleClose();
       } else {
-        alert("Update failed.");
+        toast.error("Update failed.");
       }
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong with the server.");
+    } finally {
+      setIsSaving(false);
     }
     */
     
     // MOCK BEHAVIOR
-    console.log("Saving changes:", formData);
-    handleClose();
+    setTimeout(() => {
+      setIsSaving(false);
+      toast.success("✅ Success! Contest information updated.\n\nNote: Simulated backend response.");
+      handleClose();
+    }, 1500);
   };
 
   if (!isOpen && !contestId) return null;

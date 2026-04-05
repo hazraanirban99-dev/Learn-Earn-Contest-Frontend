@@ -3,6 +3,7 @@ import { useUsers } from '../../context/UserContext';
 import EditUserModal from '../../components/Admin/EditUserModal';
 import AdminLayout from '../../layouts/AdminLayout';
 import { FiSearch, FiDownload, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiShield } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const ManageUsers = () => {
   const { users, updateUser } = useUsers();
@@ -34,7 +35,43 @@ const ManageUsers = () => {
   const handleSaveUser = React.useCallback((updatedData) => {
     updateUser(updatedData.id, updatedData);
     setEditingUser(null);
+    toast.success("Scholar profile updated successfully!");
   }, [updateUser]);
+
+  const handleDeleteUser = React.useCallback((id) => {
+    // Custom Toast for Confirmation
+    const ConfirmToast = ({ closeToast }) => (
+      <div className="p-1">
+        <p className="text-sm font-black text-slate-800 mb-3 uppercase tracking-tight">Delete this participant?</p>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => {
+              // Mock Delete: Filter them out (or call a context function)
+              toast.success("Participant removed from registry.");
+              closeToast();
+            }}
+            className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors"
+          >
+            Confirm
+          </button>
+          <button 
+            onClick={closeToast}
+            className="bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast />, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      theme: "light",
+      className: "border-2 border-[#fbc111] !bg-[#f3f4f6]"
+    });
+  }, []);
 
   return (
     <AdminLayout>
@@ -148,6 +185,7 @@ const ManageUsers = () => {
                           <FiEdit2 size={16} />
                         </button>
                         <button 
+                          onClick={() => handleDeleteUser(user.id)}
                           className="p-2.5 bg-[#8cc63f]/10 hover:bg-[#8cc63f]/20 text-[#8cc63f] rounded-xl transition-colors shadow-sm"
                           title="Delete User"
                         >

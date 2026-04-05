@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus } from 'react-icons/fi';
 import AdminLayout from '../../layouts/AdminLayout';
 import Button from '../../components/Button/Button';
+import { toast } from 'react-toastify';
 
 const CreateContest = () => {
   const [rigor, setRigor] = useState('Easy');
   const [domain, setDomain] = useState('Development');
+  const [cashPrize, setCashPrize] = useState('');
+  const [expertCertificate, setExpertCertificate] = useState('No');
+  const [internshipOffer, setInternshipOffer] = useState('No');
 
   return (
     <AdminLayout>
@@ -205,14 +209,68 @@ const CreateContest = () => {
                   </label>
                 </div>
 
-                <input 
-                  type="text" 
-                  placeholder="e.g., $5,000 & Golden Laurel Badge"
-                  className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl px-4 py-4 font-bold text-slate-700 placeholder-yellow-300 outline-none focus:bg-white focus:border-yellow-300 transition-all"
-                />
+                 <div className="space-y-5">
+                  {/* Cash Prize */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">CASH PRIZE (₹)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-[#fbc111]">₹</span>
+                      <input 
+                        type="number"
+                        placeholder="0.00"
+                        value={cashPrize}
+                        onChange={(e) => setCashPrize(e.target.value)}
+                        className="w-full bg-yellow-50/50 border border-yellow-100 rounded-2xl pl-10 pr-4 py-4 font-bold text-slate-700 placeholder-yellow-300 outline-none focus:bg-white focus:border-yellow-300 transition-all transition-all shadow-sm"
+                      />
+                    </div>
+                  </div>
 
-                <p className="text-[10px] font-bold text-gray-400 leading-relaxed px-1">
-                  Recipients will receive an encrypted digital certificate verified by the Desun Academy Academic Board.
+                  {/* Yes/No Options Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Expert Certificate */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">EXPERT CERTIFICATE</label>
+                      <div className="flex bg-yellow-50/50 p-1.5 rounded-2xl border border-yellow-100 h-[58px]">
+                        {['Yes', 'No'].map((opt) => (
+                          <button
+                            key={opt}
+                            onClick={() => setExpertCertificate(opt)}
+                            className={`flex-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                              expertCertificate === opt 
+                                ? 'bg-white text-[#fbc111] shadow-sm' 
+                                : 'text-yellow-400/60 hover:text-yellow-500'
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Internship Offer */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">INTERNSHIP OFFER</label>
+                      <div className="flex bg-yellow-50/50 p-1.5 rounded-2xl border border-yellow-100 h-[58px]">
+                        {['Yes', 'No'].map((opt) => (
+                          <button
+                            key={opt}
+                            onClick={() => setInternshipOffer(opt)}
+                            className={`flex-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                              internshipOffer === opt 
+                                ? 'bg-white text-[#fbc111] shadow-sm' 
+                                : 'text-yellow-400/60 hover:text-yellow-500'
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-[9px] font-bold text-[#fbc111]/50 leading-relaxed px-1 text-center italic">
+                  Awards will be digitally authenticated via Secure Ledger.
                 </p>
               </div>
             </div>
@@ -222,7 +280,7 @@ const CreateContest = () => {
               <Button 
                 text="Finalize & Create Contest"
                 onClick={async () => {
-                  console.log("Create Contest Payload sent to API (Mocked)");
+                  toast.success("Contest Created Successfully!");
                 }}
               />
             </div>

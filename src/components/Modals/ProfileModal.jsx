@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiEdit2, FiCheckCircle, FiFileText, FiMapPin, FiMail, FiPhone, FiBookOpen, FiLoader } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 import { Logo, InputField, Button } from '../index';
 
 const ProfileModal = ({ isOpen, onClose }) => {
@@ -68,14 +69,14 @@ const ProfileModal = ({ isOpen, onClose }) => {
             });
 
             if (response.ok) {
-                alert("Profile updated successfully!");
+                toast.success("Profile updated successfully!");
                 onClose();
             } else {
-                alert("Failed to update profile.");
+                toast.error("Failed to update profile.");
             }
         } catch (error) {
             console.error("API Error:", error);
-            alert("Something went wrong with the server.");
+            toast.error("Something went wrong with the server.");
         } finally {
             setIsSaving(false);
         }
@@ -84,7 +85,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
         // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
         setTimeout(() => {
             setIsSaving(false);
-            alert("✅ Success! Your profile information has been saved to the backend.\n\nNote: This is a simulated backend response for your review.");
+            toast.success("✅ Success! Your profile information has been saved to the backend.\n\nNote: This is a simulated backend response for your review.");
             onClose(); // Optional: Close modal on success
         }, 1500);
     };

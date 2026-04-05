@@ -1,7 +1,7 @@
-import React from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import { FiSearch, FiChevronDown, FiInfo, FiDownload, FiPrinter, FiSend } from 'react-icons/fi';
 import { FaStar } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 export default function DeclareWinners() {
   const topWinners = [
@@ -204,7 +204,10 @@ export default function DeclareWinners() {
           </div>
 
           <div className="flex flex-col items-center z-10 w-full md:w-auto shrink-0">
-             <button className="bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px]">
+             <button 
+                onClick={() => toast.success("Winners Declared & Notifications Sent Successfully!")}
+                className="bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px]"
+              >
                <div className="flex flex-col items-center">
                  <span>Finalize Winners &</span>
                  <span>Send Notifications</span>
