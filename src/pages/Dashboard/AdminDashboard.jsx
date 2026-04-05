@@ -60,7 +60,7 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Top Region: Chart & Launch */}
           <div className="col-span-12 xl:col-span-8">
-            <EnrollmentChart />
+            <EnrollmentChart view={activeToggle} />
           </div>
           <div className="col-span-12 xl:col-span-4">
             <LaunchCard />

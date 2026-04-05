@@ -25,7 +25,9 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
     description: 'The challenge invites students to propose a 10-hectare carbon-neutral district model. Focusing on the integration of vertical forests, circular waste management, and autonomous transport systems, participants must present a holistic masterplan for future urban living...',
     startDate: '2024-11-01',
     endDate: '2025-01-15',
-    award: '£5,000 Academic Grant + Summer Internship at Foster & Partners'
+    cashPrize: '5000',
+    expertCertificate: 'Yes',
+    internshipOffer: 'Yes'
   });
 
   // =========================================================================
@@ -209,18 +211,72 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label className="text-[12px] font-bold text-gray-800">Award & Recognition</label>
-            <div className="relative">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 text-yellow-600">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="p-2 bg-yellow-50 rounded-lg text-yellow-600">
                 <FiAward size={20} />
               </div>
-              <input 
-                type="text" 
-                value={formData.award}
-                onChange={(e) => setFormData({...formData, award: e.target.value})}
-                className="w-full bg-yellow-50/50 focus:bg-white border-2 border-yellow-100 focus:border-yellow-300 rounded-2xl pl-14 pr-5 py-4 text-[15px] font-bold text-yellow-800 outline-none transition-all shadow-sm"
-              />
+              <label className="text-[12px] font-bold text-gray-800 uppercase tracking-wider">Award & Recognition</label>
+            </div>
+            
+            <div className="bg-white border-2 border-yellow-100 rounded-[28px] p-6 space-y-6 shadow-sm shadow-yellow-500/5">
+              {/* Cash Prize */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">CASH PRIZE (₹)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-[#fbc111]">₹</span>
+                  <input 
+                    type="number"
+                    placeholder="0.00"
+                    value={formData.cashPrize}
+                    onChange={(e) => setFormData({...formData, cashPrize: e.target.value})}
+                    className="w-full bg-yellow-50/50 border border-yellow-50 rounded-2xl pl-10 pr-4 py-4 font-bold text-slate-700 placeholder-yellow-300 outline-none focus:bg-white focus:border-yellow-200 transition-all shadow-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Yes/No Options Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Expert Certificate */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">EXPERT CERTIFICATE</label>
+                  <div className="flex bg-yellow-50/50 p-1 rounded-2xl border border-yellow-50 h-[54px]">
+                    {['Yes', 'No'].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setFormData({...formData, expertCertificate: opt})}
+                        className={`flex-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                          formData.expertCertificate === opt 
+                            ? 'bg-white text-[#fbc111] shadow-sm' 
+                            : 'text-yellow-400/60 hover:text-yellow-500'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Internship Offer */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">INTERNSHIP OFFER</label>
+                  <div className="flex bg-yellow-50/50 p-1 rounded-2xl border border-yellow-50 h-[54px]">
+                    {['Yes', 'No'].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setFormData({...formData, internshipOffer: opt})}
+                        className={`flex-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                          formData.internshipOffer === opt 
+                            ? 'bg-white text-[#fbc111] shadow-sm' 
+                            : 'text-yellow-400/60 hover:text-yellow-500'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           

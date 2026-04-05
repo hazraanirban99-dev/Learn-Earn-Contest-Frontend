@@ -2,16 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FiCheckCircle, FiTrendingUp, FiUsers, FiBold, FiItalic, FiList, FiSend, FiChevronDown } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import AdminLayout from '../../layouts/AdminLayout';
+import ContestUserFilter from '../../components/ContestFilters/ContestUserFilter';
 
 export default function ReviewSubmissions() {
-  const [loading, setLoading] = useState(true);
-
-  // States for interactive Dropdowns and Sliders
-  const [selectedContest, setSelectedContest] = useState('Eco-Urban Design 2024');
-  const [selectedParticipant, setSelectedParticipant] = useState('Marcus Aurelius (Selected)');
+  const [loading, setLoading] = useState(false);
   const [reviewDraft, setReviewDraft] = useState('');
-
-  // Example submission data
   const [submission, setSubmission] = useState({
     participantName: 'Marcus Aurelius',
     participantTrack: 'SCHOLAR TRACK',
@@ -34,6 +29,21 @@ export default function ReviewSubmissions() {
       functionality: 8
     }
   });
+
+  const handleFilterChange = React.useCallback((selection) => {
+     // When participant changes, we could fetch data here.
+     // For now, we update the submission name to match the selection
+     if (selection.participant && selection.participant !== 'No participants found') {
+        const participantData = selection.contestData?.participants?.find(p => p.name === selection.participant);
+        if (participantData) {
+            setSubmission(prev => ({
+                ...prev,
+                participantName: participantData.name,
+                username: participantData.name.toLowerCase().replace(' ', '_')
+            }));
+        }
+     }
+  }, []);
 
   const [scoreMode, setScoreMode] = useState('performance'); // 'performance' or 'custom'
   const [customScore, setCustomScore] = useState(8.5);
@@ -114,36 +124,10 @@ export default function ReviewSubmissions() {
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto mt-4 lg:mt-0">
-            <div className="space-y-2 flex-1 sm:w-64">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-900">Select Contest</label>
-              <div className="relative">
-                <select 
-                  value={selectedContest}
-                  onChange={(e) => setSelectedContest(e.target.value)}
-                  className="w-full bg-[#f1f8e8] border border-transparent hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all"
-                >
-                  <option>Eco-Urban Design 2024</option>
-                  <option>Future Mobility Concept</option>
-                </select>
-                <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
-              </div>
-            </div>
-            <div className="space-y-2 flex-1 sm:w-64">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-900">Select Participant</label>
-              <div className="relative">
-                <select 
-                  value={selectedParticipant}
-                  onChange={(e) => setSelectedParticipant(e.target.value)}
-                  className="w-full bg-[#f1f8e8] border border-transparent hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all"
-                >
-                  <option>Marcus Aurelius (Selected)</option>
-                  <option>Jane Doe (Pending)</option>
-                </select>
-                <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
-              </div>
-            </div>
-          </div>
+          <ContestUserFilter 
+            showParticipant={true} 
+            onSelectionChange={handleFilterChange} 
+          />
         </div>
 
         {/* Main Content Grid */}

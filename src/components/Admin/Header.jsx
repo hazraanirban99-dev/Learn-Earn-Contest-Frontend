@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2 } from 'react-icons/fi';
 import { Logo } from '../index';
+import { toast } from 'react-toastify';
 
 const Header = ({ onMenuClick }) => {
   const [activeTab, setActiveTab] = useState('Analytics');
@@ -55,7 +56,13 @@ const Header = ({ onMenuClick }) => {
         {tabs.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              if (tab !== 'Analytics') {
+                toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
+              } else {
+                setActiveTab(tab);
+              }
+            }}
             className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
               activeTab === tab ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
             }`}
@@ -71,11 +78,17 @@ const Header = ({ onMenuClick }) => {
       {/* Profile & Settings Section */}
       <div className="flex items-center gap-2 sm:gap-5 relative">
         <div className="hidden lg:flex items-center gap-4 mr-2">
-           <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors relative group">
+           <button 
+            onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors relative group"
+           >
             <FiBell size={20} className="group-hover:text-[#8cc63f] transition-colors" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 border-2 border-white rounded-full" />
           </button>
-          <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors group">
+          <button 
+            onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors group"
+          >
             <FiSettings size={20} className="group-hover:translate-x-0.5 transition-all" />
           </button>
         </div>
@@ -104,13 +117,19 @@ const Header = ({ onMenuClick }) => {
               </div>
             </div>
 
-            {/* Nav Links in Dropdown */}
             <div className="flex flex-col gap-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
               {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => { setActiveTab(tab); setIsMenuOpen(false); }}
+                  onClick={() => { 
+                    if (tab !== 'Analytics') {
+                      toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
+                    } else {
+                      setActiveTab(tab); 
+                      setIsMenuOpen(false); 
+                    }
+                  }}
                   className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
                     activeTab === tab ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
                   }`}
@@ -120,32 +139,45 @@ const Header = ({ onMenuClick }) => {
               ))}
             </div>
 
-            {/* Quick Actions in Dropdown */}
             <div className="flex flex-col gap-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Quick Actions</p>
-              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all">
+              <button 
+                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+              >
                 <FiBell size={18} />
                 <span>Notifications</span>
                 <span className="ml-auto w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all">
+              <button 
+                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+              >
                 <FiSettings size={18} />
                 <span>Settings</span>
               </button>
             </div>
 
-            {/* Account Actions in Dropdown */}
             <div className="flex flex-col gap-3">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Account</p>
-              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all">
+              <button 
+                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+              >
                 <FiEdit size={18} />
                 <span>Edit Profile</span>
               </button>
-              <button className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all">
+              <button 
+                onClick={() => toast.success("Logged out successfully. Redirecting...", { className: "border-2 border-[#8cc63f] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all"
+              >
                 <FiLogOut size={18} />
                 <span>Logout</span>
               </button>
-              <button className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 transition-all">
+              <button 
+                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-red-500 !bg-[#fff5f5] font-black text-[10px] tracking-tight uppercase" })}
+                className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 transition-all"
+              >
                 <FiTrash2 size={18} />
                 <span>Delete Account</span>
               </button>
@@ -169,16 +201,25 @@ const Header = ({ onMenuClick }) => {
           {/* Desktop Profile Dropdown */}
           {isProfileOpen && (
             <div ref={profileDropdownRef} className="absolute top-full right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 flex flex-col gap-2 z-[100]">
-              <button className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] hover:bg-gray-50 px-3 py-2.5 rounded-xl transition-all">
+              <button 
+                onClick={() => { setIsProfileOpen(false); toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" }); }}
+                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] hover:bg-gray-50 px-3 py-2.5 rounded-xl transition-all w-full"
+              >
                 <FiEdit size={18} />
                 <span>Edit Profile</span>
               </button>
-              <button className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50 px-3 py-2.5 rounded-xl transition-all">
+              <button 
+                onClick={() => { setIsProfileOpen(false); toast.success("Logged out successfully. Redirecting...", { className: "border-2 border-[#8cc63f] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" }); }}
+                className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50 px-3 py-2.5 rounded-xl transition-all w-full"
+              >
                 <FiLogOut size={18} />
                 <span>Logout</span>
               </button>
               <div className="h-px bg-gray-100 my-1" />
-              <button className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-2.5 rounded-xl transition-all">
+              <button 
+                onClick={() => { setIsProfileOpen(false); toast.info("You can't do the operation right now", { className: "border-2 border-red-500 !bg-[#fff5f5] font-black text-[10px] tracking-tight uppercase" }); }}
+                className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-2.5 rounded-xl transition-all w-full"
+              >
                 <FiTrash2 size={18} />
                 <span>Delete Account</span>
               </button>
