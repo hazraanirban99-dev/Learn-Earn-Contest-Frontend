@@ -39,11 +39,25 @@ const AllContests = () => {
    }, [isFilterActive]);
 
    useEffect(() => {
-      // Mock Fetching Data
+      // =========================================================================
+      // 🚀 [BACKEND] FETCH CAROUSEL SLIDES + ALL CONTESTS
+      // =========================================================================
+      // Replace all mock data below with 2 API calls:
+      //
+      // CAROUSEL: GET /api/v1/contests/featured
+      //   Returns: [{ id, title, subtitle, thumbnailUrl, tag, buttonText }]
+      //   → Replace the setCarouselData([...]) array below
+      //
+      // CONTESTS: GET /api/v1/contests?status=all&domain=all
+      //   Returns: [{ id, title, desc, domain, status, dateValue, dateInfo }]
+      //   → Replace the baseContests array below
+      //   → Remove the duplicate-expansion loop (lines after baseContests)
+      //   → Remove the fake setTimeout delay entirely
+      //   Note: icon field can be derived from domain on frontend
+      // =========================================================================
       const fetchData = async () => {
          setLoading(true);
          try {
-            await new Promise(res => setTimeout(res, 800));
 
             // Carousel 3 slides for this page to EXACTLY match dashboard
             setCarouselData([

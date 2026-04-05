@@ -196,7 +196,31 @@ export default function DeclareWinners() {
 
           <div className="flex flex-col items-center z-10 w-full md:w-auto shrink-0">
              <button 
-                onClick={() => toast.success("Winners Declared & Notifications Sent Successfully!")}
+                onClick={async () => {
+                  // =========================================================================
+                  // 🚀 [BACKEND] FINALIZE WINNERS & SEND NOTIFICATIONS
+                  // =========================================================================
+                  // Endpoint: POST /api/v1/contests/:contestId/finalize-winners
+                  // Payload:
+                  // {
+                  //   contestId: <from ContestUserFilter>,
+                  //   winners: rankedParticipants.filter(p => p.rank <= 3).map(p => ({
+                  //     participantId: p.id,
+                  //     rank: p.rank,
+                  //     finalScore: p.score
+                  //   }))
+                  // }
+                  //
+                  // Side effects (handled by backend):
+                  //   - Auto-generate certificates for top 3
+                  //   - Send email notifications to all ranked participants
+                  //   - Update contest status to 'COMPLETED'
+                  //   - Publicly announce on portal
+                  // =========================================================================
+
+                  // MOCK — DELETE when API is ready:
+                  toast.success("Winners Declared & Notifications Sent Successfully!");
+                }}
                 className="bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px]"
               >
                <div className="flex flex-col items-center">

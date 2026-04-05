@@ -1,7 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
-// Mock Data Centralized
+// =========================================================================
+// 🚀 [BACKEND] FETCH HIERARCHICAL FILTER DATA
+// =========================================================================
+// This component needs 4 cascading API calls:
+//
+// 1. FETCH YEARS — GET /api/v1/contests/years
+//    Returns: ['2024', '2025', ...]
+//    Replace hardcoded <option>2024</option> list with mapped years from API.
+//
+// 2. FETCH MONTHS (on year change) — GET /api/v1/contests/months?year=2024
+//    Returns: ['January', 'October', 'September', ...]
+//    Replace the static 12-month list with months that actually have contests.
+//
+// 3. FETCH CONTESTS (on month change) — GET /api/v1/contests?year=2024&month=October
+//    Returns: [{ id: 'c1', title: '...', participants: [...] }, ...]
+//    Each contest must include its participants array for sub-filtering.
+//
+// 4. PARTICIPANT LIST comes from the selected contest's participant array.
+//    No extra API call needed if contests include participants.
+//    OR: GET /api/v1/contests/:contestId/participants
+//
+// Tip: Use `useEffect` with dependency on [selectedYear, selectedMonth] etc.
+// =========================================================================
+
+// MOCK Data — DELETE this entire object once API is connected:
 const mockData = {
   '2024': {
     'October': [

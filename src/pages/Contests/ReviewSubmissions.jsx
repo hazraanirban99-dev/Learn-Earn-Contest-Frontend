@@ -100,7 +100,24 @@ export default function ReviewSubmissions() {
   const handleSubmitReview = React.useCallback(async () => {
     if(!reviewDraft.trim()) return toast.warning('Please enter review narrative');
     
-    // MOCK SUBMIT
+    // =========================================================================
+    // 🚀 [BACKEND] SUBMIT REVIEW
+    // =========================================================================
+    // Endpoint: POST /api/v1/reviews/submit
+    // Payload:
+    // {
+    //   contestId: <from ContestUserFilter selectedContest>,
+    //   participantId: <from ContestUserFilter selectedParticipant>,
+    //   metrics: submission.metrics,       // { innovation, technical, ... }
+    //   finalScore: finalScore,            // number (performance avg or custom)
+    //   narrative: reviewDraft             // string
+    // }
+    //
+    // On success: toast.success, clear draft, mark submission as reviewed
+    // On failure: toast.error with server message
+    // =========================================================================
+
+    // MOCK SUBMIT — DELETE when API is ready:
     console.log("Submitted Review:", { reviewDraft, metrics: submission.metrics, finalScore });
     toast.success(`Review Submitted successfully! Final Score: ${finalScore}`);
     setReviewDraft('');

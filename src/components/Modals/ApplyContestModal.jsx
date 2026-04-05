@@ -11,7 +11,20 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
 
     if (!isOpen) return null;
 
-    // Simulated Active User Context
+    // =========================================================================
+    // 🚀 [BACKEND] GET LOGGED-IN USER
+    // =========================================================================
+    // Replace this hardcoded activeUser with real data from AuthContext:
+    //
+    // import { useAuth } from '../../context/AuthContext';
+    // const { user } = useAuth();
+    // Then use: user.id, user.username, user.name
+    //
+    // AuthContext already reads from localStorage on mount.
+    // Make sure your login API returns and stores: { id, name, username, token }
+    // =========================================================================
+
+    // MOCK — DELETE when AuthContext has real user data:
     const activeUser = { id: 'USR_4091', username: '@alex_dev', name: 'Alex Rivera' };
 
     const handleAddMember = () => {
@@ -64,14 +77,42 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
             };
         }
 
-        // Simulate API Transmission Delay
+        // =========================================================================
+        // 🚀 [BACKEND] SUBMIT CONTEST APPLICATION
+        // =========================================================================
+        // Endpoint: POST /api/v1/contests/apply
+        // Headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        // Payload (already built above as `payload`):
+        // {
+        //   contestId,
+        //   userId,
+        //   participatingAs: 'individual' | 'team',
+        //   primaryUser: { name, username },
+        //   teamData?: { teamName, members: [{ name, username }] }  // only if team
+        // }
+        //
+        // const res = await fetch('http://YOUR_BACKEND_URL/api/v1/contests/apply', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+        //   },
+        //   body: JSON.stringify(payload)
+        // });
+        //
+        // if (res.ok) {
+        //   onSuccess();
+        // } else {
+        //   const err = await res.json();
+        //   toast.error(err.message || 'Application failed.');
+        // }
+        // =========================================================================
         try {
             console.log("Transmitting Application to Backend...", payload);
+            // MOCK delay — DELETE when API is ready:
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Backend Response Success Route
             setIsSubmitting(false);
-            onSuccess(); // Triggers parent state tracking
+            onSuccess();
         } catch(error) {
             console.error("Backend Error", error);
             setIsSubmitting(false);

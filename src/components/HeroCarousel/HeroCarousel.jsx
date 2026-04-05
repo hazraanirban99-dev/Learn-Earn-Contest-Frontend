@@ -19,7 +19,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
       <div className="relative w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden shadow-2xl group text-left">
         {loading ? (
           <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
-            <div className="w-12 h-12 border-4 border-[#8cc63f] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 rounded-full spinner-dual"></div>
           </div>
         ) : (
           <>

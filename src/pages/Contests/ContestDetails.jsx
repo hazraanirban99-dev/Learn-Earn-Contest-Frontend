@@ -13,14 +13,34 @@ const ContestDetails = () => {
     const [isApplyModalOpen, setIsApplyModalOpen] = React.useState(false);
     const [hasApplied, setHasApplied] = React.useState(false);
 
-    // Mock Contest Data (would eventually come from backend based on 'id')
+    // =========================================================================
+    // 🚀 [BACKEND] FETCH CONTEST DETAILS BY ID
+    // =========================================================================
+    // Endpoint: GET /api/v1/contests/:id
+    // Use the `id` from useParams() above to fetch specific contest.
+    //
+    // useEffect(() => {
+    //   const fetchContest = async () => {
+    //     const res = await fetch(`http://YOUR_BACKEND_URL/api/v1/contests/${id}`);
+    //     const data = await res.json();
+    //     if (res.ok) setContestData(data.contest);
+    //     // Expected shape: { title, status, domain, difficulty, endDate,
+    //     //   syllabusUrl, thumbnailUrl, description, prizes, rules }
+    //   };
+    //   fetchContest();
+    // }, [id]); // Re-fetch when route id changes
+    //
+    // Also replace the hardcoded contestImage URL below with data.contest.thumbnailUrl
+    // =========================================================================
+
+    // MOCK Contest Data — DELETE this when API is ready:
     const contestData = {
         title: "The Algorithmic Grand Prix 2024",
         status: "ONGOING",
         domain: "DEVELOPMENT",
         difficulty: "MEDIUM",
-        endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 12 * 60 * 60 * 1000 + 59 * 60 * 1000).toISOString(), // 4d 12h 59m from now
-        syllabusUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" // Mock backend link
+        endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 12 * 60 * 60 * 1000 + 59 * 60 * 1000).toISOString(),
+        syllabusUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
     };
 
     const handleDownload = () => {

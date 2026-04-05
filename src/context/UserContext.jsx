@@ -3,8 +3,25 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  // Mock data mimicking a backend response
   const [users, setUsers] = useState([
+    // =========================================================================
+    // 🚀 [BACKEND] FETCH ALL REGISTERED USERS
+    // =========================================================================
+    // Replace this entire mock array with a useEffect fetch:
+    //
+    // useEffect(() => {
+    //   const fetchUsers = async () => {
+    //     const res = await fetch('http://YOUR_BACKEND_URL/api/v1/admin/users', {
+    //       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    //     });
+    //     const data = await res.json();
+    //     if (res.ok) setUsers(data.users);
+    //     // Expected shape per user: { id, name, regId, email, phone, domain,
+    //     //   registrationDate, registrationTime, avatar }
+    //   };
+    //   fetchUsers();
+    // }, []);
+    // =========================================================================
     {
       id: 1,
       name: 'Elena Vance',
@@ -52,10 +69,30 @@ export const UserProvider = ({ children }) => {
   ]);
 
   const updateUser = (id, updatedData) => {
+    // =========================================================================
+    // 🚀 [BACKEND] UPDATE USER — Endpoint: PATCH /api/v1/admin/users/:id
+    // =========================================================================
+    // await fetch(`http://YOUR_BACKEND_URL/api/v1/admin/users/${id}`, {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //   },
+    //   body: JSON.stringify(updatedData) // Send only the changed fields
+    // });
+    // =========================================================================
     setUsers(users.map(user => user.id === id ? { ...user, ...updatedData } : user));
   };
 
   const deleteUser = (id) => {
+    // =========================================================================
+    // 🚀 [BACKEND] DELETE USER — Endpoint: DELETE /api/v1/admin/users/:id
+    // =========================================================================
+    // await fetch(`http://YOUR_BACKEND_URL/api/v1/admin/users/${id}`, {
+    //   method: 'DELETE',
+    //   headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    // });
+    // =========================================================================
     setUsers(users.filter(user => user.id !== id));
   };
 

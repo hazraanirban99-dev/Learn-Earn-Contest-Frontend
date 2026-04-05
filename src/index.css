@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Dual-color spinner: 0°→180° yellow, 180°→360° green, repeats every spin */
+@keyframes dual-spin {
+  0%     { transform: rotate(0deg);   border-color: #fbc111 #fbc111 #fbc111 transparent; }
+  49.9%  { transform: rotate(179deg); border-color: #fbc111 #fbc111 #fbc111 transparent; }
+  50%    { transform: rotate(180deg); border-color: #8cc63f #8cc63f #8cc63f transparent; }
+  100%   { transform: rotate(360deg); border-color: #8cc63f #8cc63f #8cc63f transparent; }
+}
+.spinner-dual {
+  animation: dual-spin 1s linear infinite;
+}
+
 html {
   scroll-behavior: smooth;
 }

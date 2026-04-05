@@ -280,6 +280,41 @@ const CreateContest = () => {
               <Button 
                 text="Finalize & Create Contest"
                 onClick={async () => {
+                  // =========================================================================
+                  // 🚀 [BACKEND] CREATE CONTEST
+                  // =========================================================================
+                  // Endpoint: POST /api/v1/admin/contests/create
+                  // Content-Type: multipart/form-data  (because of file uploads)
+                  //
+                  // const formPayload = new FormData();
+                  // formPayload.append('title', <contest title input value>);
+                  // formPayload.append('description', <textarea value>);
+                  // formPayload.append('domain', domain);           // state variable
+                  // formPayload.append('rigor', rigor);             // state variable
+                  // formPayload.append('startDate', <start date input value>);
+                  // formPayload.append('endDate', <end date input value>);
+                  // formPayload.append('cashPrize', cashPrize);     // state variable
+                  // formPayload.append('expertCertificate', expertCertificate); // 'Yes'/'No'
+                  // formPayload.append('internshipOffer', internshipOffer);     // 'Yes'/'No'
+                  // formPayload.append('thumbnail', <file from thumbnail input ref>);  // File
+                  // formPayload.append('syllabus', <file from syllabus input ref>);    // File
+                  //
+                  // const res = await fetch('http://YOUR_BACKEND_URL/api/v1/admin/contests/create', {
+                  //   method: 'POST',
+                  //   headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                  //   body: formPayload  // DO NOT set Content-Type manually for FormData
+                  // });
+                  //
+                  // if (res.ok) {
+                  //   toast.success('Contest Created Successfully!');
+                  //   navigate('/admin/contests');
+                  // } else {
+                  //   const err = await res.json();
+                  //   toast.error(err.message || 'Failed to create contest');
+                  // }
+                  // =========================================================================
+
+                  // MOCK — DELETE when API is ready:
                   toast.success("Contest Created Successfully!");
                 }}
               />

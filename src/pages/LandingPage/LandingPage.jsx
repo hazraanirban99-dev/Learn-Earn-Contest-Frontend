@@ -52,9 +52,6 @@ const LandingPage = () => {
             // const response = await fetch('YOUR_API_ENDPOINT/contests');
             // const data = await response.json();
             
-            // Simulating network delay
-            await new Promise(resolve => setTimeout(resolve, 1200));
-            
             setContests(initialContests);
          } catch (err) {
             console.error("Error fetching contests:", err);
@@ -386,9 +383,9 @@ const LandingPage = () => {
 
             {loading ? (
                <div className="flex flex-col items-center justify-center py-24 space-y-4">
-                  <div className="w-12 h-12 border-4 border-[#8cc63f] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-[#a68945] text-[10px] font-black uppercase tracking-widest animate-pulse">Fetching Contests...</p>
-               </div>
+               <div className="w-12 h-12 border-4 rounded-full spinner-dual"></div>
+               <p className="text-[#a68945] text-[10px] font-black uppercase tracking-widest animate-pulse">Fetching Contests...</p>
+            </div>
             ) : error ? (
                <div className="text-center py-24">
                   <p className="text-red-500 font-bold mb-4">{error}</p>
