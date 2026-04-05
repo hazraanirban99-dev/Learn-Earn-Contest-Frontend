@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2 } from 'react-icons/fi';
 import { Logo } from '../index';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = ({ onMenuClick }) => {
   const [activeTab, setActiveTab] = useState('Analytics');
@@ -11,6 +13,8 @@ const Header = ({ onMenuClick }) => {
   const toggleRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const profileToggleRef = useRef(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const tabs = ['Analytics', 'Reports', 'Logs'];
 
   // Close dropdowns when clicking outside
@@ -168,7 +172,7 @@ const Header = ({ onMenuClick }) => {
                 <span>Edit Profile</span>
               </button>
               <button 
-                onClick={() => toast.success("Logged out successfully. Redirecting...", { className: "border-2 border-[#8cc63f] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                onClick={() => { setIsMenuOpen(false); logout(); navigate('/login', { replace: true }); }}
                 className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all"
               >
                 <FiLogOut size={18} />
@@ -209,7 +213,7 @@ const Header = ({ onMenuClick }) => {
                 <span>Edit Profile</span>
               </button>
               <button 
-                onClick={() => { setIsProfileOpen(false); toast.success("Logged out successfully. Redirecting...", { className: "border-2 border-[#8cc63f] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" }); }}
+                onClick={() => { setIsProfileOpen(false); logout(); navigate('/login', { replace: true }); }}
                 className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50 px-3 py-2.5 rounded-xl transition-all w-full"
               >
                 <FiLogOut size={18} />

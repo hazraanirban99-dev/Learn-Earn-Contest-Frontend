@@ -4,6 +4,7 @@ import { Logo } from '../index';
 import ProfileModal from '../Modals/ProfileModal';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
 
 const UserNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ const UserNavbar = () => {
   const dropdownRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const navLinks = [
     { label: 'Home', path: '/student/dashboard' },
@@ -36,8 +38,8 @@ const UserNavbar = () => {
   }, []);
 
   const handleLogout = () => {
-    // Backend logout logic placeholder
-    navigate('/login');
+    logout();
+    navigate('/login', { replace: true });
   };
 
   const handleDelete = () => {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -36,6 +37,12 @@ export const AuthProvider = ({ children }) => {
     // Endpoint: POST /api/v1/auth/logout (Optional)
     // Perform any server-side invalidation if required, then clear cookies/storage.
     // =========================================================================
+
+    if (user?.role === 'admin') {
+      toast.success('Admin securely logged out. Session ended.');
+    } else {
+      toast.success('Logged out successfully! See you soon.');
+    }
 
     setUser(null);
     localStorage.removeItem('user');

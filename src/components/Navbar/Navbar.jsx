@@ -9,7 +9,7 @@ const Navbar = ({ showAuth = true }) => {
   const navigate = useNavigate();
 
   const navLinks = [
-    { label: 'History', path: '/#history', id: 'history' },
+    { label: 'About Us', path: '/#aboutus', id: 'aboutus' },
     { label: 'Vision', path: '/#vision', id: 'vision' },
     { label: 'Courses', path: '/#courses', id: 'courses' },
     { label: 'Benefits', path: '/#benefits', id: 'benefits' },
