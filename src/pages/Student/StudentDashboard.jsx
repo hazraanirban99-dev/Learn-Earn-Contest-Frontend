@@ -8,7 +8,7 @@ import Ratings from '../../components/Ratings/Ratings';
 import { FiArrowRight } from 'react-icons/fi';
 import { FaStar, FaShieldAlt, FaUsers, FaRocket } from 'react-icons/fa';
 
-const UserDashboard = () => {
+const StudentDashboard = () => {
   const [heroContests, setHeroContests] = useState([]);
   const [popularContests, setPopularContests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -193,4 +193,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default StudentDashboard;

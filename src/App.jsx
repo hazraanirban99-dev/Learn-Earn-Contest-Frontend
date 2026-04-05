@@ -1,13 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import AdminDashboard from './pages/Dashboard/AdminDashboard';
-import { CreateContest, ManageContests, ReviewSubmissions, DeclareWinners } from './pages/Contests';
-import { ManageUsers } from './pages/Users';
-import UserDashboard from './pages/Dashboard/UserDashboard';
-import AllContests from './pages/Contests/AllContests';
-import StudentSubmission from './pages/Contests/StudentSubmission';
-import ContestDetails from './pages/Contests/ContestDetails';
+import { AdminDashboard, CreateContest, ManageContests, ReviewSubmissions, DeclareWinners, ManageUsers } from './pages/Admin';
+import { StudentDashboard, AllContests, StudentSubmission, ContestDetails } from './pages/Student';
 import LandingPage from './pages/LandingPage/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider } from './context/UserContext';
@@ -35,7 +30,7 @@ function App() {
             <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
 
             {/* Student Routes */}
-            <Route path="/student/dashboard" element={<UserDashboard />} />
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/contests" element={<AllContests />} />
             <Route path="/student/contests/:id" element={<ContestDetails />} />
             <Route path="/student/submissions" element={<StudentSubmission />} />

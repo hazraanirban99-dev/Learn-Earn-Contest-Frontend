@@ -9,6 +9,7 @@ import { exportToCSV } from '../../utils/exportUtils';
 export default function DeclareWinners() {
   const [participants, setParticipants] = useState([]);
   const [stats, setStats] = useState({ totalEvaluated: 0 });
+  const [visibleCount, setVisibleCount] = useState(5);
 
   const rankedParticipants = useMemo(() => {
     if (!participants || participants.length === 0) return [];
@@ -31,11 +32,14 @@ export default function DeclareWinners() {
 
   const topWinners = rankedParticipants.filter(p => p.rank <= 3);
   const leaderboard = rankedParticipants.filter(p => p.rank > 3);
+  const visibleLeaderboard = leaderboard.slice(0, visibleCount);
+  const hasMore = visibleCount < leaderboard.length;
 
   const handleFilterChange = React.useCallback((selection) => {
     if (selection.contestData) {
       setParticipants(selection.contestData.participants || []);
       setStats({ totalEvaluated: selection.contestData.participants?.length || 0 });
+      setVisibleCount(5);
     }
   }, []);
 
@@ -152,7 +156,7 @@ export default function DeclareWinners() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e8efe0]/60">
-                {leaderboard.map((item, idx) => (
+                {visibleLeaderboard.map((item, idx) => (
                   <tr key={idx} className="hover:bg-[#f8faf6]/50 transition-colors duration-200">
                     <td className="py-5 px-8 font-black text-gray-400 text-sm text-center">#{item.rank}</td>
                     <td className="py-5 px-6">
@@ -176,11 +180,16 @@ export default function DeclareWinners() {
             </table>
           </div>
 
-          <div className="p-6 flex justify-center bg-[#fafdf8] border-t border-[#e8efe0]/60">
-            <button className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[#5c8a14] transition-colors">
-              Load More Participants
-            </button>
-          </div>
+          {hasMore && (
+            <div className="p-6 flex justify-center bg-[#fafdf8] border-t border-[#e8efe0]/60">
+              <button 
+                onClick={() => setVisibleCount(leaderboard.length)}
+                className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[#5c8a14] transition-colors"
+              >
+                Load All Remaining Participants
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Finalize Section */}
