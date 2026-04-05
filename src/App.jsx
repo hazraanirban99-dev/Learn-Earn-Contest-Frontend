@@ -4,7 +4,7 @@ import Register from './pages/Register/Register';
 import { AdminDashboard, CreateContest, ManageContests, ReviewSubmissions, DeclareWinners, ManageUsers } from './pages/Admin';
 import { StudentDashboard, AllContests, StudentSubmission, ContestDetails } from './pages/Student';
 import LandingPage from './pages/LandingPage/LandingPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Protected Admin Routes */}
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/contests" element={<ManageContests />} />
             <Route path="/admin/contests/create" element={<CreateContest />} />
@@ -28,8 +28,10 @@ function App() {
             <Route path="/admin/users" element={<ManageUsers />} />
             {/* Redirect old dashboard path to the new admin path */}
             <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+          </Route>
 
-            {/* Student Routes */}
+          {/* Protected Student Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['student']} />}>
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/contests" element={<AllContests />} />
             <Route path="/student/contests/:id" element={<ContestDetails />} />

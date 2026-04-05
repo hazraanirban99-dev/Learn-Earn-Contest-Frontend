@@ -91,8 +91,14 @@ const AuthForm = ({ type }) => {
       */
       
       // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      login({ email: formData.email, name: formData.fullName });
-      navigate('/admin/dashboard');
+      const role = formData.email === 'admin@gmail.com' ? 'admin' : 'student';
+      login({ email: formData.email, name: formData.fullName, role });
+      
+      if (role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
     } else {
       console.log("Login Attempt:", formData);
       
@@ -128,8 +134,18 @@ const AuthForm = ({ type }) => {
       */
       
       // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      login({ email: formData.email, name: 'Admin User' });
-      navigate('/admin/dashboard');
+      const role = formData.email === 'admin@gmail.com' ? 'admin' : 'student';
+      login({ 
+        email: formData.email, 
+        name: role === 'admin' ? 'Admin User' : 'Student User',
+        role 
+      });
+
+      if (role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
     }
   };
 

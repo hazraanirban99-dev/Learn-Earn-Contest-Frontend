@@ -16,7 +16,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
 
   return (
     <section className="w-full">
-      <div className="relative w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden shadow-2xl group text-left">
+      <div className="relative w-full h-[380px] xs:h-[350px] sm:h-[400px] lg:h-[480px] overflow-hidden shadow-2xl group text-left">
         {loading ? (
           <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
             <div className="w-12 h-12 border-4 rounded-full spinner-dual"></div>
@@ -41,18 +41,18 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent"></div>
                 
                 {/* Content inside Carousel */}
-                <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 max-w-3xl">
+                <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 md:px-20 max-w-3xl">
                    {contest.tag && (
-                     <span className="inline-block bg-[#fbc111] text-slate-900 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-6 w-max shadow-lg shadow-[#fbc111]/20">
+                     <span className="inline-block bg-[#fbc111] text-slate-900 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase mb-4 sm:mb-6 w-max shadow-lg shadow-[#fbc111]/20">
                         {contest.tag}
                      </span>
                    )}
-                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-6 animate-in slide-in-from-bottom-4 duration-700">
+                   <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-4 sm:mb-6 animate-in slide-in-from-bottom-4 duration-700">
                       {contest.title}
                    </h1>
                    
                    {contest.subtitle && (
-                     <p className="text-gray-300 font-bold text-sm md:text-base leading-relaxed mb-6 max-w-xl animate-in slide-in-from-bottom-6 duration-700 delay-100">
+                     <p className="text-gray-300 font-bold text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-xl animate-in slide-in-from-bottom-6 duration-700 delay-100 line-clamp-3 sm:line-clamp-none">
                         {contest.subtitle}
                      </p>
                    )}
@@ -62,9 +62,9 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                    {contest.buttonText && (
                      <Link 
                        to={`/student/contests/${contest.id}`}
-                       className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-8 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl shadow-[#8cc63f]/30"
+                       className="bg-[#8cc63f] hover:bg-[#7ab332] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-[16px] sm:rounded-[20px] font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl shadow-[#8cc63f]/30"
                      >
-                        {contest.buttonText} <FiArrowRight size={16} />
+                        {contest.buttonText} <FiArrowRight size={14} sm:size={16} />
                      </Link>
                    )}
                 </div>
