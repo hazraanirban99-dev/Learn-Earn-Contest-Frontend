@@ -91,7 +91,7 @@ const AuthForm = ({ type }) => {
       */
       
       // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      const role = formData.email === 'admin@gmail.com' ? 'admin' : 'student';
+      const role = formData.email.trim().toLowerCase() === 'admin@gmail.com' ? 'admin' : 'student';
       login({ email: formData.email, name: formData.fullName, role });
       
       if (role === 'admin') {
@@ -134,7 +134,7 @@ const AuthForm = ({ type }) => {
       */
       
       // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      const role = formData.email === 'admin@gmail.com' ? 'admin' : 'student';
+      const role = formData.email.trim().toLowerCase() === 'admin@gmail.com' ? 'admin' : 'student';
       login({ 
         email: formData.email, 
         name: role === 'admin' ? 'Admin User' : 'Student User',
