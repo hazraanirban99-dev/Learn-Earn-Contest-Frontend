@@ -137,7 +137,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
                         <div className="bg-[#ecf0e6] p-1 rounded-2xl flex mb-10 shrink-0">
                             <button 
                                 onClick={() => setMode('individual')}
-                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 ${
+                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 cursor-pointer ${
                                     mode === 'individual' 
                                     ? 'bg-white text-[#4a7010] shadow-sm' 
                                     : 'text-gray-500 hover:text-slate-800'
@@ -147,7 +147,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
                             </button>
                             <button 
                                 onClick={() => setMode('team')}
-                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 ${
+                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 cursor-pointer ${
                                     mode === 'team' 
                                     ? 'bg-white text-[#4a7010] shadow-sm' 
                                     : 'text-gray-500 hover:text-slate-800'
@@ -222,7 +222,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
                                     {members.length < 3 && (
                                         <button 
                                             onClick={handleAddMember}
-                                            className="text-[#5c8a14] hover:text-[#8cc63f] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-colors"
+                                            className="text-[#5c8a14] hover:text-[#8cc63f] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
                                         >
                                             <FiPlusCircle size={16} /> Add another member
                                         </button>
@@ -252,7 +252,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
                             className={`w-full py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all flex justify-center items-center gap-3 shadow-xl ${
                                 isSubmitting 
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
-                                : 'bg-gradient-to-r from-[#8cc63f] to-[#e6d013] hover:brightness-105 text-slate-900 shadow-[#8cc63f]/30 active:scale-95'
+                                : 'bg-gradient-to-r from-[#8cc63f] to-[#e6d013] hover:brightness-105 text-slate-900 shadow-[#8cc63f]/30 active:scale-95 cursor-pointer'
                             }`}
                         >
                             {isSubmitting ? 'Processing Payload...' : 'Apply Now'} {!isSubmitting && <FiArrowRight size={16} />}

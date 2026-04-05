@@ -35,20 +35,23 @@ export default function ReviewSubmissions() {
   const [scoreMode, setScoreMode] = useState('performance'); // 'performance' or 'custom'
   const [customScore, setCustomScore] = useState(8.5);
 
-  // Calculate performance average
-  const performanceAverage = (Object.values(submission.metrics).reduce((a, b) => a + b, 0) / Object.keys(submission.metrics).length).toFixed(1);
+  const performanceAverage = React.useMemo(() => {
+    return (Object.values(submission.metrics).reduce((a, b) => a + b, 0) / Object.keys(submission.metrics).length).toFixed(1);
+  }, [submission.metrics]);
 
-  const finalScore = scoreMode === 'performance' ? performanceAverage : customScore;
+  const finalScore = React.useMemo(() => {
+    return scoreMode === 'performance' ? performanceAverage : customScore;
+  }, [scoreMode, performanceAverage, customScore]);
 
   const [copiedLink, setCopiedLink] = useState(null);
 
-  const copyToClipboard = (text, type) => {
+  const copyToClipboard = React.useCallback((text, type) => {
     navigator.clipboard.writeText(text);
     setCopiedLink(type);
     setTimeout(() => setCopiedLink(null), 2000);
-  };
+  }, []);
 
-  const handleMetricChange = (metric, value) => {
+  const handleMetricChange = React.useCallback((metric, value) => {
     setSubmission(prev => ({
       ...prev,
       metrics: {
@@ -56,7 +59,7 @@ export default function ReviewSubmissions() {
         [metric]: parseInt(value)
       }
     }));
-  };
+  }, []);
 
   // =========================================================================
   // 🚀 BACKEND API INTEGRATION: FETCH SUBMISSION DATA (GET)
@@ -81,32 +84,14 @@ export default function ReviewSubmissions() {
   */
   // =========================================================================
 
-  const handleSubmitReview = async () => {
+  const handleSubmitReview = React.useCallback(async () => {
     if(!reviewDraft.trim()) return alert('Please enter review narrative');
-    
-    // =========================================================================
-    // 🚀 BACKEND API INTEGRATION: SUBMIT REVIEW (POST)
-    // =========================================================================
-    /*
-    try {
-      const response = await fetch(`http://YOUR_BACKEND_URL/api/v1/submissions/review`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ review: reviewDraft, scores: submission.metrics, finalScore: finalScore })
-      });
-      if(response.ok) {
-        alert("Review Saved!");
-      }
-    } catch (error) {
-      console.error("API error:", error);
-    }
-    */
     
     // MOCK SUBMIT
     console.log("Submitted Review:", { reviewDraft, metrics: submission.metrics, finalScore });
     alert(`Review Submitted successfully! Final Score: ${finalScore}`);
     setReviewDraft('');
-  };
+  }, [reviewDraft, submission.metrics, finalScore]);
 
   return (
     <AdminLayout>

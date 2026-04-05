@@ -86,41 +86,21 @@ const ManageContests = () => {
   */
   // =========================================================================
 
-  const handleDelete = async (id) => {
+  const handleDelete = React.useCallback(async (id) => {
     if (!window.confirm("Are you sure you want to delete this contest?")) return;
-    
-    // =========================================================================
-    // 🚀 BACKEND API INTEGRATION: DELETE CONTEST
-    // =========================================================================
-    /*
-    try {
-      const response = await fetch(`http://YOUR_BACKEND_URL/api/v1/contests/${id}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        setContests(prev => prev.filter(c => c.id !== id));
-      } else {
-        const data = await response.json();
-        alert(data.message || "Failed to delete");
-      }
-    } catch (error) {
-      console.error("API error:", error);
-    }
-    */
-    // =========================================================================
     
     // MOCK DELETE:
     setContests(prev => prev.filter(c => c.id !== id));
-  };
+  }, []);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = React.useCallback((status) => {
     switch(status) {
       case 'ONGOING': return 'bg-[#8cc63f] text-white';
       case 'UPCOMING': return 'bg-[#fbc111] text-white';
       case 'COMPLETED': return 'bg-gray-400 text-white';
       default: return 'bg-gray-200 text-gray-600';
     }
-  };
+  }, []);
 
   return (
     <>

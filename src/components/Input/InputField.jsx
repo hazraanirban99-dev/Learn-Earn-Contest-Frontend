@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
-const InputField = ({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight }) => {
+const InputField = React.memo(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight }) => {
   const isTextArea = type === 'textarea';
 
   return (
@@ -60,6 +60,6 @@ const InputField = ({ label, type, name, value, onChange, placeholder, icon: Ico
       </div>
     </div>
   );
-};
+});
 
 export default InputField;

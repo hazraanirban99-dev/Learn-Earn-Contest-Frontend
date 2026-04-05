@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 
-const HeroCarousel = ({ contests, loading }) => {
+const HeroCarousel = React.memo(({ contests, loading }) => {
   const [heroIndex, setHeroIndex] = useState(0);
 
   // Auto-slide effect
@@ -90,6 +90,6 @@ const HeroCarousel = ({ contests, loading }) => {
       </div>
     </section>
   );
-};
+});
 
 export default HeroCarousel;

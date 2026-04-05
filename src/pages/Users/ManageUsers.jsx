@@ -11,23 +11,30 @@ const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.regId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = React.useMemo(() => {
+    return users.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.regId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [users, searchTerm]);
 
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = React.useMemo(() => {
+    return Math.ceil(filteredUsers.length / itemsPerPage);
+  }, [filteredUsers.length, itemsPerPage]);
 
-  const handleEditClick = (user) => {
+  const currentUsers = React.useMemo(() => {
+    return filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  }, [filteredUsers, currentPage, itemsPerPage]);
+
+  const handleEditClick = React.useCallback((user) => {
     setEditingUser(user);
-  };
+  }, []);
 
-  const handleSaveUser = (updatedData) => {
+  const handleSaveUser = React.useCallback((updatedData) => {
     updateUser(updatedData.id, updatedData);
     setEditingUser(null);
-  };
+  }, [updateUser]);
 
   return (
     <AdminLayout>

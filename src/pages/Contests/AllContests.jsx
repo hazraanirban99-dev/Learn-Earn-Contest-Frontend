@@ -17,17 +17,26 @@ const AllContests = () => {
    const [selectedStatuses, setSelectedStatuses] = useState([]);
    const [visibleCount, setVisibleCount] = useState(6);
 
+   // Logic: Only enable infinite scroll when filters are active
+   const isFilterActive = searchQuery.trim() !== '' || selectedDomains.length > 0 || selectedStatuses.length > 0;
+
    // Infinite Scroll Listener
    useEffect(() => {
+      if (!isFilterActive) {
+         setVisibleCount(6); // Reset to base set when filters are cleared
+         return;
+      }
+
       const handleScroll = () => {
          // Check if user scrolled near the bottom of the page
          if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 200) {
             setVisibleCount(prev => prev + 6);
          }
       };
+
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
-   }, []);
+   }, [isFilterActive]);
 
    useEffect(() => {
       // Mock Fetching Data
@@ -139,50 +148,56 @@ const AllContests = () => {
    const domains = ['Development', 'UI/UX', 'Marketing'];
    const statuses = ['Ongoing', 'Upcoming', 'Completed'];
 
-   const toggleFilter = (type, value) => {
+   const toggleFilter = React.useCallback((type, value) => {
       if (type === 'domain') {
          setSelectedDomains(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
       } else {
          setSelectedStatuses(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
       }
-   };
+   }, []);
 
-   // Filter Logic
-   const filteredContests = allContests.filter(contest => {
-      const matchesSearch = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         contest.desc.toLowerCase().includes(searchQuery.toLowerCase());
-      const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(contest.domain);
-      const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(contest.status.charAt(0) + contest.status.slice(1).toLowerCase());
-      return matchesSearch && domainMatch && statusMatch;
-   });
+   // Filter Logic - Memoized to prevent re-calculation on scroll
+   const filteredContests = React.useMemo(() => {
+      return allContests.filter(contest => {
+         const matchesSearch = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            contest.desc.toLowerCase().includes(searchQuery.toLowerCase());
+         const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(contest.domain);
+         const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(contest.status.charAt(0) + contest.status.slice(1).toLowerCase());
+         return matchesSearch && domainMatch && statusMatch;
+      });
+   }, [allContests, searchQuery, selectedDomains, selectedStatuses]);
 
    // Infinite scroll slice before grouping
-   const visibleContests = filteredContests.slice(0, visibleCount);
+   const visibleContests = React.useMemo(() => {
+      return filteredContests.slice(0, visibleCount);
+   }, [filteredContests, visibleCount]);
 
-   // Grouping Logic
-   const groupedContests = domains.reduce((acc, domain) => {
-      const contestsInDomain = visibleContests.filter(c => c.domain === domain);
-      if (contestsInDomain.length > 0) acc[domain] = contestsInDomain;
-      return acc;
-   }, {});
+   // Grouping Logic - Memoized
+   const groupedContests = React.useMemo(() => {
+      return domains.reduce((acc, domain) => {
+         const contestsInDomain = visibleContests.filter(c => c.domain === domain);
+         if (contestsInDomain.length > 0) acc[domain] = contestsInDomain;
+         return acc;
+      }, {});
+   }, [visibleContests, domains]);
 
-   const getDomainColor = (domain) => {
+   const getDomainColor = React.useCallback((domain) => {
       switch (domain) {
          case 'Development': return 'text-[#8cc63f]';
          case 'UI/UX': return 'text-[#3f8cc6]';
          case 'Marketing': return 'text-[#fbc111]';
          default: return 'text-gray-400';
       }
-   };
+   }, []);
 
-   const getDomainIcon = (domain) => {
+   const getDomainIcon = React.useCallback((domain) => {
       switch (domain) {
          case 'Development': return <FiGlobe size={24} />;
          case 'UI/UX': return <FiLayout size={24} />;
          case 'Marketing': return <FiTrendingUp size={24} />;
          default: return <FiGlobe size={24} />;
       }
-   };
+   }, []);
 
    return (
       <div className="min-h-screen bg-[#f8faf2] font-sans">

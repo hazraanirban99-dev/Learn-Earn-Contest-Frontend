@@ -12,7 +12,7 @@ import logo from '../../assets/desun-logo.png';
  * @param {string} className - Additional CSS classes for the container
  * @param {string} to - Path to link to. If null or empty, will not be a link.
  */
-const Logo = ({ 
+const Logo = React.memo(({ 
   variant = 'dark', 
   size = 'md', 
   showTagline = true, 
@@ -74,6 +74,6 @@ const Logo = ({
   }
 
   return <div className="shrink-0">{content}</div>;
-};
+});
 
 export default Logo;

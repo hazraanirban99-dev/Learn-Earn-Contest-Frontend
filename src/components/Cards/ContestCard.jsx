@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ApplyContestModal from '../Modals/ApplyContestModal';
 
-const ContestCard = ({ contest, index, variant = 'dashboard' }) => {
+const ContestCard = React.memo(({ contest, index, variant = 'dashboard' }) => {
     const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
 
@@ -77,14 +77,14 @@ const ContestCard = ({ contest, index, variant = 'dashboard' }) => {
                         ) : (
                             <button 
                                 onClick={() => setIsApplyModalOpen(true)}
-                                className="flex-1 bg-[#8cc63f] hover:bg-[#7ab332] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#8cc63f]/20 active:scale-95 text-center"
+                                className="flex-1 bg-[#8cc63f] hover:bg-[#7ab332] cursor-pointer text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#8cc63f]/20 active:scale-95 text-center"
                             >
                                 Apply Now
                             </button>
                         )}
                         <Link 
                             to={`/student/contests/${contest.id}`}
-                            className="flex-1 bg-[#fbc111] hover:bg-[#e0ad0c] text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center flex items-center justify-center font-bold"
+                            className="flex-1 bg-[#fbc111] hover:bg-[#e0ad0c] cursor-pointer text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center flex items-center justify-center font-bold"
                         >
                             View Details
                         </Link>
@@ -104,6 +104,6 @@ const ContestCard = ({ contest, index, variant = 'dashboard' }) => {
             />
         </div>
     );
-};
+});
 
 export default ContestCard;
