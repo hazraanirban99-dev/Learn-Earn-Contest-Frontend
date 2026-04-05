@@ -141,9 +141,9 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
       </div>
 
       {/* Bottom Row: Contest and Optionally Participant */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
-        <div className={`space-y-2 flex-1 ${showParticipant ? 'sm:w-64' : 'w-full'}`}>
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-900/60">Select Project Contest</label>
+      <div className="flex flex-col gap-4 w-full">
+        <div className="space-y-2 w-full">
+          <label className="text-[10px] font-black uppercase tracking-widest text-[#fbc111]">Select Project Contest</label>
           <div className="relative group">
             <select 
               value={selectedContest}
@@ -162,8 +162,8 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
         </div>
         
         {showParticipant && (
-          <div className="space-y-2 flex-1 sm:w-64">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-900/60">Select Candidate</label>
+          <div className="space-y-2 w-full">
+            <label className="text-[10px] font-black uppercase tracking-widest text-[#fbc111]">Select Candidate / Team</label>
             <div className="relative group">
               <select 
                 value={selectedParticipant}
