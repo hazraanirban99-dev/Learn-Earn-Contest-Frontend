@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import { AdminDashboard, CreateContest, ManageContests, ReviewSubmissions, DeclareWinners, ManageUsers } from './pages/Admin';
+import { AdminDashboard, CreateContest, ManageContests, ReviewSubmissions, DeclareWinners, ManageUsers, ContestReports } from './pages/Admin';
 import { StudentDashboard, AllContests, StudentSubmission, ContestDetails } from './pages/Student';
 import LandingPage from './pages/LandingPage/LandingPage';
 import { ProtectedRoute } from './components/Auth';
@@ -26,6 +26,7 @@ function App() {
             <Route path="/admin/submissions" element={<ReviewSubmissions />} />
             <Route path="/admin/winners" element={<DeclareWinners />} />
             <Route path="/admin/users" element={<ManageUsers />} />
+            <Route path="/admin/reports" element={<ContestReports />} />
             {/* Redirect old dashboard path to the new admin path */}
             <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
           </Route>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2 } from 'react-icons/fi';
 import { Logo } from '../index';
 import { toast } from 'react-toastify';
@@ -6,16 +7,27 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Header = ({ onMenuClick }) => {
-  const [activeTab, setActiveTab] = useState('Analytics');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const toggleRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const profileToggleRef = useRef(null);
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-  const tabs = ['Analytics', 'Reports', 'Logs'];
+
+  const tabs = [
+    { name: 'Analytics', path: '/admin/dashboard' },
+    { name: 'Contest Reports', path: '/admin/reports' },
+    { name: 'All Participants', path: '#' }
+  ];
+
+  // Determine active tab based on current path
+  const activeTab = React.useMemo(() => {
+    const currentTab = tabs.find(t => t.path !== '#' && location.pathname === t.path);
+    return currentTab ? currentTab.name : 'Analytics';
+  }, [location.pathname]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -59,20 +71,20 @@ const Header = ({ onMenuClick }) => {
       <nav className="hidden lg:flex items-center gap-8">
         {tabs.map((tab) => (
           <button
-            key={tab}
+            key={tab.name}
             onClick={() => {
-              if (tab !== 'Analytics') {
+              if (tab.path === '#') {
                 toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
               } else {
-                setActiveTab(tab);
+                navigate(tab.path);
               }
             }}
             className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
-              activeTab === tab ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
+              activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
             }`}
           >
-            {tab}
-            {activeTab === tab && (
+            {tab.name}
+            {activeTab === tab.name && (
               <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
             )}
           </button>
@@ -125,20 +137,20 @@ const Header = ({ onMenuClick }) => {
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
               {tabs.map((tab) => (
                 <button
-                  key={tab}
+                  key={tab.name}
                   onClick={() => { 
-                    if (tab !== 'Analytics') {
+                    if (tab.path === '#') {
                       toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
                     } else {
-                      setActiveTab(tab); 
+                      navigate(tab.path);
                       setIsMenuOpen(false); 
                     }
                   }}
                   className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                    activeTab === tab ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                    activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
                   }`}
                 >
-                  {tab}
+                  {tab.name}
                 </button>
               ))}
             </div>

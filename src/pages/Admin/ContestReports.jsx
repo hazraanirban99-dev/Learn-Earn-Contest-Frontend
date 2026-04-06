@@ -1,0 +1,247 @@
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import AdminLayout from '../../layouts/AdminLayout';
+import { 
+  FiSearch, FiFilter, FiTrendingUp, FiChevronLeft, FiChevronRight, FiDownload, FiPlus
+} from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import StatusUpdateMenu from '../../components/Admin/StatusUpdateMenu';
+import { useNavigate } from 'react-router-dom';
+
+// Table Row Component - Memoized for performance
+const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'UPCOMING': 
+        return 'bg-[#fcf3d9] text-[#dca51a] border-[#fce7a8]/50';
+      case 'ONGOING': 
+        return 'bg-[#f4f8ec] text-[#8cc63f] border-[#e2edd3]/50';
+      case 'COMPLETED': 
+        return 'bg-gray-100 text-gray-400 border-gray-200';
+      default: 
+        return 'bg-gray-50 text-gray-500 border-gray-200';
+    }
+  };
+
+  const getDomainStyle = (domain) => {
+    const d = domain.toLowerCase();
+    if (d.includes('ui/ux')) return 'bg-blue-50 text-blue-500 border-blue-200';
+    if (d.includes('dev')) return 'bg-purple-50 text-purple-500 border-purple-200';
+    if (d.includes('marketing')) return 'bg-amber-50 text-amber-500 border-amber-200';
+    if (d.includes('analytics')) return 'bg-teal-50 text-teal-600 border-teal-200';
+    return 'bg-gray-50 text-gray-500 border-gray-200';
+  };
+
+  return (
+    <tr className="hover:bg-white transition-colors duration-200 group border-b border-[#e8efe0]/60">
+      <td className="py-6 px-10">
+        <span className="text-[14px] font-black text-gray-300">
+           {index < 9 ? `0${index + 1}` : index + 1}
+        </span>
+      </td>
+      <td className="py-6 px-4">
+        <div className="flex flex-col">
+          <span className="font-black text-slate-800 text-[16px] tracking-tight leading-tight">
+            {contest.title}
+          </span>
+        </div>
+      </td>
+      <td className="py-6 px-4">
+        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest border uppercase inline-block shadow-sm ${getDomainStyle(contest.domain)}`}>
+          {contest.domain}
+        </span>
+      </td>
+      <td className="py-6 px-4">
+        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest border uppercase inline-block shadow-sm ${getStatusStyle(contest.status)}`}>
+          {contest.status}
+        </span>
+      </td>
+      <td className="py-6 px-4">
+        <span className="text-[16px] font-black text-slate-800">
+          {contest.participants.toLocaleString()}
+        </span>
+      </td>
+      <td className="py-6 px-10 text-right">
+        <StatusUpdateMenu 
+          currentStatus={contest.status} 
+          onStatusUpdate={(newStatus) => onStatusUpdate(contest.id, newStatus)} 
+        />
+      </td>
+    </tr>
+  );
+});
+
+const ContestReports = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [selectedDomain, setSelectedDomain] = useState('All Domains');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Use state for contests to manage updates
+  const [contests, setContests] = useState([
+    { id: 1, title: 'Algorithmic Grand Prix 2024', domain: 'Development', status: 'UPCOMING', participants: 1240, subText: 'Final Round', dateInfo: '12 Jan 2024' },
+    { id: 2, title: 'UI Mastery Challenge', domain: 'UI/UX', status: 'ONGOING', participants: 850, subText: 'Design Sprint', dateInfo: '05 Jan 2024' },
+    { id: 3, title: 'Data Science Olympiad', domain: 'Analytics', status: 'COMPLETED', participants: 2100, subText: 'Global Heat', dateInfo: '28 Dec 2023' },
+    { id: 4, title: 'Growth Marketing Hackathon', domain: 'Marketing', status: 'COMPLETED', participants: 1620, subText: 'Strategy Hub', dateInfo: '20 Dec 2023' },
+    { id: 5, title: 'Full Stack Developer Summit', domain: 'Development', status: 'COMPLETED', participants: 3450, subText: 'Internal Qualifier', dateInfo: '15 Dec 2023' },
+    { id: 6, title: 'Cloud Infrastructure Expo', domain: 'Development', status: 'UPCOMING', participants: 500, subText: 'Tech Meet', dateInfo: '15 Jan 2024' },
+  ]);
+
+  // Derived unique domains
+  const domains = useMemo(() => {
+    return ['All Domains', ...new Set(contests.map(c => c.domain))];
+  }, [contests]);
+
+  // Handle Domain Filtering
+  const filteredContests = useMemo(() => {
+    if (selectedDomain === 'All Domains') return contests;
+    return contests.filter(c => c.domain === selectedDomain);
+  }, [contests, selectedDomain]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredContests.length / itemsPerPage);
+  const currentContests = useMemo(() => {
+    return filteredContests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  }, [filteredContests, currentPage]);
+
+  // Status Update Handler (Patterned for Backend API)
+  const handleStatusUpdate = useCallback(async (id, newStatus) => {
+    try {
+      setLoading(true);
+      // Backend pattern simulation
+      setContests(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+      toast.success(`Contest status updated to ${newStatus.toLowerCase()}!`);
+    } catch (error) {
+      toast.error('Failed to update status.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return (
+    <AdminLayout>
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1440px] mx-auto space-y-12">
+        
+        {/* --- Header & Filter Toolbar --- */}
+        <div className="flex flex-col gap-10">
+           {/* Section Title Group */}
+           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-[2px] bg-[#fbc111]"></div>
+                  <h4 className="text-[#fbc111] text-[13px] font-black tracking-[0.3em] uppercase">Academic Dashboard</h4>
+                </div>
+                <h1 className="text-5xl lg:text-6xl font-black text-slate-800 tracking-tighter leading-none">
+                  Contest <span className="text-[#5c8a14]">Archives</span>
+                </h1>
+              </div>
+
+              {/* Controls Toolbar */}
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                 {/* Domain Filter Dropdown */}
+                 <div className="relative flex-1 sm:flex-none flex items-center bg-[#fbc111] rounded-2xl px-6 py-1 shadow-md border border-[#fbc111]/20 hover:shadow-lg transition-all group">
+                   <label className="text-[11px] font-black text-slate-900/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
+                   <select 
+                     value={selectedDomain}
+                     onChange={(e) => {
+                       setSelectedDomain(e.target.value);
+                       setCurrentPage(1);
+                     }}
+                     className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
+                   >
+                     {domains.map(domain => (
+                       <option key={domain} value={domain}>{domain}</option>
+                     ))}
+                   </select>
+                   <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900/30">
+                      <FiFilter size={16} strokeWidth={3} />
+                   </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        {/* --- Main Table Container --- */}
+        <div className="bg-[#fbfcfa] rounded-[48px] border border-[#e8efe0] overflow-hidden shadow-2xl shadow-[#8cc63f]/5">
+           <div className="overflow-x-auto w-full scrollbar-hide">
+              <table className="w-full text-left border-collapse min-w-[1000px]">
+                <thead>
+                  <tr className="bg-[#f8faea]/50 border-b border-[#e8efe0]">
+                    <th className="py-7 px-10 text-[11px] font-black tracking-widest text-slate-400 uppercase">#</th>
+                    <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Contest Name</th>
+                    <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Domain</th>
+                    <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Status</th>
+                    <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Total Enrolled</th>
+                    <th className="py-7 px-10 text-right text-[11px] font-black tracking-widest text-slate-400 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50/50">
+                  {currentContests.length > 0 ? (
+                    currentContests.map((contest, idx) => (
+                      <ContestRow 
+                        key={contest.id} 
+                        contest={contest} 
+                        index={(currentPage - 1) * itemsPerPage + idx} 
+                        onStatusUpdate={handleStatusUpdate}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="py-20 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">
+                         No contests found in this domain.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+           </div>
+
+           {/* --- Footer Pagination (Premium Styled) --- */}
+           <div className="bg-[#f8faea]/40 px-10 py-6 border-t border-[#e8efe0] flex flex-col sm:flex-row items-center justify-between gap-6">
+              <span className="text-[13px] font-bold text-gray-400 font-sans tracking-tight">
+                Showing <span className="text-slate-800 font-black">{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredContests.length)}</span> of {filteredContests.length} active contests in current semester
+              </span>
+
+              <div className="flex items-center gap-3">
+                 <button 
+                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                   disabled={currentPage === 1}
+                   className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#8cc63f] transition-colors disabled:opacity-20"
+                 >
+                   <FiChevronLeft size={24} strokeWidth={2.5} />
+                 </button>
+
+                 <div className="flex items-center gap-3">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button 
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-10 h-10 rounded-2xl text-[14px] font-black transition-all duration-300 ${
+                          currentPage === i + 1 
+                          ? 'bg-[#5c8a14] text-white shadow-lg shadow-[#5c8a14]/30' 
+                          : 'text-slate-400 hover:bg-white hover:text-slate-800'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                 </div>
+
+                 <button 
+                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                   disabled={currentPage === totalPages}
+                   className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#8cc63f] transition-colors disabled:opacity-20"
+                 >
+                   <FiChevronRight size={24} strokeWidth={2.5} />
+                 </button>
+              </div>
+           </div>
+        </div>
+
+      </div>
+    </AdminLayout>
+  );
+};
+
+export default React.memo(ContestReports);
