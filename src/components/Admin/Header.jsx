@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2 } from 'react-icons/fi';
 import { Logo } from '../index';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Header = ({ onMenuClick }) => {
@@ -20,7 +19,7 @@ const Header = ({ onMenuClick }) => {
   const tabs = [
     { name: 'Analytics', path: '/admin/dashboard' },
     { name: 'Contest Reports', path: '/admin/reports' },
-    { name: 'All Participants', path: '#' }
+    { name: 'All Participants', path: '/admin/participants' }
   ];
 
   // Determine active tab based on current path
@@ -70,24 +69,33 @@ const Header = ({ onMenuClick }) => {
       {/* Tabs Section - Desktop Only */}
       <nav className="hidden lg:flex items-center gap-8">
         {tabs.map((tab) => (
-          <button
-            key={tab.name}
-            onClick={() => {
-              if (tab.path === '#') {
-                toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
-              } else {
-                navigate(tab.path);
-              }
-            }}
-            className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
-              activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            {tab.name}
-            {activeTab === tab.name && (
-              <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
-            )}
-          </button>
+          tab.path === '#' ? (
+            <button
+              key={tab.name}
+              onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+              className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
+                activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              {tab.name}
+              {activeTab === tab.name && (
+                <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
+              )}
+            </button>
+          ) : (
+            <Link
+              key={tab.name}
+              to={tab.path}
+              className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
+                activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              {tab.name}
+              {activeTab === tab.name && (
+                <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
+              )}
+            </Link>
+          )
         ))}
       </nav>
 
@@ -136,22 +144,28 @@ const Header = ({ onMenuClick }) => {
             <div className="flex flex-col gap-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
               {tabs.map((tab) => (
-                <button
-                  key={tab.name}
-                  onClick={() => { 
-                    if (tab.path === '#') {
-                      toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" });
-                    } else {
-                      navigate(tab.path);
-                      setIsMenuOpen(false); 
-                    }
-                  }}
-                  className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                    activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
-                  }`}
-                >
-                  {tab.name}
-                </button>
+                tab.path === '#' ? (
+                  <button
+                    key={tab.name}
+                    onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                    className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
+                      activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.name}
+                  </button>
+                ) : (
+                  <Link
+                    key={tab.name}
+                    to={tab.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
+                      activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.name}
+                  </Link>
+                )
               ))}
             </div>
 

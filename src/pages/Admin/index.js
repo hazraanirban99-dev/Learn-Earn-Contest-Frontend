@@ -5,3 +5,4 @@ export { default as ReviewSubmissions } from './ReviewSubmissions';
 export { default as DeclareWinners } from './DeclareWinners';
 export { default as ManageUsers } from './ManageUsers';
 export { default as ContestReports } from './ContestReports';
+export { default as ParticipantsDirectory } from './ParticipantsDirectory';
