@@ -274,6 +274,7 @@ const ContestDetails = () => {
             <ApplyContestModal
                 isOpen={isApplyModalOpen}
                 onClose={() => setIsApplyModalOpen(false)}
+                contest={contestData}
                 contestId={id}
                 onSuccess={() => {
                     toast.success("Application Transmitted Successfully!");

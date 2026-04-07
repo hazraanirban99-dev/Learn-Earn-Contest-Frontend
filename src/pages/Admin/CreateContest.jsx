@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus } from 'react-icons/fi';
+import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus, FiMinus, FiUser, FiUsers } from 'react-icons/fi';
 import AdminLayout from '../../layouts/AdminLayout';
 import Button from '../../components/Button/Button';
 import { toast } from 'react-toastify';
@@ -10,6 +10,8 @@ const CreateContest = () => {
   const [cashPrize, setCashPrize] = useState('');
   const [expertCertificate, setExpertCertificate] = useState('No');
   const [internshipOffer, setInternshipOffer] = useState('No');
+  const [projectType, setProjectType] = useState('Solo');
+  const [teamSize, setTeamSize] = useState(2);
 
   return (
     <AdminLayout>
@@ -88,7 +90,6 @@ const CreateContest = () => {
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
               <div className="space-y-4 group">
                 <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
@@ -117,6 +118,72 @@ const CreateContest = () => {
                     <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">Upload Syllabus</p>
                     <p className="text-gray-400 font-bold text-[9px] sm:text-[10px]">PDF format / Max 25MB</p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Collaboration Strategy (Solo vs Team) */}
+            <div className="space-y-6 pt-4">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-6 bg-[#8cc63f] rounded-full" />
+                <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f]">
+                  COLLABORATION STRATEGY
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Toggle Solo/Team */}
+                <div className="bg-[#f8faf6]/50 p-2 rounded-[28px] flex gap-2 border border-white shadow-inner min-h-[70px]">
+                  {[
+                    { id: 'Solo', icon: FiUser, label: 'Solo Project' },
+                    { id: 'Team', icon: FiUsers, label: 'Team Project' }
+                  ].map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => setProjectType(type.id)}
+                      className={`flex-1 flex items-center justify-center gap-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
+                        projectType === type.id 
+                          ? 'bg-[#8cc63f] text-white shadow-lg scale-[1.02]' 
+                          : 'text-gray-400 hover:text-slate-800 hover:bg-white/50'
+                      }`}
+                    >
+                      <type.icon size={18} />
+                      {type.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Team Size Stepper (Shown only if Team selected) */}
+                <div className={`transition-all duration-500 overflow-hidden ${projectType === 'Team' ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
+                  <div className="bg-white border-2 border-[#8cc63f]/10 rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                    <div className="flex flex-col px-6">
+                       <span className="text-[9px] font-black text-[#8cc63f] uppercase tracking-widest block mb-1">Max Team Capacity</span>
+                       <span className="text-2xl font-black text-slate-800 tabular-nums">{teamSize} Members</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mr-1">
+                      {/* Minus Button */}
+                      <button 
+                        type="button"
+                        onClick={() => setTeamSize(Math.max(2, teamSize - 1))}
+                        className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90"
+                      >
+                         <FiMinus size={20} strokeWidth={3} />
+                      </button>
+                      
+                      {/* Plus Button */}
+                      <button 
+                        type="button"
+                        onClick={() => setTeamSize(Math.min(10, teamSize + 1))}
+                        className="w-12 h-12 bg-[#8cc63f]/10 rounded-2xl flex items-center justify-center text-[#8cc63f] hover:bg-[#8cc63f] hover:text-white transition-all shadow-sm active:scale-90 shadow-[#8cc63f]/20"
+                      >
+                         <FiPlus size={20} strokeWidth={3} />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-[9px] font-bold text-gray-300 italic mt-3 px-4">
+                    Set the maximum number of scholars permitted per collective effort.
+                  </p>
                 </div>
               </div>
             </div>
@@ -295,6 +362,8 @@ const CreateContest = () => {
                   // formPayload.append('cashPrize', cashPrize);     // state variable
                   // formPayload.append('expertCertificate', expertCertificate); // 'Yes'/'No'
                   // formPayload.append('internshipOffer', internshipOffer);     // 'Yes'/'No'
+                  // formPayload.append('projectType', projectType);           // 'Solo'/'Team'
+                  // formPayload.append('maxTeamSize', projectType === 'Team' ? teamSize : 1);
                   // formPayload.append('thumbnail', <file from thumbnail input ref>);  // File
                   // formPayload.append('syllabus', <file from syllabus input ref>);    // File
                   //

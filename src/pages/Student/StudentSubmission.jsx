@@ -47,6 +47,12 @@ const StudentSubmission = () => {
   const [driveLink, setDriveLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Past Submissions State
+  const [pastSubmissions, setPastSubmissions] = useState([
+    { id: '101', name: 'UI Prototype Challenge', endDate: 'Oct 15, 2024', isResultDeclared: true },
+    { id: '102', name: 'MERN Social App', endDate: 'Oct 30, 2024', isResultDeclared: false }
+  ]);
+
   // Teammate helpers
   const addTeammate = useCallback(() => {
     if (teammates.length >= 4) {
@@ -154,14 +160,36 @@ const StudentSubmission = () => {
 
       // MOCK delay — delete when API is ready
       await new Promise(r => setTimeout(r, 1400));
+      
+      const newSubmission = {
+        id: Date.now().toString(),
+        name: availableContests.find(c => c.id === projectId)?.name || 'New Contest',
+        endDate: 'Nov 30, 2024', // Mock date
+        isResultDeclared: false
+      };
+      
+      setPastSubmissions(prev => [newSubmission, ...prev]);
       toast.success('Project Submitted Successfully! 🎉');
-      // Optionally redirect:
-      // navigate('/student/dashboard');
+      
+      // Reset form
+      setProjectId('');
+      setGithubLink('');
+      setLiveLink('');
+      setDriveLink('');
     } catch (err) {
       toast.error(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleViewResult = (sub) => {
+    if (!sub.isResultDeclared) {
+      toast.info('Result not declared yet for this contest.');
+      return;
+    }
+    // Navigate to leaderboard or result page
+    navigate(`/student/leaderboard/${sub.id}`);
   };
 
   return (
@@ -413,6 +441,52 @@ const StudentSubmission = () => {
             onClick={handleSubmit}
             className="w-max px-14"
           />
+        </div>
+
+        {/* SECTION 4: Past Submissions */}
+        <div className="bg-white rounded-[40px] p-6 sm:p-10 shadow-sm border border-gray-100">
+          <SectionTitle label="04" title="Past Submissions" accent="#8cc63f" />
+          
+          <div className="mt-8 space-y-4">
+            {pastSubmissions.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <p className="text-sm font-black text-gray-400 uppercase tracking-widest">No past submissions found</p>
+              </div>
+            ) : (
+              pastSubmissions.map((sub) => (
+                <div key={sub.id} className="flex flex-col sm:flex-row items-center justify-between p-6 bg-[#f1f8e8]/40 border border-white rounded-[32px] hover:bg-[#f1f8e8] transition-all group gap-4">
+                  <div className="flex items-center gap-6 w-full sm:w-auto">
+                    <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-[#8cc63f] shadow-sm transform group-hover:scale-110 transition-transform">
+                      <FiFileText size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-slate-800 tracking-tight leading-tight">{sub.name}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">End Date:</span>
+                        <span className="text-[10px] font-black text-[#8cc63f] uppercase tracking-widest">{sub.endDate}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
+                    <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                      sub.isResultDeclared 
+                        ? 'bg-[#8cc63f]/10 text-[#8cc63f] border-[#8cc63f]/20' 
+                        : 'bg-yellow-50 text-yellow-500 border-yellow-200'
+                    }`}>
+                      {sub.isResultDeclared ? 'Result Declared' : 'Pending Evaluation'}
+                    </div>
+                    <button 
+                      onClick={() => handleViewResult(sub)}
+                      className="px-6 py-3 bg-white text-slate-800 text-[11px] font-black uppercase tracking-widest rounded-2xl border border-gray-100 hover:border-[#8cc63f] hover:text-[#8cc63f] shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-2"
+                    >
+                      View Result
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

@@ -1,50 +1,21 @@
 import React, { useState } from 'react';
-import { FiX, FiCheckCircle, FiAward, FiPlusCircle, FiArrowRight, FiMinusCircle } from 'react-icons/fi';
+import { FiX, FiCheckCircle, FiAward, FiPlusCircle, FiArrowRight, FiMinusCircle, FiSearch, FiUserPlus, FiUsers } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import { useUsers } from '../../context/UserContext';
+import { useAuth } from '../../context/AuthContext';
 
-const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
-    const [mode, setMode] = useState('individual'); // 'individual' or 'team'
+const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) => {
+    const { users } = useUsers();
+    const { user: activeUser } = useAuth();
+
+    const [mode, setMode] = useState(contest?.projectType?.toLowerCase() || 'individual');
     const [teamName, setTeamName] = useState('');
-    const [members, setMembers] = useState([{ name: '', username: '' }]);
+    const [selectedMembers, setSelectedMembers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [agreed, setAgreed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!isOpen) return null;
-
-    // =========================================================================
-    // 🚀 [BACKEND] GET LOGGED-IN USER
-    // =========================================================================
-    // Replace this hardcoded activeUser with real data from AuthContext:
-    //
-    // import { useAuth } from '../../context/AuthContext';
-    // const { user } = useAuth();
-    // Then use: user.id, user.username, user.name
-    //
-    // AuthContext already reads from localStorage on mount.
-    // Make sure your login API returns and stores: { id, name, username, token }
-    // =========================================================================
-
-    // MOCK — DELETE when AuthContext has real user data:
-    const activeUser = { id: 'USR_4091', username: '@alex_dev', name: 'Alex Rivera' };
-
-    const handleAddMember = () => {
-        if (members.length < 3) {
-            setMembers([...members, { name: '', username: '' }]);
-        }
-    };
-
-    const handleRemoveMember = (index) => {
-        if (members.length > 1) {
-            const newMembers = members.filter((_, i) => i !== index);
-            setMembers(newMembers);
-        }
-    };
-
-    const handleMemberChange = (index, field, value) => {
-        const newMembers = [...members];
-        newMembers[index][field] = value;
-        setMembers(newMembers);
-    };
 
     const handleSubmit = async () => {
         if (!agreed) {
@@ -73,7 +44,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
             }
             payload.teamData = {
                 teamName: teamName,
-                members: members.filter(m => m.name.trim() !== '' && m.username.trim() !== ''),
+                members: selectedMembers.map(m => ({ id: m.id, name: m.name, username: m.username })),
             };
         }
 
@@ -175,35 +146,30 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
 
                     {/* Scrollable Body */}
                     <div className="flex-1 overflow-y-auto px-8 lg:px-12 custom-scrollbar pb-8">
-                        {/* Togglable Slider for Mode */}
-                        <div className="bg-[#ecf0e6] p-1 rounded-2xl flex mb-10 shrink-0">
-                            <button 
-                                onClick={() => setMode('individual')}
-                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 cursor-pointer ${
-                                    mode === 'individual' 
-                                    ? 'bg-white text-[#4a7010] shadow-sm' 
-                                    : 'text-gray-500 hover:text-slate-800'
-                                }`}
-                            >
-                                Individual
-                            </button>
-                            <button 
-                                onClick={() => setMode('team')}
-                                className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all duration-300 cursor-pointer ${
-                                    mode === 'team' 
-                                    ? 'bg-white text-[#4a7010] shadow-sm' 
-                                    : 'text-gray-500 hover:text-slate-800'
-                                }`}
-                            >
-                                Team
-                            </button>
-                        </div>
+                        {/* Only show toggle if not forced by admin */}
+                        {/* Solo Mode Indicator (Optional, subtle) */}
+                        {mode === 'individual' && (
+                            <div className="mb-10 animate-in fade-in duration-500">
+                                <div className="bg-[#8cc63f]/5 border border-[#8cc63f]/20 rounded-2xl p-6 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-[#8cc63f] flex items-center justify-center text-white shadow-lg">
+                                        <FiUserPlus size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Individual Entry</h4>
+                                        <p className="text-[11px] font-bold text-gray-400 font-sans mt-0.5">You are applying for this scholastic challenge as a solo contestant.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {mode === 'team' && (
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-500 pb-4">
                                 
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Team Name</label>
+                                    <div className="flex items-center gap-2 mb-2 ml-1">
+                                        <div className="w-1.5 h-4 bg-[#8cc63f] rounded-full" />
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Identify Your Team</label>
+                                    </div>
                                     <input 
                                         type="text"
                                         placeholder="E.g. Pixel Pioneers" 
@@ -213,62 +179,112 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, onSuccess }) => {
                                     />
                                 </div>
 
-                                <div className="space-y-8">
-                                    {members.map((member, index) => (
-                                        <div key={index} className="relative p-6 bg-[#f8faf2] rounded-2xl border border-gray-100">
-                                            <div className="flex justify-between items-center mb-6">
-                                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                                                    Member {index + 1} Details
-                                                </label>
-                                                {index > 0 && (
-                                                    <button 
-                                                        onClick={() => handleRemoveMember(index)}
-                                                        className="flex items-center gap-1.5 text-red-500 hover:text-red-600 transition-colors text-[10px] font-black uppercase tracking-widest"
-                                                    >
-                                                        <FiMinusCircle size={14} /> Remove
-                                                    </button>
-                                                )}
+                                {/* Teammate Selection Registry */}
+                                <div className="space-y-6">
+                                    <div className="flex flex-col gap-1 ml-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-4 bg-[#fbc111] rounded-full" />
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Select Scholars</label>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-gray-400 italic">
+                                            This is a team project. You can add up to <span className="text-[#8cc63f] font-black">{contest?.maxTeamSize || 4}</span> members (including yourself).
+                                        </p>
+                                    </div>
+                                    <div className="flex justify-end -mt-4">
+                                        <span className="text-[10px] font-black text-[#8cc63f] uppercase bg-[#8cc63f]/5 px-2 py-1 rounded-md border border-[#8cc63f]/10">
+                                            {selectedMembers.length + 1} / {contest?.maxTeamSize || 4} Members Added
+                                        </span>
+                                    </div>
+
+                                    {/* Search Input */}
+                                    <div className="relative">
+                                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                        <input 
+                                            type="text"
+                                            placeholder={`Search ${contest?.domain || ''} scholars...`}
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="w-full bg-[#f8faf2] rounded-xl pl-12 pr-4 py-3.5 border-none outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all"
+                                        />
+                                    </div>
+
+                                    {/* Filtered Scholars List */}
+                                    {searchQuery.trim() && (
+                                        <div className="max-h-48 overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-lg p-2 space-y-1 custom-scrollbar">
+                                            {users
+                                                .filter(u => 
+                                                    u.domain === (contest?.domain || 'Development') &&
+                                                    u.username !== activeUser?.username &&
+                                                    !selectedMembers.some(sm => sm.id === u.id) &&
+                                                    (u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.username.toLowerCase().includes(searchQuery.toLowerCase()))
+                                                ).slice(0, 5).map(u => (
+                                                    <div key={u.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-all group">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white">
+                                                                {u.name[0]}
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-black text-slate-800">{u.name}</p>
+                                                                <p className="text-[10px] font-bold text-gray-400 font-mono">{u.username}</p>
+                                                            </div>
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (selectedMembers.length + 1 >= (contest?.maxTeamSize || 4)) {
+                                                                    toast.warning(`Maximum ${contest?.maxTeamSize || 4} members allowed.`);
+                                                                    return;
+                                                                }
+                                                                setSelectedMembers([...selectedMembers, u]);
+                                                                setSearchQuery('');
+                                                            }}
+                                                            className="p-2 text-[#8cc63f] hover:bg-[#8cc63f]/10 rounded-full transition-all"
+                                                        >
+                                                            <FiUserPlus size={18} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            {users.filter(u => u.domain === (contest?.domain || 'Development') && u.username !== activeUser?.username && !selectedMembers.some(sm => sm.id === u.id) && (u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.username.toLowerCase().includes(searchQuery.toLowerCase()))).length === 0 && (
+                                                <div className="p-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">No matching scholars found</div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Registrants Display */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {/* Active User (Leader) */}
+                                        <div className="p-4 bg-[#8cc63f]/5 border border-[#8cc63f]/20 rounded-2xl flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#8cc63f] to-[#fbc111] p-[2px]">
+                                                <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white">
+                                                    YOU
+                                                </div>
                                             </div>
-                                            
-                                            <div className="flex flex-col sm:flex-row gap-4 items-start">
-                                                <div className="flex-1 w-full text-left">
-                                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                                                        Full Name
-                                                    </label>
-                                                    <input 
-                                                        type="text" 
-                                                        placeholder="Full name"
-                                                        value={member.name}
-                                                        onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
-                                                        className="w-full bg-white rounded-xl px-4 py-3.5 border border-gray-100 outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 w-full text-left">
-                                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                                                        Username
-                                                    </label>
-                                                    <input 
-                                                        type="text" 
-                                                        placeholder="@handle"
-                                                        value={member.username}
-                                                        onChange={(e) => handleMemberChange(index, 'username', e.target.value)}
-                                                        className="w-full bg-white rounded-xl px-4 py-3.5 border border-gray-100 outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all font-mono"
-                                                    />
-                                                </div>
+                                            <div>
+                                                <p className="text-xs font-black text-[#8cc63f] uppercase leading-none mb-1">Scholar Leader</p>
+                                                <p className="text-sm font-black text-slate-800 truncate">{activeUser?.name || 'Active Scholar'}</p>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
 
-                                <div className="flex items-center gap-4 pt-2">
-                                    {members.length < 3 && (
-                                        <button 
-                                            onClick={handleAddMember}
-                                            className="text-[#5c8a14] hover:text-[#8cc63f] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
-                                        >
-                                            <FiPlusCircle size={16} /> Add another member
-                                        </button>
-                                    )}
+                                        {/* Teammates */}
+                                        {selectedMembers.map((member) => (
+                                            <div key={member.id} className="p-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-between group animate-in fade-in slide-in-from-left-2 duration-300">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500">
+                                                        {member.name[0]}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[9px] font-black text-gray-400 uppercase leading-none mb-1">Registrant</p>
+                                                        <p className="text-sm font-black text-slate-800 truncate">{member.name}</p>
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    onClick={() => setSelectedMembers(selectedMembers.filter(m => m.id !== member.id))}
+                                                    className="w-8 h-8 rounded-full flex items-center justify-center text-red-400 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                                                >
+                                                    <FiX size={14} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}

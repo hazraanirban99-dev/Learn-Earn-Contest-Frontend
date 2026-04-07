@@ -5,7 +5,7 @@ import EnrollmentChart from '../../components/Admin/EnrollmentChart';
 import RecentContestsTable from '../../components/Admin/RecentContestsTable';
 import { 
   LaunchCard, 
-  AssistanceCard, 
+  RecentActivityCard, 
   SkillTrajectory, 
   UpcomingContestCard 
 } from '../../components/Admin/SidebarContainers';
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
             <RecentContestsTable />
           </div>
           <div className="col-span-12 xl:col-span-4 h-full">
-            <AssistanceCard />
+            <RecentActivityCard />
           </div>
 
           {/* New Bottom Region: Upcoming Contest & Skill Trajectory (Equal width) */}

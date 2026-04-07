@@ -32,29 +32,47 @@ export const LaunchCard = () => {
   );
 };
 
-export const AssistanceCard = () => (
-  <div className="bg-[#e9f2db]/60 border-2 border-white rounded-[32px] p-8 flex flex-col gap-6 relative group overflow-hidden h-full shadow-sm">
-    <div className="flex items-center gap-4">
-      <div className="p-3 bg-white rounded-xl shadow-md border border-gray-50 group-hover:rotate-6 transition-transform">
-        <svg className="w-5 h-5 text-[#8cc63f]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      </div>
-      <h4 className="font-black text-slate-800 text-[16px] tracking-tight uppercase">Need assistance?</h4>
-    </div>
-    
-    <p className="text-gray-500 text-[14px] leading-relaxed font-bold opacity-80">
-      Our academy support team is available for real-time console help.
-    </p>
+export const RecentActivityCard = () => {
+  const activities = [
+    { id: 1, type: 'contest', name: 'Sustainable Green Energy Challenge', status: 'Created', date: 'Oct 24, 2024', color: '#8cc63f' },
+    { id: 2, type: 'student', name: 'Maya Thompson', status: 'Registered', date: 'Oct 24, 2024', time: '09:42 AM', color: '#fbc111' },
+    { id: 3, type: 'contest', name: 'MERN Stack Masters', status: 'Created', date: 'Oct 23, 2024', color: '#8cc63f' },
+    { id: 4, type: 'student', name: 'Liam Carter', status: 'Registered', date: 'Oct 23, 2024', time: '08:15 AM', color: '#fbc111' },
+    { id: 5, type: 'student', name: 'Sarah Jenks', status: 'Registered', date: 'Oct 22, 2024', time: '11:20 AM', color: '#fbc111' },
+    { id: 6, type: 'contest', name: 'Bauhaus UI Revival', status: 'Created', date: 'Oct 21, 2024', color: '#8cc63f' },
+  ];
 
-    <a 
-      href="mailto:teamsupport@gmail.com?subject=Admin Support Request&body=Hi Support Team,"
-      className="w-full bg-white py-4 rounded-xl font-black text-[#8cc63f] text-sm hover:bg-[#8cc63f] hover:text-white transition-all shadow-md active:scale-95 border border-[#8cc63f]/10 text-center block"
-    >
-      Contact Support
-    </a>
-  </div>
-);
+  return (
+    <div className="bg-white rounded-[32px] p-8 flex flex-col gap-8 h-full border border-gray-100 shadow-sm group">
+      <div className="flex items-center justify-between px-1">
+        <h4 className="font-black text-slate-800 text-xl tracking-tight uppercase leading-none">Recent Activity</h4>
+      </div>
+
+      <div className="relative flex-1 px-1">
+        {/* Vertical Timeline Line */}
+        <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-slate-50" />
+
+        <div className="space-y-8 relative">
+          {activities.slice(0, 4).map((item, idx) => (
+            <div key={item.id} className="flex gap-6 items-start group/item">
+              {/* Timeline Dot */}
+              <div className={`w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm shrink-0 mt-1.5 z-10 transition-transform group-hover/item:scale-125`} style={{ backgroundColor: item.color }} />
+              
+              <div className="flex flex-col gap-1">
+                <p className="text-[14px] leading-tight font-bold text-slate-800 uppercase tracking-tight">
+                  <span className="font-black">{item.name}</span> <span className="opacity-60">{item.status}</span>
+                </p>
+                <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest">
+                  {item.date} {item.time && <span className="mx-1">•</span>} {item.time}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 export const SkillTrajectory = () => {
