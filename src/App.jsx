@@ -4,6 +4,7 @@ import Register from './pages/Register/Register';
 import { AdminDashboard, CreateContest, ManageContests, ReviewSubmissions, DeclareWinners, ManageUsers, ContestReports, ParticipantsDirectory } from './pages/Admin';
 import { StudentDashboard, AllContests, StudentSubmission, ContestDetails } from './pages/Student';
 import LandingPage from './pages/LandingPage/LandingPage';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/password/reset/:token" element={<ResetPassword />} />
 
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

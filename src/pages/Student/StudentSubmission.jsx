@@ -1,514 +1,223 @@
-import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
-import DropZone from '../../components/Input/DropZone';
-import PortalInput from '../../components/Input/PortalInput';
-import PortalSelect from '../../components/Input/PortalSelect';
-import Button from '../../components/Button/Button';
-import {
-  FiGithub, FiGlobe, FiLink2,
-  FiPlus, FiX, FiSend, FiImage, FiFileText, FiUser
-} from 'react-icons/fi';
+import SubmitContestModal from '../../components/Modals/SubmitContestModal';
+import { FiFileText, FiAward, FiClock, FiCheckCircle, FiMoreHorizontal, FiCode, FiLayout, FiTrendingUp } from 'react-icons/fi';
+import ContestCard from '../../components/Cards/ContestCard';
 
-// ─────────────────────────────────────────────────────────────
-// MOCK DATA — replace with API calls when backend is ready
-// ─────────────────────────────────────────────────────────────
-
-// 🚀 [BACKEND] - GET /api/v1/contests/years  →  string[]
-const YEARS = ['2024', '2025', '2026'];
-
-// 🚀 [BACKEND] - GET /api/v1/contests/months?year=YYYY  →  string[]
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+const MOCK_APPLIED_CONTESTS = [
+    {
+        id: '1',
+        title: 'Algorithmic Geometry Challenge 2024',
+        desc: 'Explore the intersection of Euclidean geometry and computational complexity in this advanced challenge.',
+        domain: 'Development',
+        status: 'ONGOING',
+        icon: <FiCode />,
+        dateInfo: 'ENDS IN',
+        dateValue: '2 Days',
+        imageUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+        id: '2',
+        title: 'Kinematics & Fluid Dynamics Symposium',
+        desc: 'Solve complex fluid simulation problems and optimize solver performance for real-time applications.',
+        domain: 'Physics',
+        status: 'ONGOING',
+        icon: <FiCode />,
+        dateInfo: 'ENDS IN',
+        dateValue: '5 Days',
+        imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+        id: '3',
+        title: 'Secure Systems Architecture Hackathon',
+        desc: 'Build resilient systems that withstand adversarial attacks while maintaining high throughput.',
+        domain: 'Development',
+        status: 'ONGOING',
+        icon: <FiCode />,
+        dateInfo: 'ENDS IN',
+        dateValue: '12 Hours',
+        imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop'
+    }
 ];
 
-const SUBMIT_TYPES = ['Solo', 'Team'];
-
-// ─────────────────────────────────────────────────────────────
-// MAIN PAGE
-// ─────────────────────────────────────────────────────────────
+const MOCK_PAST_SUBMISSIONS = [
+    { 
+        id: '101', 
+        name: 'Quantum Mechanics Mid-Year Invitational', 
+        date: 'Oct 24, 2023',
+        domain: 'Physics Division',
+        status: 'Evaluated',
+        rank: '#12 / 450',
+        actionText: 'View Feedback',
+        icon: <FiCheckCircle />
+    },
+    { 
+        id: '102', 
+        name: 'Data Science & Ethics Symposium', 
+        date: 'Nov 02, 2023',
+        domain: 'Data Science',
+        status: 'Under Review',
+        rank: 'Pending',
+        actionText: 'Review Locked',
+        icon: <FiMoreHorizontal />
+    },
+    { 
+        id: '103', 
+        name: 'Global Economics Case Study Competition', 
+        date: 'Sept 15, 2023',
+        domain: 'Humanities',
+        status: 'Evaluated',
+        rank: '#3 / 1,200',
+        actionText: 'Download Certificate',
+        icon: <FiAward />
+    }
+];
 
 const StudentSubmission = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+    const [selectedContest, setSelectedContest] = useState(null);
 
-  // Form State
-  const [year, setYear] = useState('');
-  const [month, setMonth] = useState('');
-  const [projectId, setProjectId] = useState('');
-  const [submitType, setSubmitType] = useState('Solo');
-  const [teammates, setTeammates] = useState(['']);
-  const [projectPic, setProjectPic] = useState(null);
-  const [projectPdf, setProjectPdf] = useState(null);
-  const [githubLink, setGithubLink] = useState('');
-  const [liveLink, setLiveLink] = useState('');
-  const [driveLink, setDriveLink] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    const handleOpenSubmit = (contest) => {
+        setSelectedContest(contest);
+        setIsSubmitModalOpen(true);
+    };
 
-  // Past Submissions State
-  const [pastSubmissions, setPastSubmissions] = useState([
-    { id: '101', name: 'UI Prototype Challenge', endDate: 'Oct 15, 2024', isResultDeclared: true },
-    { id: '102', name: 'MERN Social App', endDate: 'Oct 30, 2024', isResultDeclared: false }
-  ]);
+    const handleActionClick = (sub) => {
+        if (sub.status === 'Under Review') {
+            toast.info('Review is locked until evaluation is complete.');
+            return;
+        }
+        if (sub.actionText === 'View Feedback') {
+            navigate(`/student/leaderboard/${sub.id}`);
+        } else {
+            toast.success('Certificate Downloaded!');
+        }
+    };
 
-  // Teammate helpers
-  const addTeammate = useCallback(() => {
-    if (teammates.length >= 4) {
-      toast.info('Maximum 4 teammates allowed.');
-      return;
-    }
-    setTeammates(prev => [...prev, '']);
-  }, [teammates.length]);
+    return (
+        <div className="min-h-screen bg-[#f8faf2] font-sans selection:bg-[#8cc63f]/30">
+            <UserNavbar />
 
-  const removeTeammate = useCallback((idx) => {
-    setTeammates(prev => prev.filter((_, i) => i !== idx));
-  }, []);
-
-  const updateTeammate = useCallback((idx, val) => {
-    setTeammates(prev => prev.map((t, i) => i === idx ? val : t));
-  }, []);
-
-  // 🚀 [BACKEND] - GET /api/v1/student/enrolled-contests?year=YYYY&month=MM  →  { id, name }[]
-  const enrolledContestData = useMemo(() => ({
-    '2024': {
-      'October': [
-        { id: 'c1', name: 'Eco-Urban Design 2024' },
-        { id: 'c2', name: 'Future Mobility Concept' }
-      ],
-      'September': [
-        { id: 'c3', name: 'Sustainable Energy Hackathon' }
-      ]
-    },
-    '2025': {
-      'January': [
-        { id: 'c4', name: 'AI in Architecture 2025' }
-      ]
-    }
-  }), []);
-
-  // Filter Cascade Logic
-  const availableMonths = useMemo(() => enrolledContestData[year] ? Object.keys(enrolledContestData[year]) : [], [year, enrolledContestData]);
-  const availableContests = useMemo(() => enrolledContestData[year]?.[month] || [], [year, month, enrolledContestData]);
-
-  // Handle Cascading Resets
-  useEffect(() => {
-    if (year && !availableMonths.includes(month)) {
-      setMonth(availableMonths[0] || '');
-    }
-  }, [year, availableMonths, month]);
-
-  useEffect(() => {
-    if (month && !availableContests.some(c => c.id === projectId)) {
-      setProjectId(availableContests[0]?.id || '');
-    }
-  }, [month, availableContests, projectId]);
-
-  const projectOptions = useMemo(() => availableContests.map(p => ({ value: p.id, label: p.name })), [availableContests]);
-
-  // Validation
-  const isFormValid = useMemo(() => {
-    if (!year || !month || !projectId) return false;
-    if (!projectPic || !projectPdf) return false;
-    if (!githubLink.trim() || !liveLink.trim()) return false;
-    if (submitType === 'Team' && teammates.some(t => !t.trim())) return false;
-    return true;
-  }, [year, month, projectId, projectPic, projectPdf, githubLink, liveLink, submitType, teammates]);
-
-  // Submit handler
-  const handleSubmit = async () => {
-    if (!isFormValid) {
-      toast.error('Please fill all required fields before submitting.');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // =========================================================================
-      // 🚀 [BACKEND] SUBMIT PROJECT
-      // =========================================================================
-      // Endpoint: POST /api/v1/student/submissions
-      // Content-Type: multipart/form-data
-      //
-      // const formData = new FormData();
-      // formData.append('year', year);
-      // formData.append('month', month);
-      // formData.append('contestId', projectId);
-      // formData.append('submitType', submitType);
-      // if (submitType === 'Team') {
-      //   teammates.forEach(t => formData.append('teammates[]', t));
-      // }
-      // formData.append('projectPic', projectPic);      // File
-      // formData.append('projectPdf', projectPdf);      // File
-      // formData.append('githubLink', githubLink);
-      // formData.append('liveLink', liveLink);
-      // formData.append('driveLink', driveLink);
-      //
-      // const res = await fetch('/api/v1/student/submissions', {
-      //   method: 'POST',
-      //   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      //   body: formData,
-      // });
-      //
-      // if (!res.ok) {
-      //   const err = await res.json();
-      //   throw new Error(err.message || 'Submission failed');
-      // }
-      // =========================================================================
-
-      // MOCK delay — delete when API is ready
-      await new Promise(r => setTimeout(r, 1400));
-      
-      const newSubmission = {
-        id: Date.now().toString(),
-        name: availableContests.find(c => c.id === projectId)?.name || 'New Contest',
-        endDate: 'Nov 30, 2024', // Mock date
-        isResultDeclared: false
-      };
-      
-      setPastSubmissions(prev => [newSubmission, ...prev]);
-      toast.success('Project Submitted Successfully! 🎉');
-      
-      // Reset form
-      setProjectId('');
-      setGithubLink('');
-      setLiveLink('');
-      setDriveLink('');
-    } catch (err) {
-      toast.error(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleViewResult = (sub) => {
-    if (!sub.isResultDeclared) {
-      toast.info('Result not declared yet for this contest.');
-      return;
-    }
-    // Navigate to leaderboard or result page
-    navigate(`/student/leaderboard/${sub.id}`);
-  };
-
-  return (
-    <div className="min-h-screen bg-[#f8faf2] font-sans selection:bg-[#8cc63f]/30">
-      <UserNavbar />
-
-      {/* ── PAGE HERO HEADER ─────────────────────────────────────── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-12 lg:px-24 pt-12 pb-10">
-        <nav className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-gray-400 mb-6">
-          <span>Student Portal</span>
-          <span className="text-[#8cc63f]">›</span>
-          <span className="text-[#8cc63f]">Submit Project</span>
-        </nav>
-
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <span className="text-[#8cc63f] text-[10px] font-black uppercase tracking-[0.2em] mb-3 block">
-              Project Portal
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.05]">
-              SUBmit your{' '}
-              <span className="text-[#fbc111]">contest</span>
-            </h1>
-          </div>
-          {/* Decorative accent */}
-          <div className="hidden md:block">
-            <div className="w-20 h-1 bg-[#fbc111] rounded-full mb-2" />
-            <div className="w-12 h-1 bg-[#8cc63f] rounded-full" />
-          </div>
-        </div>
-      </div>
-
-      {/* ── MAIN FORM ────────────────────────────────────────────── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-12 lg:px-24 pb-24 space-y-10">
-
-        {/* SECTION 1: Contest Selection */}
-        <div className="bg-white rounded-[40px] p-6 sm:p-10 shadow-sm border border-gray-100">
-          <SectionTitle label="01" title="Select Contest" accent="#8cc63f" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <PortalSelect
-              id="year-select"
-              label="Year of Competition"
-              value={year}
-              onChange={e => { setYear(e.target.value); setMonth(''); setProjectId(''); }}
-              options={YEARS}
-              placeholder="Select year"
-            />
-            <PortalSelect
-              id="month-select"
-              label="Month"
-              value={month}
-              onChange={e => { setMonth(e.target.value); setProjectId(''); }}
-              options={availableMonths}
-              placeholder={availableMonths.length > 0 ? "Select month" : "No active months"}
-            />
-          </div>
-
-          <div className="mt-6">
-            <PortalSelect
-              id="project-select"
-              label="Project / Contest Name"
-              value={projectId}
-              onChange={e => setProjectId(e.target.value)}
-              options={projectOptions}
-              placeholder="Select your project"
-            />
-          </div>
-        </div>
-
-        {/* SECTION 2: Submission Type */}
-        <div className="bg-white rounded-[40px] p-6 sm:p-10 shadow-sm border border-gray-100">
-          <SectionTitle label="02" title="Submission Type" accent="#fbc111" />
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-
-            {/* Submit Type Toggle */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400">
-                Submit Type
-              </label>
-              <div className="bg-[#f1f8e8] p-1.5 rounded-2xl flex gap-2 border border-white shadow-inner">
-                {SUBMIT_TYPES.map(t => (
-                  <button
-                    key={t}
-                    onClick={() => { setSubmitType(t); setTeammates(['']); }}
-                    className={`flex-1 py-3.5 px-2 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all ${
-                      submitType === t
-                        ? 'bg-[#8cc63f] text-white shadow-lg scale-[1.03]'
-                        : 'text-gray-500 hover:text-slate-800 hover:bg-white/60'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
+            {/* ── PAGE HEADER ─────────────────────────────────────── */}
+            <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pt-16 pb-8">
+                <span className="text-[#8cc63f] text-[10px] font-black uppercase tracking-[0.2em] mb-3 block">
+                    Scholastic Atelier
+                </span>
+                <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-[1.05] mb-4">
+                    My Submissions
+                </h1>
+                <p className="text-gray-500 font-medium text-sm max-w-2xl">
+                    Track your academic progress through competitive challenges. Manage active contest entries and review your performance history within the Desun ecosystem.
+                </p>
             </div>
 
-            {/* Teammate Inputs — only in Team mode */}
-            {submitType === 'Team' && (
-              <div className="flex flex-col gap-3">
-                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <FiUser size={13} /> Enter Teammate Usernames
-                </label>
-                <div className="space-y-3">
-                  {teammates.map((t, idx) => (
-                    <div key={idx} className="flex items-center gap-2 sm:gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center bg-[#f1f8e8] border-2 border-transparent focus-within:border-[#8cc63f]/40 focus-within:bg-white rounded-2xl transition-all shadow-sm overflow-hidden">
-                          <div className="pl-3 sm:pl-4 pr-1 sm:pr-2 text-gray-400 shrink-0">
-                            <FiUser size={15} className="w-3.5 sm:w-4" />
-                          </div>
-                          <input
-                            type="text"
-                            value={t}
-                            onChange={e => updateTeammate(idx, e.target.value)}
-                            placeholder="@username"
-                            className="flex-1 py-2.5 sm:py-3.5 pr-3 sm:pr-4 outline-none bg-transparent text-slate-800 font-bold text-sm placeholder-gray-300 min-w-0"
-                          />
-                        </div>
-                      </div>
-                      {teammates.length > 1 && (
-                        <button
-                          onClick={() => removeTeammate(idx)}
-                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-50 text-red-400 hover:bg-red-100 flex items-center justify-center transition-all shrink-0"
-                        >
-                          <FiX className="w-3.5 sm:w-4" />
-                        </button>
-                      )}
+            <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pb-24">
+                
+                {/* ── CURRENTLY APPLIED CONTESTS ──────────────────────── */}
+                <div className="mb-16">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-black text-slate-800">Currently Applied Contests</h2>
+                        <div className="w-20 h-2 bg-[#8cc63f] rounded-full hidden sm:block"></div>
                     </div>
-                  ))}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {MOCK_APPLIED_CONTESTS.map((contest, index) => (
+                            <ContestCard 
+                                key={contest.id}
+                                contest={contest}
+                                index={index}
+                                variant="submission"
+                                onAction={() => handleOpenSubmit(contest)}
+                            />
+                        ))}
+                    </div>
                 </div>
 
-                {teammates.length < 4 && (
-                  <button
-                    onClick={addTeammate}
-                    className="flex items-center gap-2 text-[#fbc111] font-black text-[10px] sm:text-xs uppercase tracking-widest hover:text-[#d9a50e] transition-colors mt-1"
-                  >
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#fbc111] text-white flex items-center justify-center shadow-md shadow-[#fbc111]/30">
-                      <FiPlus size={12} className="sm:w-3.5 sm:h-3.5" strokeWidth={3} />
+                {/* ── PAST SUBMISSIONS ────────────────────────────────── */}
+                <div className="mb-12">
+                    <h2 className="text-2xl font-black text-slate-800 mb-8">Past Submissions</h2>
+                    
+                    <div className="space-y-4">
+                        {MOCK_PAST_SUBMISSIONS.map((sub, idx) => (
+                            <div key={sub.id} className="bg-[#f2f8e9]/50 border border-[#8cc63f]/10 rounded-[32px] p-6 lg:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-[#f2f8e9] transition-all relative overflow-hidden">
+                                {/* Left strip indicator for pending ones */}
+                                {sub.status === 'Under Review' && (
+                                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#fbc111]"></div>
+                                )}
+                                
+                                <div className="flex items-center gap-6">
+                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl shrink-0 ${
+                                        sub.status === 'Evaluated' ? 'bg-[#8cc63f]/20 text-[#4a7010]' : 'bg-[#fbc111]/20 text-[#d9a50e]'
+                                    }`}>
+                                        {sub.icon}
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-black text-slate-900 mb-1">{sub.name}</h3>
+                                        <p className="text-sm font-medium text-gray-500">
+                                            Submitted on {sub.date} • {sub.domain}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-4">
+                                    <div className="flex items-center gap-2 bg-gray-100/80 px-4 py-2 rounded-xl">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">STATUS:</span>
+                                        <span className={`text-[11px] font-black ${
+                                            sub.status === 'Evaluated' ? 'text-[#4a7010]' : 'text-[#d9a50e]'
+                                        }`}>
+                                            {sub.status}
+                                        </span>
+                                    </div>
+
+                                    {sub.status === 'Evaluated' ? (
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <button 
+                                                onClick={() => navigate(`/student/leaderboard/${sub.id}`)}
+                                                className="px-4 py-2 text-xs font-black text-[#4a7010] hover:underline transition-all"
+                                            >
+                                                View Feedback
+                                            </button>
+                                            <button 
+                                                onClick={() => toast.success('Certificate Downloaded!')}
+                                                className="px-4 py-2 text-xs font-black text-[#4a7010] hover:underline transition-all"
+                                            >
+                                                Download Certificate
+                                            </button>
+                                            <button 
+                                                onClick={() => navigate(`/leaderboard/${sub.id}`)}
+                                                className="px-4 py-2 text-xs font-black text-[#4a7010] hover:underline transition-all"
+                                            >
+                                                Full Leaderboard
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button 
+                                            className="px-4 py-2 text-xs font-black text-gray-400 cursor-not-allowed transition-all"
+                                        >
+                                            Review Locked
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    Add Teammate
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* SECTION 3: Submission Area */}
-        <div className="bg-white rounded-[40px] p-6 sm:p-10 shadow-sm border border-gray-100">
-          {/* Title with separator */}
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">Submission Area</h2>
-            <div className="flex-1 h-[2px] bg-gradient-to-r from-[#8cc63f] to-transparent rounded-full" />
-          </div>
-
-          {/* File Uploads */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-            <div className="space-y-3">
-              <DropZone
-                id="project-pic-upload"
-                label="Upload Project Image"
-                accept="image/png, image/jpeg"
-                icon={FiImage}
-                hint="Drop your PNG/JPG here"
-                note="Max size 5MB · PNG or JPG"
-                file={projectPic}
-                onFileChange={f => {
-                  if (f.size > 5 * 1024 * 1024) { toast.error('Image must be under 5MB.'); return; }
-                  setProjectPic(f);
-                  toast.success('Project image selected!');
-                }}
-                accentColor="#8cc63f"
-              />
-              <p className="text-[10px] text-[#fbc111] font-bold px-1">
-                📌 Filename should be: <span className="font-black">yourUserName_project.jpg/.png</span> or <span className="font-black">yourTeamName_yourUserName.jpg/.png</span>
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <DropZone
-                id="project-pdf-upload"
-                label="Upload Project PDF"
-                accept="application/pdf"
-                icon={FiFileText}
-                hint="Drop your PDF here"
-                note="Max size 10MB · PDF"
-                file={projectPdf}
-                onFileChange={f => {
-                  if (f.size > 10 * 1024 * 1024) { toast.error('PDF must be under 10MB.'); return; }
-                  setProjectPdf(f);
-                  toast.success('Project PDF selected!');
-                }}
-                accentColor="#fbc111"
-              />
-              <p className="text-[10px] text-[#fbc111] font-bold px-1">
-                📌 Filename should be: <span className="font-black">yourUserName_project.pdf</span> or <span className="font-black">yourTeamName_yourUserName.pdf</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Links */}
-          <div className="space-y-5 mt-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <PortalInput
-                id="github-link"
-                label="GitHub Repo Link"
-                value={githubLink}
-                onChange={e => setGithubLink(e.target.value)}
-                placeholder="https://github.com/..."
-                icon={FiGithub}
-                subNote="Make sure link is public"
-                borderColor="border-[#fbc111]/50 focus-within:border-[#fbc111]"
-              />
-              <PortalInput
-                id="live-link"
-                label="Live Link"
-                value={liveLink}
-                onChange={e => setLiveLink(e.target.value)}
-                placeholder="https://myproject.vercel.app"
-                icon={FiGlobe}
-                subNote="Make sure link is public"
-                borderColor="border-[#8cc63f]/50 focus-within:border-[#8cc63f]"
-              />
-            </div>
-
-            <PortalInput
-              id="drive-link"
-              label="Google Drive Link"
-              value={driveLink}
-              onChange={e => setDriveLink(e.target.value)}
-              placeholder="https://drive.google.com/..."
-              icon={FiLink2}
-              subNote="Make sure link is public"
-              borderColor="border-[#8cc63f]/50 focus-within:border-[#8cc63f]"
-            />
-          </div>
-        </div>
-
-        {/* SUBMIT BUTTON */}
-        <div className="flex justify-center pt-4">
-          <Button
-            variant="portalSubmit"
-            text="Final Submit"
-            icon={FiSend}
-            isLoading={isSubmitting}
-            loadingText="Submitting..."
-            onClick={handleSubmit}
-            className="w-max px-14"
-          />
-        </div>
-
-        {/* SECTION 4: Past Submissions */}
-        <div className="bg-white rounded-[40px] p-6 sm:p-10 shadow-sm border border-gray-100">
-          <SectionTitle label="04" title="Past Submissions" accent="#8cc63f" />
-          
-          <div className="mt-8 space-y-4">
-            {pastSubmissions.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-                <p className="text-sm font-black text-gray-400 uppercase tracking-widest">No past submissions found</p>
-              </div>
-            ) : (
-              pastSubmissions.map((sub) => (
-                <div key={sub.id} className="flex flex-col sm:flex-row items-center justify-between p-6 bg-[#f1f8e8]/40 border border-white rounded-[32px] hover:bg-[#f1f8e8] transition-all group gap-4">
-                  <div className="flex items-center gap-6 w-full sm:w-auto">
-                    <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-[#8cc63f] shadow-sm transform group-hover:scale-110 transition-transform">
-                      <FiFileText size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-black text-slate-800 tracking-tight leading-tight">{sub.name}</h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">End Date:</span>
-                        <span className="text-[10px] font-black text-[#8cc63f] uppercase tracking-widest">{sub.endDate}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
-                    <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                      sub.isResultDeclared 
-                        ? 'bg-[#8cc63f]/10 text-[#8cc63f] border-[#8cc63f]/20' 
-                        : 'bg-yellow-50 text-yellow-500 border-yellow-200'
-                    }`}>
-                      {sub.isResultDeclared ? 'Result Declared' : 'Pending Evaluation'}
-                    </div>
-                    <button 
-                      onClick={() => handleViewResult(sub)}
-                      className="px-6 py-3 bg-white text-slate-800 text-[11px] font-black uppercase tracking-widest rounded-2xl border border-gray-100 hover:border-[#8cc63f] hover:text-[#8cc63f] shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-2"
-                    >
-                      View Result
-                    </button>
-                  </div>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
+            </div>
 
-      <Footer />
-    </div>
-  );
+            <Footer />
+
+            <SubmitContestModal 
+                isOpen={isSubmitModalOpen}
+                onClose={() => setIsSubmitModalOpen(false)}
+                contest={selectedContest}
+                onSuccess={() => setIsSubmitModalOpen(false)}
+            />
+        </div>
+    );
 };
-
-// ─────────────────────────────────────────────────────────────
-// HELPER: Section title with number badge
-// ─────────────────────────────────────────────────────────────
-const SectionTitle = ({ label, title, accent }) => (
-  <div className="flex items-center gap-4">
-    <div
-      className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black text-white shrink-0 shadow-md"
-      style={{ background: accent === '#fbc111' ? '#fbc111' : '#8cc63f', boxShadow: `0 4px 14px ${accent}44` }}
-    >
-      {label}
-    </div>
-    <h2 className="text-xl font-black text-slate-900 tracking-tight">{title}</h2>
-    <div className={`flex-1 h-[2px] bg-gradient-to-r ${accent === '#fbc111' ? 'from-[#fbc111]' : 'from-[#8cc63f]'} to-transparent rounded-full`} />
-  </div>
-);
 
 export default StudentSubmission;

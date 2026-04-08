@@ -5,7 +5,82 @@ import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import ApplyContestModal from '../../components/Modals/ApplyContestModal';
 import { Logo } from '../../components/index';
-import { FiBookOpen, FiDownload, FiCheckCircle, FiCalendar, FiDollarSign, FiAward, FiBriefcase } from 'react-icons/fi';
+import ContestCard from '../../components/Cards/ContestCard';
+import { FiBookOpen, FiDownload, FiCheckCircle, FiCalendar, FiDollarSign, FiAward, FiBriefcase, FiCode, FiLayout, FiTrendingUp, FiGlobe } from 'react-icons/fi';
+
+// MOCK Contest Data
+const MOCK_CONTEST_DATA = {
+    id: 1,
+    title: "The Algorithmic Grand Prix 2024",
+    status: "ONGOING",
+    domain: "DEVELOPMENT",
+    difficulty: "MEDIUM",
+    endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 12 * 60 * 60 * 1000 + 59 * 60 * 1000).toISOString(),
+    syllabusUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+};
+
+// Related Contests Logic (Mock data from AllContests.jsx)
+const BASE_CONTESTS = [
+    {
+        id: 1,
+        title: "Algorithmic Odyssey",
+        desc: "Master complex data structures and solve real-world efficiency problems in this 48-hour sprint.",
+        domain: "Development",
+        status: "ONGOING",
+        icon: <FiCode />,
+        dateInfo: "ENDS IN",
+        dateValue: "12h"
+    },
+    {
+        id: 2,
+        title: "Python Pro Challenge",
+        desc: "A deep dive into backend optimization and clean code practices using Python frameworks.",
+        domain: "Development",
+        status: "UPCOMING",
+        icon: <FiCode />
+    },
+    {
+        id: 3,
+        title: "Visual Storytelling",
+        desc: "A design challenge focused on minimalist composition and emotional color theory application.",
+        domain: "UI/UX",
+        status: "ONGOING",
+        icon: <FiLayout />
+    },
+    {
+        id: 4,
+        title: "Accessibility Masterclass",
+        desc: "Designing inclusive interfaces that cater to users with diverse functional needs.",
+        domain: "UI/UX",
+        status: "UPCOMING",
+        icon: <FiLayout />
+    },
+    {
+        id: 5,
+        title: "Growth Hacking Summit",
+        desc: "Strategic campaign planning and data-driven optimization for scaling startups.",
+        domain: "Marketing",
+        status: "UPCOMING",
+        icon: <FiTrendingUp />
+    },
+    {
+        id: 6,
+        title: "SEO Performance Blast",
+        desc: "Master technical SEO and content clustering to dominate search engine results.",
+        domain: "Marketing",
+        status: "ONGOING",
+        icon: <FiTrendingUp />
+    }
+];
+
+const getDomainIcon = (domain) => {
+    switch (domain?.toLowerCase()) {
+        case 'development': return <FiCode />;
+        case 'ui/ux': return <FiLayout />;
+        case 'marketing': return <FiTrendingUp />;
+        default: return <FiGlobe />;
+    }
+};
 
 const ContestDetails = () => {
     const { id } = useParams();
@@ -34,18 +109,26 @@ const ContestDetails = () => {
     // =========================================================================
 
     // MOCK Contest Data — DELETE this when API is ready:
-    const contestData = {
-        title: "The Algorithmic Grand Prix 2024",
-        status: "ONGOING",
-        domain: "DEVELOPMENT",
-        difficulty: "MEDIUM",
-        endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 12 * 60 * 60 * 1000 + 59 * 60 * 1000).toISOString(),
-        syllabusUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-    };
+
+
+
+
+    const relatedContests = React.useMemo(() => {
+        return BASE_CONTESTS
+            .filter(c => 
+                c.domain.toLowerCase() === MOCK_CONTEST_DATA.domain.toLowerCase() && 
+                String(c.id) !== String(id) // Exclude current contest
+            )
+            .map(c => ({
+                ...c,
+                icon: getDomainIcon(c.domain)
+            }))
+            .slice(0, 4); // Limit to 4
+    }, [id]);
 
     const handleDownload = () => {
-        if (contestData.syllabusUrl) {
-            window.open(contestData.syllabusUrl, '_blank');
+        if (MOCK_CONTEST_DATA.syllabusUrl) {
+            window.open(MOCK_CONTEST_DATA.syllabusUrl, '_blank');
         }
     };
 
@@ -55,8 +138,8 @@ const ContestDetails = () => {
 
     useEffect(() => {
         const calculateTimeLeft = () => {
-            const difference = +new Date(contestData.endDate) - +new Date();
-            let timeLeft = {};
+            const difference = +new Date(MOCK_CONTEST_DATA.endDate) - +new Date();
+            let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
             if (difference > 0) {
                 timeLeft = {
@@ -74,7 +157,7 @@ const ContestDetails = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [contestData.endDate]);
+    }, []);
 
     return (
         <div className="min-h-screen bg-[#f8faf2] font-sans selection:bg-[#8cc63f]/30 overflow-x-hidden">
@@ -88,13 +171,13 @@ const ContestDetails = () => {
                     {/* Tags */}
                     <div className="flex flex-wrap items-center gap-3 mb-6">
                         <span className="bg-[#8cc63f] text-slate-900 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
-                            {contestData.status}
+                            {MOCK_CONTEST_DATA.status}
                         </span>
                         <span className="bg-[#ecf0e6] text-gray-500 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
-                            {contestData.domain}
+                            {MOCK_CONTEST_DATA.domain}
                         </span>
                         <span className="bg-[#fbc111] text-slate-900 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
-                            {contestData.difficulty}
+                            {MOCK_CONTEST_DATA.difficulty}
                         </span>
                     </div>
 
@@ -217,15 +300,17 @@ const ContestDetails = () => {
                     {/* Registration Timer Widget (Apply Now) */}
                     <div className="bg-white p-8 lg:p-10 rounded-[40px] text-center border-[3px] border-[#fbc111]/90 shadow-2xl shadow-[#fbc111]/10 flex flex-col justify-center">
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Registration Closes In</p>
-                        <div className="flex items-center justify-center gap-3 text-4xl lg:text-5xl font-black text-slate-800 font-mono tracking-tighter mb-4">
+                        <div className="flex items-center justify-center gap-2 sm:gap-3 text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 font-mono tracking-tighter mb-4">
                             <span>{String(timeLeft.days || 0).padStart(2, '0')}</span>
-                            <span className="text-[#fbc111] -mt-2">:</span>
+                            <span className="text-[#fbc111] -mt-1">:</span>
                             <span>{String(timeLeft.hours || 0).padStart(2, '0')}</span>
-                            <span className="text-[#fbc111] -mt-2">:</span>
+                            <span className="text-[#fbc111] -mt-1">:</span>
                             <span>{String(timeLeft.minutes || 0).padStart(2, '0')}</span>
+                            <span className="text-[#fbc111] -mt-1">:</span>
+                            <span>{String(timeLeft.seconds || 0).padStart(2, '0')}</span>
                         </div>
-                        <div className="flex items-center justify-center gap-[42px] text-[8px] font-black text-gray-400 uppercase tracking-widest pl-1 mb-10">
-                            <span>Days</span><span>Hrs</span><span>Min</span>
+                        <div className="flex items-center justify-center gap-[18px] sm:gap-[24px] lg:gap-[30px] text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest pl-1 mb-10">
+                            <span>Days</span><span>Hrs</span><span>Min</span><span>Sec</span>
                         </div>
                         {hasApplied ? (
                             <button disabled className="bg-gray-200 text-gray-500 border border-gray-300 px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest w-full mb-6 cursor-not-allowed">✅ Applied</button>
@@ -267,6 +352,35 @@ const ContestDetails = () => {
 
                 </div>
 
+                {/* --- ROW 3: RELATED CONTESTS --- */}
+                {relatedContests.length > 0 && (
+                    <div className="mt-24 border-t border-gray-200 pt-16">
+                        <div className="flex justify-between items-end mb-8 lg:mb-12">
+                            <div>
+                                <h2 className="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight mb-4">
+                                    Related Contests
+                                </h2>
+                                <p className="text-gray-500 font-medium text-sm lg:text-base max-w-xl">
+                                    More opportunities in the <span className="font-bold text-[#8cc63f]">{MOCK_CONTEST_DATA.domain}</span> domain to showcase your skills.
+                                </p>
+                            </div>
+                            <Link to="/student/contests" className="hidden md:flex text-[#8cc63f] hover:text-[#7ab332] font-black text-sm uppercase tracking-widest items-center gap-2 transition-colors">
+                                View All 
+                            </Link>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                            {relatedContests.map((contest, index) => (
+                                <ContestCard 
+                                    key={contest.id} 
+                                    contest={contest} 
+                                    index={index} 
+                                    variant="all" 
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
             </section>
 
             <Footer />
@@ -274,7 +388,7 @@ const ContestDetails = () => {
             <ApplyContestModal
                 isOpen={isApplyModalOpen}
                 onClose={() => setIsApplyModalOpen(false)}
-                contest={contestData}
+                contest={MOCK_CONTEST_DATA}
                 contestId={id}
                 onSuccess={() => {
                     toast.success("Application Transmitted Successfully!");

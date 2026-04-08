@@ -16,6 +16,8 @@ const AuthForm = ({ type }) => {
   const isRegister = type === 'register';
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -42,8 +44,42 @@ const AuthForm = ({ type }) => {
     setFormData(prev => ({ ...prev, gender: g }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (isForgotPassword) {
+      if (!formData.email) {
+        toast.error("Please enter your email address");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/v1/users/password/forgot`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: formData.email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success(data.message || "Reset link sent to your email!");
+          setIsForgotPassword(false); // Go back to login after success
+        } else {
+          toast.error(data.message || "Failed to send reset link.");
+        }
+      } catch (error) {
+        console.error("Forgot Password Error:", error);
+        toast.error("Server connection failed.");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (isRegister) {
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match!");
@@ -161,10 +197,14 @@ const AuthForm = ({ type }) => {
         
         <div className="text-center">
           <h2 className={`font-black text-black mb-1.5 tracking-tight leading-tight uppercase ${isRegister ? 'text-[32px]' : 'text-[34px]'}`}>
-            {isRegister ? 'Create Account' : 'Welcome Back'}
+            {isForgotPassword ? 'Reset Password' : isRegister ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-gray-500 text-[15px] font-bold opacity-70">
-            {isRegister ? 'Start your journey toward academic mastery today.' : 'Please enter your details to continue.'}
+            {isForgotPassword 
+              ? 'Enter your email to receive a recovery link.' 
+              : isRegister 
+                ? 'Start your journey toward academic mastery today.' 
+                : 'Please enter your details to continue.'}
           </p>
         </div>
       </div>
@@ -229,85 +269,104 @@ const AuthForm = ({ type }) => {
           </>
         )}
 
-        <div className={isRegister ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-6"}>
-          <InputField
-            label="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            icon={isRegister ? FiLock : null}
-            labelRight={!isRegister ? "Forgot Password?" : null}
-            required
-          />
-          {isRegister && (
+        {!isForgotPassword && (
+          <div className={isRegister ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-6"}>
             <InputField
-              label="Confirm" type="password" name="confirmPassword" value={formData.confirmPassword}
-              onChange={handleChange} placeholder="••••••••" icon={FiRotateCcw} required
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              icon={isRegister ? FiLock : null}
+              labelRight={!isRegister ? "Forgot Password?" : null}
+              onLabelRightClick={() => setIsForgotPassword(true)}
+              required
             />
-          )}
-        </div>
-
-        <div className="flex items-center gap-2.5 py-1">
-          <input
-            type="checkbox"
-            id={isRegister ? "terms" : "keepLoggedIn"}
-            name={isRegister ? "termsAccepted" : "keepLoggedIn"}
-            checked={isRegister ? formData.termsAccepted : formData.keepLoggedIn}
-            onChange={handleChange}
-            className="w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
-          />
-          <label htmlFor={isRegister ? "terms" : "keepLoggedIn"} className="text-sm text-gray-600 font-semibold cursor-pointer flex-1 uppercase tracking-tight">
-            {isRegister ? (
-              <>I agree to the <a href="#terms" className="text-[#6aa315] font-semibold hover:underline">Terms of Service</a> and <a href="#privacy" className="text-[#6ca518] font-semibold hover:underline">Privacy Policy</a>.</>
-            ) : (
-              "Keep me logged in"
+            {isRegister && (
+              <InputField
+                label="Confirm" type="password" name="confirmPassword" value={formData.confirmPassword}
+                onChange={handleChange} placeholder="••••••••" icon={FiRotateCcw} required
+              />
             )}
-          </label>
-        </div>
+          </div>
+        )}
+
+        {!isForgotPassword && (
+          <div className="flex items-center gap-2.5 py-1">
+            <input
+              type="checkbox"
+              id={isRegister ? "terms" : "keepLoggedIn"}
+              name={isRegister ? "termsAccepted" : "keepLoggedIn"}
+              checked={isRegister ? formData.termsAccepted : formData.keepLoggedIn}
+              onChange={handleChange}
+              className="w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
+            />
+            <label htmlFor={isRegister ? "terms" : "keepLoggedIn"} className="text-sm text-gray-600 font-semibold cursor-pointer flex-1 uppercase tracking-tight">
+              {isRegister ? (
+                <>I agree to the <a href="#terms" className="text-[#6aa315] font-semibold hover:underline">Terms of Service</a> and <a href="#privacy" className="text-[#6ca518] font-semibold hover:underline">Privacy Policy</a>.</>
+              ) : (
+                "Keep me logged in"
+              )}
+            </label>
+          </div>
+        )}
 
         <Button
           type="submit"
-          disabled={isRegister && !formData.termsAccepted}
-          text={isRegister ? "Create Account" : "Sign In to Academy"}
+          disabled={loading || (isRegister && !formData.termsAccepted)}
+          text={loading ? "Please wait..." : isForgotPassword ? "Send Recovery Link" : isRegister ? "Create Account" : "Sign In to Academy"}
           icon={FiArrowRight}
           variant="primary"
           className={`mt-2 py-4 shadow-xl shadow-[#8cc63f]/25 ${!isRegister ? 'text-[16px] tracking-wider' : ''}`}
         />
+
+        {isForgotPassword && (
+          <button
+            type="button"
+            onClick={() => setIsForgotPassword(false)}
+            className="w-full text-center text-sm font-bold text-[#6ca518] hover:underline mt-4 cursor-pointer"
+          >
+            ← Back to Login
+          </button>
+        )}
       </form>
 
-      {/* Divider */}
-      <div className="relative my-10 lg:my-12">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-100"></div>
-        </div>
-        <div className="relative flex justify-center text-[10px] font-black tracking-[0.2em] text-gray-300">
-          <span className="bg-[#e5faa7] lg:bg-white px-5 uppercase">
-            {isRegister ? 'OR REGISTER WITH' : 'OR CONTINUE WITH'}
-          </span>
-        </div>
-      </div>
+      {!isForgotPassword && (
+        <>
+          {/* Divider */}
+          <div className="relative my-10 lg:my-12">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-100"></div>
+            </div>
+            <div className="relative flex justify-center text-[10px] font-black tracking-[0.2em] text-gray-300">
+              <span className="bg-[#e5faa7] lg:bg-white px-5 uppercase">
+                {isRegister ? 'OR REGISTER WITH' : 'OR CONTINUE WITH'}
+              </span>
+            </div>
+          </div>
 
-      {/* Social Sign In */}
-      <div className={`flex gap-4 ${!isRegister ? 'flex-col' : ''}`}>
-        <SocialButton
-          text="Google"
-          icon={FcGoogle}
-          onClick={() => console.log("Google Login Clicked")}
-        />
-        {isRegister && (
-          <SocialButton text="Apple" icon={FaApple} iconColor="text-black" onClick={() => console.log('Apple login clicked')} />
-        )}
-      </div>
+          {/* Social Sign In */}
+          <div className={`flex gap-4 ${!isRegister ? 'flex-col' : ''}`}>
+            <SocialButton
+              text="Google"
+              icon={FcGoogle}
+              onClick={() => console.log("Google Login Clicked")}
+            />
+            {isRegister && (
+              <SocialButton text="Apple" icon={FaApple} iconColor="text-black" onClick={() => console.log('Apple login clicked')} />
+            )}
+          </div>
 
-      <p className={`text-center text-[15px] font-bold text-gray-500 mt-14 mb-8 ${!isRegister ? 'text-gray-400' : ''}`}>
-        {isRegister ? (
-          <>Already have an account? <Link to="/login" className="text-[#6ca518] hover:underline font-bold ml-1 transition-colors">Log in here</Link></>
-        ) : (
-          <>Don't have an account yet? <Link to="/register" className="text-[#6ca518] hover:underline hover:text-[#5a8c14] transition-colors ml-1 font-bold">Join the Academy</Link></>
-        )}
-      </p>
+          <p className={`text-center text-[15px] font-bold text-gray-500 mt-14 mb-8 ${!isRegister ? 'text-gray-400' : ''}`}>
+            {isRegister ? (
+              <>Already have an account? <Link to="/login" className="text-[#6ca518] hover:underline font-bold ml-1 transition-colors">Log in here</Link></>
+            ) : (
+              <>Don't have an account yet? <Link to="/register" className="text-[#6ca518] hover:underline hover:text-[#5a8c14] transition-colors ml-1 font-bold">Join the Academy</Link></>
+            )}
+          </p>
+        </>
+      )}
     </div>
   );
 };

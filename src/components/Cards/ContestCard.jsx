@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ApplyContestModal from '../Modals/ApplyContestModal';
 
-const ContestCard = React.memo(({ contest, index, variant = 'dashboard' }) => {
+const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onAction }) => {
     const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
 
@@ -64,6 +64,15 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard' }) => {
                         >
                             View Details
                         </Link>
+                    </div>
+                ) : variant === 'submission' ? (
+                    <div className="flex flex-wrap gap-4 mt-auto">
+                        <button 
+                            onClick={() => onAction && onAction(contest)}
+                            className="flex-1 bg-[#fbc111] hover:bg-[#ebaa00] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center"
+                        >
+                            Submit Your Response
+                        </button>
                     </div>
                 ) : (
                     <div className="flex flex-wrap gap-4 mt-auto">

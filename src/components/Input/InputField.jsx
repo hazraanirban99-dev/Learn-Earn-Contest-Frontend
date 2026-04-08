@@ -1,14 +1,14 @@
 import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
-const InputField = React.memo(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight }) => {
+const InputField = React.memo(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight, onLabelRightClick }) => {
   const isTextArea = type === 'textarea';
 
   return (
     <div className="flex flex-col gap-1.5 w-full mb-4">
       <div className="flex justify-between items-center">
         <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">{label}</label>
-        {labelRight && <div className="text-[10px] font-bold text-[#689c19] hover:underline cursor-pointer">{labelRight}</div>}
+        {labelRight && <button type="button" onClick={onLabelRightClick} className="text-[10px] font-bold text-[#689c19] hover:underline cursor-pointer bg-transparent border-0 p-0">{labelRight}</button>}
       </div>
       <div className={`flex rounded-lg bg-[#f4f7eb] focus-within:ring-2 focus-within:ring-[#8cc63f] overflow-hidden transition-all relative ${isTextArea ? 'min-h-25 items-start pt-4' : 'h-13 items-center'}`}>
         {Icon && (
