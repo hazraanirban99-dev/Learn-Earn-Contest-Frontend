@@ -28,3 +28,9 @@ dist-ssr
 src/backup_assets/
 src/assets/
 
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+

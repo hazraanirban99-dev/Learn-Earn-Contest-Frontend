@@ -8,9 +8,10 @@
 
 import React from 'react';
 import { Logo } from '../index';
-import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
-const partnerLogos = getOptimizedUrl(CLOUDINARY_ASSETS["partner-logos.png"]);
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
+
+const partnerLogos = getOptimizedUrl(CLOUDINARY_ASSETS["partner-logos.png"]);
 
 const Footer = () => {
   const companyLinks = [

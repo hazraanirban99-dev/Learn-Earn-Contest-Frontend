@@ -8,6 +8,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
+
 const logo = getOptimizedUrl(CLOUDINARY_ASSETS["desun-logo.png"]);
 
 /**
