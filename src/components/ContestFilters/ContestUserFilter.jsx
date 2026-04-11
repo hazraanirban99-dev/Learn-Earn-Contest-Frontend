@@ -1,113 +1,137 @@
+// ============================================================
+// ContestUserFilter.jsx — Admin dashboard e Year/Month/Contest filter component
+// ReviewSubmissions, DeclareWinners, r ContestReports e use hoy eta.
+// Step 1: Year + Month select korle oi samayer contests backend theke fetch hoy.
+// Step 2: Contest select korle oi contest er sob submissions fetch hoy.
+// Step 3: Participant select kora jay (showParticipant=true hole).
+// onSelectionChange() diye parent component ke data pathano hoy.
+// ============================================================
+
 import React, { useState, useEffect } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
-
-// =========================================================================
-// 🚀 [BACKEND] FETCH HIERARCHICAL FILTER DATA
-// =========================================================================
-// This component needs 4 cascading API calls:
-//
-// 1. FETCH YEARS — GET /api/v1/contests/years
-//    Returns: ['2024', '2025', ...]
-//    Replace hardcoded <option>2024</option> list with mapped years from API.
-//
-// 2. FETCH MONTHS (on year change) — GET /api/v1/contests/months?year=2024
-//    Returns: ['January', 'October', 'September', ...]
-//    Replace the static 12-month list with months that actually have contests.
-//
-// 3. FETCH CONTESTS (on month change) — GET /api/v1/contests?year=2024&month=October
-//    Returns: [{ id: 'c1', title: '...', participants: [...] }, ...]
-//    Each contest must include its participants array for sub-filtering.
-//
-// 4. PARTICIPANT LIST comes from the selected contest's participant array.
-//    No extra API call needed if contests include participants.
-//    OR: GET /api/v1/contests/:contestId/participants
-//
-// Tip: Use `useEffect` with dependency on [selectedYear, selectedMonth] etc.
-// =========================================================================
-
-// MOCK Data — DELETE this entire object once API is connected:
-const mockData = {
-  '2024': {
-    'October': [
-      { 
-        id: 'c1', 
-        title: 'Eco-Urban Design 2024',
-        participants: [
-          { id: 'p1', name: 'Marcus Aurelius (Selected)', score: 29.5, school: 'Royal Academy', avatar: 'https://i.pravatar.cc/150?img=11' },
-          { id: 'p2', name: 'Jane Doe (Pending)', score: 29.5, school: 'Design Institute', avatar: 'https://i.pravatar.cc/150?img=47' },
-          { id: 'p3', name: 'Alex Rivera', score: 28.2, school: 'Architecture School', avatar: 'https://i.pravatar.cc/150?img=12' }
-        ]
-      },
-      { 
-        id: 'c2', 
-        title: 'Future Mobility Concept',
-        participants: [
-          { id: 'p4', name: 'Sarah Smith', score: 27.5, school: 'Art University', avatar: 'https://i.pravatar.cc/150?img=33' }
-        ]
-      }
-    ],
-    'September': [
-      { 
-        id: 'c3', 
-        title: 'Sustainable Energy Hackathon',
-        participants: [
-          { id: 'p5', name: 'Tom Hardy', score: 26.0, school: 'Tech College', avatar: 'https://i.pravatar.cc/150?img=60' }
-        ]
-      }
-    ]
-  },
-  '2025': {
-    'January': [
-      { 
-        id: 'c4', 
-        title: 'AI in Architecture 2025',
-        participants: [
-          { id: 'p6', name: 'Elon Musk', score: 30.0, school: 'Space Tech', avatar: 'https://i.pravatar.cc/150?img=15' }
-        ]
-      }
-    ]
-  }
-};
+import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 
 const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
+  const { user } = useAuth();
+  const [years, setYears] = useState(['2024', '2025']); // Fallback defaults
+  const [months, setMonths] = useState(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
+  
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedContest, setSelectedContest] = useState('');
+  const [selectedParticipant, setSelectedParticipant] = useState('');
+  
+  const [availableContests, setAvailableContests] = useState([]);
+  const [availableSubmissions, setAvailableSubmissions] = useState([]);
 
-  const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedMonth, setSelectedMonth] = useState('October');
-  const [selectedContest, setSelectedContest] = useState('Eco-Urban Design 2024');
-  const [selectedParticipant, setSelectedParticipant] = useState('Marcus Aurelius (Selected)');
-
-  // Derived Lists
-  const availableContests = mockData[selectedYear]?.[selectedMonth] || [];
-  const selectedContestObj = availableContests.find(c => c.title === selectedContest);
-  const availableParticipants = selectedContestObj?.participants || [];
-
-  // Cascading Resets
+  // 1. Initial Load: Fetch Years and Months that have contests
   useEffect(() => {
-    const firstContest = availableContests[0]?.title || 'No contests found';
-    setSelectedContest(firstContest);
+    const fetchFilters = async () => {
+      try {
+        const { data } = await api.get('/contests/filters');
+        if (data.success) {
+          if (data.data.years.length > 0) {
+            setYears(data.data.years);
+            setSelectedYear(data.data.years[data.data.years.length - 1]); // Set latest year
+          }
+          if (data.data.months.length > 0) {
+            setMonths(data.data.months);
+            setSelectedMonth(data.data.months[data.data.months.length - 1]); // Set latest month
+          }
+        }
+      } catch (error) {
+        console.error("Filter fetch error:", error);
+      }
+    };
+    fetchFilters();
+  }, []);
+
+  // 2. Year/Month change hole Contests load kora hoche
+  useEffect(() => {
+    const fetchContests = async () => {
+      if (!selectedYear || !selectedMonth) return;
+      try {
+        const { data } = await api.get(`/contests?year=${selectedYear}&month=${selectedMonth}`);
+        if (data.success) {
+          setAvailableContests(data.data);
+          if (data.data.length > 0) {
+            setSelectedContest(data.data[0].title);
+          } else {
+            setSelectedContest('');
+            setAvailableSubmissions([]);
+          }
+        }
+      } catch (error) {
+        console.error("Contest fetch error:", error);
+      }
+    };
+    fetchContests();
   }, [selectedYear, selectedMonth]);
 
+  // 3. Contest change hole Submissions/Participants load kora hoche (if Admin needs it)
   useEffect(() => {
-    const firstParticipant = availableParticipants[0]?.name || 'No participants found';
-    setSelectedParticipant(firstParticipant);
-  }, [selectedContest, availableContests]);
+    const fetchSubmissions = async () => {
+      const contest = availableContests.find(c => c.title === selectedContest);
+      if (!contest) return;
+      // Non-admin users eke use korbe na
+      if (!user || user.role !== 'admin') return;
+
+      try {
+        const { data } = await api.get(`/admin/submissions/contest/${contest._id}`);
+        if (data.success) {
+          setAvailableSubmissions(data.data);
+          if (data.data.length > 0) {
+            setSelectedParticipant(data.data[0].studentId.name);
+          } else {
+            setSelectedParticipant('');
+          }
+        }
+      } catch (error) {
+        if (error.response?.status !== 401) {
+          console.error("Submission fetch error:", error);
+        }
+      }
+    };
+    
+    if (selectedContest && selectedContest !== 'No contests found') {
+        fetchSubmissions();
+    }
+  }, [selectedContest, availableContests, user]);
 
   // Notify parent on any selection change
   useEffect(() => {
+    const selectedContestObj = availableContests.find(c => c.title === selectedContest);
+    const selectedSubObj = availableSubmissions.find(s => s.studentId?.name === selectedParticipant);
+
     if (onSelectionChange) {
       onSelectionChange({
         year: selectedYear,
         month: selectedMonth,
         contest: selectedContest,
         participant: selectedParticipant,
-        contestData: selectedContestObj // Pass the full contest data including participants for DeclareWinners
+        contestId: selectedContestObj?._id,
+        contestData: { 
+            ...selectedContestObj,
+            participants: availableSubmissions.map(s => ({
+                id: s._id,
+                studentId: s.studentId, // Pass full object if we need more context down the line
+                name: s.studentId?.name,
+                email: s.studentId?.email, // Exposed email
+                avatar: s.studentId?.avatar || 'https://i.pravatar.cc/150',
+                score: s.score,
+                status: s.status,
+                projectUrl: s.projectUrl,
+                projectThumbnail: s.projectThumbnail?.url,
+                projectPdf: s.projectPdf?.url
+            }))
+        }
       });
     }
-  }, [selectedYear, selectedMonth, selectedContest, selectedParticipant, onSelectionChange]);
+  }, [selectedYear, selectedMonth, selectedContest, selectedParticipant, availableSubmissions, availableContests, onSelectionChange]);
 
   return (
     <div className="w-full lg:w-auto flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-      {/* Top Row: Year and Month */}
       <div className="flex flex-col sm:flex-row gap-4 w-full">
         <div className="space-y-2 flex-1 sm:w-48">
           <label className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f]">Select Year</label>
@@ -117,8 +141,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               onChange={(e) => setSelectedYear(e.target.value)}
               className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all hover:bg-white hover:shadow-sm"
             >
-              <option>2024</option>
-              <option>2025</option>
+              {years.map(y => <option key={y}>{y}</option>)}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
           </div>
@@ -131,16 +154,13 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all hover:bg-white hover:shadow-sm"
             >
-              {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => (
-                <option key={m}>{m}</option>
-              ))}
+              {months.map(m => <option key={m}>{m}</option>)}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
           </div>
         </div>
       </div>
 
-      {/* Bottom Row: Contest and Optionally Participant */}
       <div className="flex flex-col gap-4 w-full">
         <div className="space-y-2 w-full">
           <label className="text-[10px] font-black uppercase tracking-widest text-[#fbc111]">Select Project Contest</label>
@@ -150,11 +170,11 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               onChange={(e) => setSelectedContest(e.target.value)}
               className="w-full bg-white border-2 border-gray-100 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
             >
-              <option disabled={availableContests.length === 0}>
+              <option value="" disabled>
                 {availableContests.length === 0 ? 'No contests found in this period' : 'Select a contest'}
               </option>
               {availableContests.map(c => (
-                <option key={c.id} value={c.title}>{c.title}</option>
+                <option key={c._id} value={c.title}>{c.title}</option>
               ))}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
@@ -170,11 +190,11 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
                 onChange={(e) => setSelectedParticipant(e.target.value)}
                 className="w-full bg-white border-2 border-gray-100 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
               >
-                <option disabled={availableParticipants.length === 0}>
-                  {availableParticipants.length === 0 ? 'No participants available' : 'Select a candidate'}
+                <option value="" disabled>
+                  {availableSubmissions.length === 0 ? 'No participants available' : 'Select a candidate'}
                 </option>
-                {availableParticipants.map(p => (
-                  <option key={p.id} value={p.name}>{p.name}</option>
+                {availableSubmissions.map(s => (
+                  <option key={s._id} value={s.studentId?.name}>{s.studentId?.name}</option>
                 ))}
               </select>
               <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />

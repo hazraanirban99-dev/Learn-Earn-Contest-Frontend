@@ -1,3 +1,8 @@
+// ============================================================
+// components/index.js — Central export hub for components
+// Prottekta component ekhane import kore export kora hoy jate usage clean thake.
+// ============================================================
+
 import InputField from './Input/InputField';
 import Button from './Button/Button';
 import SocialButton from './SocialButton/SocialButton';

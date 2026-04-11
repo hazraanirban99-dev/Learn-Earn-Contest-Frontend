@@ -1,8 +1,19 @@
+// ============================================================
+// DeclareWinners.jsx — Contest winner declare korar page (Admin)
+// ContestUserFilter diye contest select korle oi contest er
+// sob evaluated participant er score dekha jay.
+// Score er upore base kore Dense Ranking logic e rank assign kora hoy.
+// Top 3 winner ke podium card e highlight kora hoy.
+// "Finalize & Send Notification" click korle default mail client khulbe
+// jeta te participant der email pre-filled thakbe. Admin manually send korbe.
+// ============================================================
+
 import React, { useState, useMemo } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import { FiInfo, FiDownload, FiSend } from 'react-icons/fi';
 import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import ContestUserFilter from '../../components/ContestFilters/ContestUserFilter';
 import { exportToCSV } from '../../utils/exportUtils';
 
@@ -138,7 +149,7 @@ export default function DeclareWinners() {
             <h2 className="text-xl font-black text-slate-900 tracking-tight">Full Leaderboard</h2>
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button 
-                onClick={() => exportToCSV(rankedParticipants, `Full_Leaderboard_${new Date().toLocaleDateString()}`)}
+                onClick={() => exportToCSV(rankedParticipants, `Full_Leaderboard_${formatDateDDMMYYYY(new Date())}`)}
                 className="flex-1 sm:flex-none justify-center px-4 py-2 bg-[#f8faf6] hover:bg-[#e8efe0] text-[#5c8a14] text-xs font-black tracking-widest uppercase rounded-xl transition-colors flex items-center gap-2"
               >
                  <FiDownload size={14} /> Export CSV
@@ -206,29 +217,33 @@ export default function DeclareWinners() {
           <div className="flex flex-col items-center z-10 w-full md:w-auto shrink-0">
              <button 
                 onClick={async () => {
-                  // =========================================================================
-                  // 🚀 [BACKEND] FINALIZE WINNERS & SEND NOTIFICATIONS
-                  // =========================================================================
-                  // Endpoint: POST /api/v1/contests/:contestId/finalize-winners
-                  // Payload:
-                  // {
-                  //   contestId: <from ContestUserFilter>,
-                  //   winners: rankedParticipants.filter(p => p.rank <= 3).map(p => ({
-                  //     participantId: p.id,
-                  //     rank: p.rank,
-                  //     finalScore: p.score
-                  //   }))
-                  // }
-                  //
-                  // Side effects (handled by backend):
-                  //   - Auto-generate certificates for top 3
-                  //   - Send email notifications to all ranked participants
-                  //   - Update contest status to 'COMPLETED'
-                  //   - Publicly announce on portal
-                  // =========================================================================
+                  try {
+                    // Collect recipient emails from ranked participants (especially top 3 winners)
+                    const winnerEmails = topWinners.filter(p => p.email).map(p => p.email);
+                    const otherEmails = leaderboard.filter(p => p.email).map(p => p.email);
+                    
+                    const allEmails = [...new Set([...winnerEmails, ...otherEmails])];
 
-                  // MOCK — DELETE when API is ready:
-                  toast.success("Winners Declared & Notifications Sent Successfully!");
+                    if (allEmails.length === 0) {
+                      toast.warning("No email addresses found for participants!");
+                      return;
+                    }
+
+                    // Create mailto link
+                    const subject = encodeURIComponent(`Contest Results Announced: ${selectedContest || 'Scholastic Atelier'} 🏆`);
+                    const body = encodeURIComponent(`Dear Participant,\n\nThe results for the contest have been declared! Please check your dashboard for your final rank and scores.\n\nBest Regards,\nAdmin Team\nDesun Academy`);
+                    
+                    // We put all emails in the "BCC" field to preserve privacy, and put admin@desun.edu.in in the "To" field.
+                    // Or follow instruction: "to te participent er mail likhe", which means put participants in "To" field.
+                    const mailtoLink = `mailto:${allEmails.join(',')}?subject=${subject}&body=${body}`;
+                    
+                    // Open default mail client
+                    window.location.href = mailtoLink;
+                    
+                    toast.success("Opening Mail Client with participants' emails!");
+                  } catch (err) {
+                    toast.error("Failed to generate mail link.");
+                  }
                 }}
                 className="bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px]"
               >
@@ -238,7 +253,7 @@ export default function DeclareWinners() {
                </div>
                <FiSend size={20} className="ml-2" />
              </button>
-             <span className="text-[8px] font-black tracking-[0.2em] text-gray-400 uppercase mt-4">This action cannot be undone</span>
+             <span className="text-[8px] font-black tracking-[0.2em] text-gray-400 uppercase mt-4">This opens your default mail client</span>
           </div>
         </div>
 

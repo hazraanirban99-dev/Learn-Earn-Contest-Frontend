@@ -1,3 +1,12 @@
+// ============================================================
+// ParticipantsDirectory.jsx — Sob participant er directory page (Admin only)
+// UserContext theke sob student fetch hoy.
+// Domain filter diye specific domain er student dekhano jay.
+// Pagination ache — 8 joner beshi hole page e bhag hobe.
+// Export button click korle sob participant er CSV download hobe.
+// React.memo use kora hoyeche unnecessary re-render avoid korar jonno.
+// ============================================================
+
 import React, { useState, useMemo, useCallback } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import { 

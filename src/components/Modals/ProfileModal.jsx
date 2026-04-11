@@ -1,22 +1,50 @@
+// ============================================================
+// ProfileModal.jsx — Student er profile edit korar modal
+// Navbar theke avatar click korle ei modal khule.
+// AuthContext theke current user data pre-fill hoy form e.
+// Student name, phone, address, domain (interested in), gender edit korte parbe.
+// Avatar upload optional — file select korle preview dekhano hoy.
+// Save click hole multipart/form-data diye PATCH /users/profile call hoy.
+// Success hole AuthContext er updateUser() call hoy — sob jagay instantly update hobe.
+// Email readonly — backend theke verified, tai change kora jay na.
+// ============================================================
+
 import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiEdit2, FiCheckCircle, FiFileText, FiMapPin, FiMail, FiPhone, FiBookOpen, FiLoader } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { Logo, InputField, Button } from '../index';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
 
 const ProfileModal = ({ isOpen, onClose }) => {
+    const { user, updateUser } = useAuth();
     const [isSaving, setIsSaving] = useState(false);
-    const [profilePic, setProfilePic] = useState("https://api.dicebear.com/7.x/avataaars/svg?seed=Alex&backgroundColor=f8faf2");
+    const [previewPic, setPreviewPic] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
 
-    // Mock User Data for form
     const [formData, setFormData] = useState({
-        fullName: 'Alexander Desun',
-        username: 'scholar_alex',
-        contactNumber: '+1 (555) 000-8266',
-        email: 'alexander@desun.academy',
+        fullName: '',
+        contactNumber: '',
+        email: '',
         address: '',
-        interestedIn: 'Web Development',
+        interestedIn: 'MERN',
         gender: 'Male'
     });
+
+    // Populate data when user changes or modal opens
+    useEffect(() => {
+        if (user && isOpen) {
+            setFormData({
+                fullName: user.name || '',
+                contactNumber: user.contactNumber || '',
+                email: user.email || '',
+                address: user.address || '',
+                interestedIn: user.domain === 'MERN' ? 'MERN' : user.domain === 'UI/UX' ? 'UI/UX' : 'Digital Marketing',
+                gender: user.gender || 'Male'
+            });
+            setPreviewPic(user.avatar?.url || null);
+        }
+    }, [user, isOpen]);
 
     // Disable body scroll when modal is open
     useEffect(() => {
@@ -38,9 +66,10 @@ const ProfileModal = ({ isOpen, onClose }) => {
     const handleProfilePicChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setAvatarFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
-                setProfilePic(reader.result);
+                setPreviewPic(reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -52,42 +81,39 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
     const handleSave = async () => {
         setIsSaving(true);
-
-        // =========================================================================
-        // 🚀 BACKEND API INTEGRATION: UPDATE PROFILE (SIMULATED)
-        // =========================================================================
-        /*
         try {
-            const profileData = { ...formData, profilePic };
-            const response = await fetch('http://YOUR_BACKEND_URL/api/v1/user/profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(profileData)
+            const domainMapping = {
+                'MERN': 'MERN',
+                'UI/UX': 'UI/UX',
+                'Digital Marketing': 'DIGITAL MARKETING'
+            };
+
+            const data = new FormData();
+            data.append('name', formData.fullName);
+            data.append('contactNumber', formData.contactNumber);
+            data.append('address', formData.address);
+            data.append('gender', formData.gender);
+            data.append('domain', domainMapping[formData.interestedIn] || formData.interestedIn);
+
+            if (avatarFile) {
+                data.append('avatar', avatarFile);
+            }
+
+            const response = await api.patch('/users/profile', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            if (response.ok) {
+            if (response.data.success) {
+                updateUser(response.data.data);
                 toast.success("Profile updated successfully!");
                 onClose();
-            } else {
-                toast.error("Failed to update profile.");
             }
         } catch (error) {
-            console.error("API Error:", error);
-            toast.error("Something went wrong with the server.");
+            console.error("Profile update error:", error);
+            toast.error(error.message || "Failed to update profile");
         } finally {
             setIsSaving(false);
         }
-        */
-
-        // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-        setTimeout(() => {
-            setIsSaving(false);
-            toast.success("✅ Success! Your profile information has been saved to the backend.\n\nNote: This is a simulated backend response for your review.");
-            onClose(); // Optional: Close modal on success
-        }, 1500);
     };
 
     return (
@@ -118,12 +144,18 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     {/* Avatar Block */}
                     <div className="flex flex-col items-center justify-center mt-4 mb-8">
                         <div className="relative group">
-                            <div className="w-24 h-24 rounded-full border-[3px] border-[#8cc63f]/30 p-1 bg-white shadow-inner overflow-hidden">
-                                <img
-                                    src={profilePic}
-                                    className="w-full h-full rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                    alt="Avatar"
-                                />
+                            <div className="w-24 h-24 rounded-full border-[3px] border-[#8cc63f]/30 p-1 bg-white shadow-inner overflow-hidden flex items-center justify-center">
+                                {previewPic ? (
+                                    <img
+                                        src={previewPic}
+                                        className="w-full h-full rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        alt="Avatar"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full rounded-full bg-gradient-to-br from-[#8cc63f] to-[#5c8a14] flex items-center justify-center text-white text-2xl font-black">
+                                        {formData.fullName ? formData.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : 'S'}
+                                    </div>
+                                )}
                             </div>
                             <input
                                 type="file"
@@ -161,27 +193,15 @@ const ProfileModal = ({ isOpen, onClose }) => {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <InputField
-                                    label="Full Name"
-                                    type="text"
-                                    name="fullName"
-                                    value={formData.fullName}
-                                    onChange={handleChange}
-                                    placeholder="Enter full name"
-                                    icon={FiUser}
-                                />
-
-                                <div className="flex flex-col gap-1.5 w-full mb-4">
-                                    <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">Username</label>
-                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 border border-gray-100 px-4">
-                                        <span className="text-sm font-medium text-gray-400 select-none">{formData.username}</span>
-                                        <span className="absolute right-3 px-2 py-1 bg-[#8cc63f]/10 text-[#5c8a14] border border-[#8cc63f]/20 rounded-md text-[8px] font-black tracking-wider uppercase flex items-center gap-1">
-                                            <FiCheckCircle size={10} /> Verified
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            <InputField
+                                label="Full Name"
+                                type="text"
+                                name="fullName"
+                                value={formData.fullName}
+                                onChange={handleChange}
+                                placeholder="Enter full name"
+                                icon={FiUser}
+                            />
 
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <InputField
@@ -191,7 +211,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                     value={formData.interestedIn}
                                     onChange={handleChange}
                                     icon={FiBookOpen}
-                                    options={['Web Development', 'UI/UX', 'Digital Marketing']}
+                                    options={['MERN', 'UI/UX', 'Digital Marketing']}
                                 />
 
                                 <div className="flex flex-col gap-1.5 w-full mb-4">
@@ -236,15 +256,17 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                     placeholder="+1 (555) 000-8266"
                                     icon={FiPhone}
                                 />
-                                <InputField
-                                    label="Email Address"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    placeholder="alexander@desun.academy"
-                                    icon={FiMail}
-                                />
+                                <div className="flex flex-col gap-1.5 w-full mb-4">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">Email Address</label>
+                                        <span className="px-2 py-0.5 bg-[#8cc63f]/10 text-[#5c8a14] border border-[#8cc63f]/20 rounded-md text-[8px] font-black tracking-wider uppercase flex items-center gap-1">
+                                            <FiCheckCircle size={10} /> Verified
+                                        </span>
+                                    </div>
+                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 border border-gray-100 px-4">
+                                        <span className="text-[12px] font-bold text-gray-400 select-none truncate">{formData.email}</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <InputField

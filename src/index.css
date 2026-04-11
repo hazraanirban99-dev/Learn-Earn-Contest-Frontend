@@ -35,8 +35,17 @@ html, body {
   border-color: #8cc63f !important; 
 }
 
-/* Error, Warning, Info (everything else) gets yellow border */
-.Toastify__toast--error,
+/* Error gets red theme */
+.Toastify__toast--error {
+  border-color: #ef4444 !important; 
+  color: #ef4444 !important;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+  fill: #ef4444 !important;
+}
+
+/* Warning and Info gets yellow border */
 .Toastify__toast--warning,
 .Toastify__toast--info {
   border-color: #fbc111 !important; 
@@ -54,7 +63,9 @@ html, body {
 .Toastify__progress-bar--success {
   background: #8cc63f !important;
 }
-.Toastify__progress-bar--error,
+.Toastify__progress-bar--error {
+  background: #ef4444 !important;
+}
 .Toastify__progress-bar--warning,
 .Toastify__progress-bar--info {
   background: #fbc111 !important;

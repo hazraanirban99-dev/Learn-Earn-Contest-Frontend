@@ -1,3 +1,9 @@
+// ============================================================
+// Ratings.jsx — Social proof rating component
+// Student profile pictures showcase kore "Over 1.5k students" text er sathe.
+// Hover logic ache jate users profile details (placeholder) dekhte pare.
+// ============================================================
+
 import React from 'react';
 import { FaStar, FaRegStar, FaStarHalfAlt } from 'react-icons/fa';
 

@@ -1,44 +1,112 @@
+// ============================================================
+// SubmitContestModal.jsx — Student er project submit korar modal
+// StudentSubmission page theke "Submit Project" click korle khule.
+// Student ta dite parbe: project image, project file, GitHub link, Live link, Drive link.
+// Submit click korle ConfirmToast dekhano hoy (double confirmation).
+// Confirmed hole multipart/form-data diye backend e POST hoy.
+// Success hole user data refresh kora hoy (submittedContests sync er jonno)
+// tahole ContestDetails page e "Response Submitted" badge dekhabe.
+// ============================================================
+
 import React, { useState, useCallback, useMemo } from 'react';
 import { FiX, FiSend, FiImage, FiFileText, FiLink2, FiGithub, FiGlobe, FiUser, FiPlus } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import DropZone from '../Input/DropZone';
 import PortalInput from '../Input/PortalInput';
 import Button from '../Button/Button';
+import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 
 const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
+    const { updateUser } = useAuth();
     const [projectPic, setProjectPic] = useState(null);
-    const [projectPdf, setProjectPdf] = useState(null);
+    const [projectFile, setProjectFile] = useState(null);
     const [githubLink, setGithubLink] = useState('');
     const [liveLink, setLiveLink] = useState('');
     const [driveLink, setDriveLink] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
     const isFormValid = useMemo(() => {
-        if (!projectPic || !projectPdf) return false;
-        if (!githubLink.trim() || !liveLink.trim()) return false;
+        // At least one thing should be provided (thumbnail, link or file)
+        if (!projectPic && !githubLink.trim() && !liveLink.trim() && !driveLink.trim() && !projectFile) return false;
         return true;
-    }, [projectPic, projectPdf, githubLink, liveLink]);
+    }, [projectPic, projectFile, githubLink, liveLink, driveLink]);
 
-    const handleSubmit = async () => {
-        if (!isFormValid) {
-            toast.error('Please fill all required fields before submitting.');
-            return;
-        }
-
+    const performFinalSubmit = async () => {
         setIsSubmitting(true);
+        const formData = new FormData();
+        formData.append('contestId', contest?.id);
+        if (projectPic) formData.append('projectPic', projectPic);
+        if (projectFile) formData.append('projectFile', projectFile);
+        if (githubLink) formData.append('githubLink', githubLink);
+        if (liveLink) formData.append('liveLink', liveLink);
+        if (driveLink) formData.append('driveLink', driveLink);
 
         try {
-            // MOCK delay
-            await new Promise(r => setTimeout(r, 1500));
-            toast.success('Project Submitted Successfully! 🎉');
-            onSuccess();
+            const response = await api.post('/student/contests/submit', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (response.data.success) {
+                // Refresh user data to show "Response Submitted" status immediately
+                const userRes = await api.get('/users/me');
+                if (userRes.data.success) {
+                    updateUser(userRes.data.data);
+                }
+
+                toast.dismiss(); // Close the confirmation toast
+                toast.success('Project Submitted Successfully! 🎉');
+                onSuccess();
+            }
         } catch (err) {
-            toast.error(err.message || 'Something went wrong.');
+            toast.error(err.response?.data?.message || 'Something went wrong during submission.');
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleSubmit = () => {
+        if (!isFormValid) {
+            toast.error('Properly submit your work as per rule, if you submit wrong input then you will be disqualified.', {
+                position: "top-right",
+                autoClose: 5000,
+                theme: "colored"
+            });
+            return;
+        }
+
+        const ConfirmToast = ({ closeToast }) => (
+            <div className="p-1">
+                <p className="text-[12px] font-black text-slate-800 mb-4 uppercase tracking-tight leading-tight">
+                   Are you sure you have submitted all files correctly according to the rules?
+                </p>
+                <div className="flex justify-end gap-2">
+                    <button 
+                        onClick={closeToast}
+                        className="bg-gray-100 text-gray-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={() => {
+                            performFinalSubmit();
+                        }}
+                        className="bg-[#8cc63f] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7ab332] shadow-lg shadow-[#8cc63f]/20"
+                    >
+                        Confirm Submit
+                    </button>
+                </div>
+            </div>
+        );
+
+        toast.info(<ConfirmToast />, {
+            position: "top-right",
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+            theme: "light",
+            icon: false
+        });
     };
 
     if (!isOpen) return null;
@@ -51,15 +119,33 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                 
                  {/* Left Sidebar */}
                  <div className="hidden md:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
-                    <div className="relative z-10">
+                    <div className="relative z-10 text-left">
                         <h2 className="text-white text-sm font-black tracking-widest uppercase mb-12">Desun Academy</h2>
                         <h1 className="text-3xl lg:text-4xl font-black text-white leading-tight tracking-tight mt-12 mb-2">
                             Submit Your Response
                         </h1>
                         <p className="text-[#ecf0e6] font-medium text-sm mt-4">
-                            Submit your project for "{contest?.name || 'Contest'}". Ensure all links and documents are publicly accessible.
+                            Submit your project for "{contest?.title || contest?.name || 'Contest'}". Ensure all links and documents are publicly accessible.
                         </p>
                     </div>
+
+                    <div className="relative z-10 bg-black/20 p-5 rounded-2xl border border-white/10 mt-8">
+                        <h4 className="text-[10px] font-black text-[#fbc111] uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <FiFileText size={12} /> Submission Rules
+                        </h4>
+                        <ul className="space-y-3">
+                            <li className="text-[11px] text-white font-medium leading-relaxed">
+                                <span className="font-black text-[#8cc63f]">MERN:</span> Upload GitHub link / Live deployment link
+                            </li>
+                            <li className="text-[11px] text-white font-medium leading-relaxed">
+                                <span className="font-black text-[#8cc63f]">UI-UX:</span> Upload Image / Figma or Canva link / Project File
+                            </li>
+                            <li className="text-[11px] text-white font-medium leading-relaxed">
+                                <span className="font-black text-[#8cc63f]">MARKETING:</span> Upload Image / Google Drive link
+                            </li>
+                        </ul>
+                    </div>
+
                     {/* Subtle aesthetic gradient overlay */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 </div>
@@ -78,8 +164,6 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar">
                         <div className="space-y-8">
                             
-
-
                             {/* Divider line */}
                             <div className="h-[2px] w-full bg-gradient-to-r from-[#8cc63f]/20 to-transparent rounded-full" />
 
@@ -87,11 +171,11 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                 <div className="space-y-3">
                                     <DropZone
                                         id="project-pic-upload"
-                                        label="Project Image"
+                                        label="Project Image (Thumbnail)"
                                         accept="image/png, image/jpeg"
                                         icon={FiImage}
-                                        hint="Drop PNG/JPG here"
-                                        note="Max 5MB"
+                                        hint="Drop Logo/SS here"
+                                        note="Max 5MB • Optional"
                                         file={projectPic}
                                         onFileChange={f => {
                                             if (f.size > 5 * 1024 * 1024) { toast.error('Image must be under 5MB.'); return; }
@@ -103,16 +187,16 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
 
                                 <div className="space-y-3">
                                     <DropZone
-                                        id="project-pdf-upload"
-                                        label="Project PDF"
-                                        accept="application/pdf"
+                                        id="project-file-upload"
+                                        label="Project File"
+                                        accept="*/*"
                                         icon={FiFileText}
-                                        hint="Drop PDF here"
-                                        note="Max 10MB"
-                                        file={projectPdf}
+                                        hint="Drop Zip/Source here"
+                                        note="Max 20MB • Optional"
+                                        file={projectFile}
                                         onFileChange={f => {
-                                            if (f.size > 10 * 1024 * 1024) { toast.error('PDF must be under 10MB.'); return; }
-                                            setProjectPdf(f);
+                                            if (f.size > 20 * 1024 * 1024) { toast.error('File must be under 20MB.'); return; }
+                                            setProjectFile(f);
                                         }}
                                         accentColor="#fbc111"
                                     />
@@ -131,10 +215,10 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                 />
                                 <PortalInput
                                     id="live-link"
-                                    label="Live Link"
+                                    label="Live / Figma / Canva Link"
                                     value={liveLink}
                                     onChange={e => setLiveLink(e.target.value)}
-                                    placeholder="https://myproject.vercel.app"
+                                    placeholder="https://myproject.com or figma.com/..."
                                     icon={FiGlobe}
                                     borderColor="border-[#8cc63f]/50 focus-within:border-[#8cc63f]"
                                 />

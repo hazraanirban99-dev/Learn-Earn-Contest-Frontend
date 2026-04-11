@@ -1,3 +1,11 @@
+// ============================================================
+// ProtectedRoute.jsx — Route protection component
+// AuthContext theke user login state r role check kore.
+// User authenticated na hole login page e redirect kore.
+// Role-based protection ache (e.g., student admin page access korte parbe na).
+// Loading state e spinning logo dekhano hoy.
+// ============================================================
+
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';

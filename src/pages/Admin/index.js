@@ -1,3 +1,8 @@
+// ============================================================
+// pages/Admin/index.js — Admin related pages er export hub
+// Admin dashboard, reports, users mgmt page ekhane centralized.
+// ============================================================
+
 export { default as AdminDashboard } from './AdminDashboard';
 export { default as ManageContests } from './ManageContests';
 export { default as CreateContest } from './CreateContest';

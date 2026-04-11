@@ -1,10 +1,23 @@
+// ============================================================
+// AdminLayout.jsx — Admin panel er wrapper layout component
+// Sob admin page ei layout wrap kore.
+// Sidebar: Desktop e left side fixed, mobile e slide-in drawer.
+// Mobile overlay: Sidebar er baaire click korle sidebar close hoy.
+// Header: Top sticky — hamburger menu + page name + actions.
+// PageTransition: Route change hole smooth fade/slide animation.
+// Footer: Page er niche scroll kore dekhano hoy.
+// ============================================================
+
 import React, { useState } from 'react';
 import Header from '../components/Admin/Header';
 import Sidebar from '../components/Admin/Sidebar';
 import { Footer } from '../components';
+import { useLocation } from 'react-router-dom';
+import PageTransition from '../components/Common/PageTransition';
 
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-[#fbfcfa] font-sans text-slate-900 relative">
@@ -29,10 +42,10 @@ const AdminLayout = ({ children }) => {
         <Header onMenuClick={() => setSidebarOpen(true)} />
         
         {/* Main Content + Footer scroll together naturally */}
-        <main className="flex-grow px-4 sm:px-6 lg:px-10 py-10 w-full overflow-x-hidden">
-          <div className="max-w-[1440px] mx-auto min-h-[calc(100vh-250px)]">
+        <main className="flex-grow px-4 sm:px-6 lg:px-10 pt-[73px] pb-10 w-full overflow-x-hidden">
+          <PageTransition key={location.pathname} className="max-w-[1440px] mx-auto min-h-[calc(100vh-250px)]">
             {children}
-          </div>
+          </PageTransition>
         </main>
         
         {/* Footer at the very bottom of the page flow */}

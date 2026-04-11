@@ -1,6 +1,17 @@
+// ============================================================
+// ReviewDetailModal.jsx — Admin e submission er detail dekha r score dewa modal
+// ReviewSubmissions page theke ei modal open hoy.
+// Participant er project URL, thumbnail, PDF dekhano hoy.
+// Score input field e admin score dite pare (0-100).
+// "Submit Review" click hole backend e score pathano hoy.
+// Submit successful hole parent component e onReviewSubmit() callback hoy,
+// jeta participant er status update kore local state e.
+// ============================================================
+
 import React, { useState } from 'react';
 import { FiX, FiTrendingUp, FiList, FiSend, FiExternalLink, FiCode, FiHardDrive, FiDownload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
 
 // Mock submission links — replace with actual participant data from API
 const MOCK_SUBMISSION = {
@@ -38,20 +49,21 @@ const LinkRow = ({ label, icon: Icon, value, copyKey, copiedLink, onCopy }) => (
   </div>
 );
 
-const ReviewDetailModal = ({ isOpen, onClose, participant }) => {
+const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => {
   const [reviewDraft, setReviewDraft] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [scoreMode, setScoreMode] = useState('performance');
-  const [customScore, setCustomScore] = useState(8.5);
+  const [customScore, setCustomScore] = useState(0);
   const [copiedLink, setCopiedLink] = useState(null);
   const [metrics, setMetrics] = useState({
-    innovation: 8,
-    technical: 9,
-    presentation: 7,
-    codeQuality: 8,
-    deployment: 6,
-    designQuality: 7,
-    thinking: 9,
-    functionality: 8,
+    innovation: 0,
+    technical: 0,
+    presentation: 0,
+    codeQuality: 0,
+    deployment: 0,
+    designQuality: 0,
+    thinking: 0,
+    functionality: 0,
   });
 
   const performanceAverage = React.useMemo(() =>
@@ -71,10 +83,35 @@ const ReviewDetailModal = ({ isOpen, onClose, participant }) => {
     setMetrics(prev => ({ ...prev, [metric]: parseInt(value) }));
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (!reviewDraft.trim()) return toast.warning('Please enter review narrative');
-    toast.success(`Review for ${participant.name} submitted! Score: ${finalScore}`);
-    onClose();
+    
+    setIsLoading(true);
+    try {
+      const { data } = await api.post('/admin/submissions/review', {
+        submissionId: participant.id,
+        score: finalScore,
+        feedback: reviewDraft
+      });
+
+      if (data.success) {
+        toast.success(`Review for ${participant.name} submitted! Score: ${finalScore}`);
+        if (onReviewSubmit) {
+          onReviewSubmit({
+            ...participant,
+            score: finalScore,
+            status: 'REVIEWED',
+            feedback: reviewDraft
+          });
+        }
+        onClose();
+      }
+    } catch (error) {
+      console.error("Review submission error:", error);
+      toast.error(error.response?.data?.message || "Failed to submit review");
+    } finally {
+      setIsLoading(true);
+    }
   };
 
   if (!isOpen) return null;
@@ -112,7 +149,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant }) => {
                 {/* Project Image */}
                 <div className="relative aspect-video rounded-[24px] overflow-hidden shadow-lg bg-slate-100">
                   <img
-                    src={MOCK_SUBMISSION.projectImage}
+                    src={participant.projectThumbnail || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
                     className="w-full h-full object-cover"
                     alt="Project"
                   />
@@ -124,29 +161,17 @@ const ReviewDetailModal = ({ isOpen, onClose, participant }) => {
                   <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Project Assets & Links</h3>
 
                   <LinkRow
-                    label="GitHub Repository"
+                    label="Project Submission Link"
                     icon={FiCode}
-                    value={MOCK_SUBMISSION.githubLink}
-                    copyKey="github"
+                    value={participant.projectUrl || 'Not provided'}
+                    copyKey="project"
                     copiedLink={copiedLink}
                     onCopy={copyToClipboard}
                   />
-                  <LinkRow
-                    label="Live Demo"
-                    icon={FiExternalLink}
-                    value={MOCK_SUBMISSION.liveUrl}
-                    copyKey="live"
-                    copiedLink={copiedLink}
-                    onCopy={copyToClipboard}
-                  />
-                  <LinkRow
-                    label="Google Drive Assets"
-                    icon={FiHardDrive}
-                    value={MOCK_SUBMISSION.googleDriveLink}
-                    copyKey="drive"
-                    copiedLink={copiedLink}
-                    onCopy={copyToClipboard}
-                  />
+                  <div className="p-3 bg-blue-50/50 rounded-2xl flex items-center gap-3 border border-blue-100/50">
+                    <FiExternalLink className="text-blue-400" size={14} />
+                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Primary Asset</span>
+                  </div>
 
                   {/* PDF Download */}
                   <div className="flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-3 sm:p-4 mt-2 shadow-sm group">
@@ -162,12 +187,13 @@ const ReviewDetailModal = ({ isOpen, onClose, participant }) => {
                       </div>
                     </div>
                     <a
-                      href={MOCK_SUBMISSION.pdfUrl}
-                      download
-                      className="flex items-center gap-2 px-3 py-2 bg-[#8cc63f] hover:bg-[#7eb533] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex-shrink-0 ml-3"
+                      href={participant.projectPdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center gap-2 px-3 py-2 ${participant.projectPdf ? 'bg-[#8cc63f] hover:bg-[#7eb533]' : 'bg-gray-200 cursor-not-allowed'} text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex-shrink-0 ml-3`}
                     >
                       <FiDownload size={12} />
-                      <span className="hidden sm:inline">Download</span>
+                      <span className="hidden sm:inline">{participant.projectPdf ? 'Download' : 'No PDF'}</span>
                     </a>
                   </div>
                 </div>

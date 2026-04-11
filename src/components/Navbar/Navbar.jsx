@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
+// ============================================================
+// Navbar.jsx — Main public navigation bar
+// Login state onujayi CTA buttons (Login/Dashboard) toggles kore.
+// Scroll detection ache background transparency change korar jonno.
+// Mobile menu (drawer) smooth animation with Framer Motion.
+// Logo component r navigation links integrated.
+// ============================================================
+
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
 import { FiMenu, FiX } from 'react-icons/fi';
@@ -16,18 +24,15 @@ const Navbar = ({ showAuth = true }) => {
     { label: 'Contact', path: '/#contact', id: 'contact' },
   ];
 
-  const handleNavClick = (e, link) => {
-    if (location.pathname === '/') {
-      e.preventDefault();
+  const handleNavClick = (_, link) => {
+    setIsMobileMenuOpen(false);
+    // Allow React Router to update the URL hash first, then programmatically scroll
+    setTimeout(() => {
       const element = document.getElementById(link.id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        setIsMobileMenuOpen(false);
       }
-    } else {
-      // If NOT on home page, let the Link handle it (it will navigate to /#id)
-      setIsMobileMenuOpen(false);
-    }
+    }, 50);
   };
 
   const isActive = (path) => {
@@ -36,7 +41,7 @@ const Navbar = ({ showAuth = true }) => {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
+    <nav className="fixed w-full top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
       <div className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-12 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-8">
         
         {/* 1. BRANDING (Left) */}
@@ -88,9 +93,14 @@ const Navbar = ({ showAuth = true }) => {
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2.5 text-slate-800 hover:bg-gray-100 rounded-xl transition-all"
+            className="lg:hidden relative w-10 h-10 flex items-center justify-center text-slate-800 hover:bg-gray-100 rounded-xl transition-all"
           >
-            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            <div className={`absolute transition-all duration-500 transform ${isMobileMenuOpen ? 'rotate-180 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
+              <FiMenu size={24} />
+            </div>
+            <div className={`absolute transition-all duration-500 transform ${isMobileMenuOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-50'}`}>
+               <FiX size={24} />
+            </div>
           </button>
         </div>
       </div>

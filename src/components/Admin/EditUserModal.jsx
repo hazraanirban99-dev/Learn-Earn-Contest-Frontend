@@ -1,3 +1,11 @@
+// ============================================================
+// EditUserModal.jsx — ManageUsers page e "Edit" click korle khule
+// Admin user er name, domain, email, phone, registration date edit korte parbe.
+// formData state e current user data pre-fill hoy (prop theke)
+// Save click korle UserContext er updateUser() callback theke update hoy.
+// Ekhane avatar camera button ache kintu currently functional na (UI only).
+// ============================================================
+
 import React, { useState } from 'react';
 import { FiX, FiCheckCircle, FiCalendar, FiShield, FiEdit3, FiCamera } from 'react-icons/fi';
 

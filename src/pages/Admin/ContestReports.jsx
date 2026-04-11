@@ -1,11 +1,24 @@
+// ============================================================
+// ContestReports.jsx — Admin e sob contest er status r report dekhার page
+// Backend theke all contests fetch hoy (admin endpoint).
+// Domain filter dropdown diye specific domain er contest filter korte para jay.
+// Pagination ache — 5 ti contest per page.
+// StatusUpdateMenu diye UPCOMING → ONGOING → COMPLETED status change kora jay,
+// setar API call o ekhane handle kora hoy.
+// ContestRow component React.memo diye wrapped — performance er jonno.
+// ============================================================
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import { 
   FiSearch, FiFilter, FiTrendingUp, FiChevronLeft, FiChevronRight, FiDownload, FiPlus
 } from 'react-icons/fi';
+import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import { toast } from 'react-toastify';
 import StatusUpdateMenu from '../../components/Admin/StatusUpdateMenu';
 import { useNavigate } from 'react-router-dom';
+import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 
 // Table Row Component - Memoized for performance
 const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
@@ -71,21 +84,43 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
 });
 
 const ContestReports = () => {
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedDomain, setSelectedDomain] = useState('All Domains');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [contests, setContests] = useState([]);
 
-  // Use state for contests to manage updates
-  const [contests, setContests] = useState([
-    { id: 1, title: 'Algorithmic Grand Prix 2024', domain: 'Development', status: 'UPCOMING', participants: 1240, subText: 'Final Round', dateInfo: '12 Jan 2024' },
-    { id: 2, title: 'UI Mastery Challenge', domain: 'UI/UX', status: 'ONGOING', participants: 850, subText: 'Design Sprint', dateInfo: '05 Jan 2024' },
-    { id: 3, title: 'Data Science Olympiad', domain: 'Analytics', status: 'COMPLETED', participants: 2100, subText: 'Global Heat', dateInfo: '28 Dec 2023' },
-    { id: 4, title: 'Growth Marketing Hackathon', domain: 'Marketing', status: 'COMPLETED', participants: 1620, subText: 'Strategy Hub', dateInfo: '20 Dec 2023' },
-    { id: 5, title: 'Full Stack Developer Summit', domain: 'Development', status: 'COMPLETED', participants: 3450, subText: 'Internal Qualifier', dateInfo: '15 Dec 2023' },
-    { id: 6, title: 'Cloud Infrastructure Expo', domain: 'Development', status: 'UPCOMING', participants: 500, subText: 'Tech Meet', dateInfo: '15 Jan 2024' },
-  ]);
+  // Backend theke contests fetch kora hocche
+  useEffect(() => {
+    const fetchContests = async () => {
+      if (authLoading) return;
+      if (!user || user.role !== 'admin') return;
+      setLoading(true);
+      try {
+        const { data } = await api.get('/admin/contests/admin');
+        if (data.success) {
+          const mapped = data.data.map(c => ({
+            id: c._id,
+            title: c.title,
+            domain: c.domain || 'General',
+            status: c.status,
+            participants: c.participantsCount || 0,
+            dateInfo: formatDateDDMMYYYY(c.startDate)
+          }));
+          setContests(mapped);
+        }
+      } catch (error) {
+        if (error.response?.status !== 401) {
+          toast.error('Failed to load contest reports');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContests();
+  }, [user?.role, user?._id, authLoading]);
 
   // Derived unique domains
   const domains = useMemo(() => {
@@ -104,16 +139,15 @@ const ContestReports = () => {
     return filteredContests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   }, [filteredContests, currentPage]);
 
-  // Status Update Handler (Patterned for Backend API)
+  // Status Update Handler - Backend e connected
   const handleStatusUpdate = useCallback(async (id, newStatus) => {
     try {
       setLoading(true);
-      // Backend pattern simulation
+      await api.put(`/admin/contests/status/${id}`, { status: newStatus });
       setContests(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
       toast.success(`Contest status updated to ${newStatus.toLowerCase()}!`);
     } catch (error) {
-      toast.error('Failed to update status.');
-      console.error(error);
+      toast.error(error.message || 'Failed to update status.');
     } finally {
       setLoading(false);
     }

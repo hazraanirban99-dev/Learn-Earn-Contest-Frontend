@@ -1,15 +1,42 @@
-import React from 'react';
+// ============================================================
+// EnrolledParticipantsModal.jsx — ManageContests e "View Participants" click e khule
+// Backend theke real-time data fetch hoy: /admin/submissions/contest/:contestId
+// Solo participant hole: শুধু তার নাম আর avatar
+// Team participant hole: team name, 👑 leader badge, member names list
+// Pagination ache (5 participants per page).
+// ============================================================
+
+import React, { useState, useEffect } from 'react';
 import { FiX, FiDownload, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import api from '../../utils/api';
+import { toast } from 'react-toastify';
 
-const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle }) => {
+const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId }) => {
+  const [participants, setParticipants] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen || !contestId) return;
+    
+    const fetchParticipants = async () => {
+      setLoading(true);
+      try {
+        const { data } = await api.get(`/admin/submissions/contest/${contestId}`);
+        if (data.success) {
+           setParticipants(data.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch participants data", err);
+        toast.error("Failed to load participants");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchParticipants();
+  }, [isOpen, contestId]);
+
   if (!isOpen) return null;
-
-  const participants = [
-    { id: 'DES-2024-001', name: 'Sarah Jenkins', email: 's.jenkins@academy.edu', date: 'Oct 12, 2023', avatar: 'https://i.pravatar.cc/150?img=47' },
-    { id: 'DES-2024-002', name: 'Marcus Chen', email: 'm.chen@dev.studio', date: 'Nov 04, 2023', avatar: 'https://i.pravatar.cc/150?img=12' },
-    { id: 'DES-2024-003', name: 'Elena Rodriguez', email: 'elena.r@growth.ly', date: 'Dec 15, 2023', avatar: 'https://i.pravatar.cc/150?img=33' },
-    { id: 'DES-2024-004', name: 'Julian Thorne', email: 'j.thorne@atelier.com', date: 'Jan 08, 2024', avatar: 'https://i.pravatar.cc/150?img=11' },
-  ];
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-all animate-in fade-in duration-300">
@@ -32,7 +59,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle }) => {
                 Participant Registry
               </h2>
               <p className="text-gray-500 font-bold text-sm md:text-base max-w-xl leading-relaxed mt-4">
-                A comprehensive overview of our current scholars and creative practitioners within the atelier ecosystem.
+                A comprehensive overview of our current scholars and creative practitioners enrolled for {contestTitle}.
               </p>
             </div>
             
@@ -48,31 +75,65 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle }) => {
               <table className="w-full text-left border-separate border-spacing-y-4">
                 <thead>
                   <tr className="uppercase text-[10px] font-black tracking-widest text-slate-400">
-                    <th className="px-8 pb-2">Participant Name</th>
-                    <th className="px-6 pb-2">Email Address</th>
-                    <th className="px-8 pb-2">Registration</th>
+                    <th className="px-8 pb-2">Participant Details</th>
+                    <th className="px-6 pb-2">Email & Contact</th>
+                    <th className="px-8 pb-2">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {participants.map((user, idx) => (
-                    <tr key={idx} className="bg-white rounded-[24px] group hover:shadow-md transition-all">
-                      <td className="py-5 px-8 rounded-l-[32px]">
-                        <div className="flex items-center gap-5">
-                          <img src={user.avatar} alt={user.name} className="w-14 h-14 rounded-full object-cover shadow-sm bg-gray-50 border-2 border-white" />
-                          <div>
-                            <div className="font-black text-slate-800 text-[16px]">{user.name}</div>
-                            <div className="text-[11px] text-gray-400 font-bold tracking-wider mt-0.5 uppercase">ID: {user.id}</div>
+                  {loading ? (
+                     <tr>
+                        <td colSpan="3" className="py-10 text-center font-bold text-slate-400">Processing real-time data...</td>
+                     </tr>
+                  ) : participants.length === 0 ? (
+                     <tr>
+                        <td colSpan="3" className="py-10 text-center font-bold text-slate-400">No participants enrolled yet</td>
+                     </tr>
+                  ) : (
+                    participants.map((user, idx) => (
+                      <tr key={idx} className="bg-white rounded-[24px] group hover:shadow-md transition-all">
+                        <td className="py-5 px-8 rounded-l-[32px] w-1/2">
+                          {user.studentId?.participationType === 'Team' ? (
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[#8cc63f] bg-[#8cc63f]/10 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TEAM</span>
+                                  <div className="font-black text-slate-800 text-[14px]">{user.studentId.teamData?.teamName}</div>
+                                </div>
+                                <div className="pl-2 border-l-2 border-gray-100 mt-2 space-y-2">
+                                    <div className="flex items-center gap-2">
+                                       <span title="Leader" className="text-lg">👑</span>
+                                       <span className="text-[12px] font-bold text-slate-700">{user.studentId.teamData?.leader?.name} (Leader)</span>
+                                    </div>
+                                    {user.studentId.teamData?.members?.map((m) => (
+                                        <div key={m.id} className="flex items-center gap-2 ml-7">
+                                           <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                           <span className="text-[11px] font-medium text-gray-500">{m.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-5">
+                              <img src={user.studentId?.avatar || 'https://i.pravatar.cc/150'} alt="Avatar" className="w-12 h-12 rounded-full object-cover shadow-sm bg-gray-50 border-2 border-white" />
+                              <div>
+                                <div className="font-black text-slate-800 text-[14px]">{user.studentId?.name || "Unknown"}</div>
+                                <div className="text-[#fbc111] bg-[#fbc111]/10 px-2 py-0.5 rounded-md inline-block text-[9px] font-black tracking-wider mt-1 uppercase">SOLO</div>
+                              </div>
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-5 px-6 font-bold text-slate-500 text-[12px]">
+                          <div className="flex flex-col gap-1">
+                             <span className="text-slate-800">{user.studentId?.email || 'N/A'}</span>
+                             <span className="text-[10px] text-gray-400">{user.studentId?.contactNumber || 'N/A'}</span>
                           </div>
-                        </div>
-                      </td>
-                      <td className="py-5 px-6 font-bold text-slate-500 text-[14px]">
-                        {user.email}
-                      </td>
-                      <td className="py-5 px-8 text-slate-600 font-bold text-[14px] rounded-r-[32px]">
-                        {user.date}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="py-5 px-8 text-slate-600 font-bold text-[14px] rounded-r-[32px]">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${user.status === 'GRADED' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'bg-[#fbc111]/10 text-[#dca51a]'}`}>{user.status}</span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

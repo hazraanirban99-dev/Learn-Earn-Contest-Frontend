@@ -1,75 +1,179 @@
+// ============================================================
+// LandingPage.jsx — Application er main homepage
+// Ekhane HeroCarousel, Features, Statistics, Categories, r Testimonials ache.
+// Navbar r Footer common component use kora hoyeche.
+// PageTransition wrap kora ache smooth loading er jonno.
+// Typing animation r dynamic search filter implementation ache niche.
+// Featured categories grid e hover effects r link navigation dewa ache.
+// ============================================================
+
 import React, { useState, useEffect } from 'react';
+import { useCarousel } from '../../hooks/useCarousel';
 import { Link } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight, FiCheck, FiMail, FiPhone, FiMapPin, FiArrowRight } from 'react-icons/fi';
-import { FaGraduationCap, FaNetworkWired, FaCertificate, FaRocket, FaTrophy } from 'react-icons/fa';
+import { FaGraduationCap, FaNetworkWired, FaCertificate, FaRocket, FaTrophy, FaEnvelope } from 'react-icons/fa';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Ratings from '../../components/Ratings/Ratings';
-import buildingHero from '../../assets/building.jpg.png';
-import award1 from '../../assets/award1.jpg';
-import award2 from '../../assets/award2.jpg';
-import slide3 from '../../assets/slide3.jpg';
-import slide4 from '../../assets/slide4.jpg';
-import slide5 from '../../assets/slide5.jpg';
-import slide6 from '../../assets/slide6.jpg';
-import slide7 from '../../assets/slide7.jpg';
-import slide8 from '../../assets/slide8.jpg';
-import slide9 from '../../assets/slide9.jpg';
-import ceoHero from '../../assets/ceo.png';
+import PageTransition from '../../components/Common/PageTransition';
+import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
+import api from '../../utils/api';
+import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 
-const LandingPage = () => {
-   // --- HERO CAROUSEL LOGIC ---
-   const heroImages = [buildingHero, award1, award2, slide3, slide4, slide5, slide6, slide7, slide8, slide9];
-   const [heroIndex, setHeroIndex] = useState(0);
+import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
+
+const buildingHero = getOptimizedUrl(CLOUDINARY_ASSETS["building.jpg.png"]);
+const award1 = getOptimizedUrl(CLOUDINARY_ASSETS["award1.jpg"]);
+const award2 = getOptimizedUrl(CLOUDINARY_ASSETS["award2.jpg"]);
+const slide3 = getOptimizedUrl(CLOUDINARY_ASSETS["slide3.jpg"]);
+const slide4 = getOptimizedUrl(CLOUDINARY_ASSETS["slide4.jpg"]);
+const slide5 = getOptimizedUrl(CLOUDINARY_ASSETS["slide5.jpg"]);
+const slide6 = getOptimizedUrl(CLOUDINARY_ASSETS["slide6.jpg"]);
+const slide7 = getOptimizedUrl(CLOUDINARY_ASSETS["slide7.jpg"]);
+const slide8 = getOptimizedUrl(CLOUDINARY_ASSETS["slide8.jpg"]);
+const slide9 = getOptimizedUrl(CLOUDINARY_ASSETS["slide9.jpg"]);
+const ceoHero = getOptimizedUrl(CLOUDINARY_ASSETS["ceo.png"]);
+
+const catMern = getOptimizedUrl(CLOUDINARY_ASSETS["cat_mern.png.png"]);
+const catUiux = getOptimizedUrl(CLOUDINARY_ASSETS["cat_uiux.png.png"]);
+const catMarketing = getOptimizedUrl(CLOUDINARY_ASSETS["cat_marketing.png.jpg"]);
+
+const heroImages = [buildingHero, award1, award2, slide3, slide4, slide5, slide6, slide7, slide8, slide9];
+
+const initialContests = [
+   { id: 1, title: 'Visual Ethics Olympiad', category: 'DESIGN', date: 'Deadline: 24.10.2024', image: 'https://images.unsplash.com/photo-1541462608141-802f39682641?q=80&w=1470&auto=format&fit=crop' },
+   { id: 2, title: 'Sustainability Hackathon', category: 'INNOVATION', date: 'Starts: 12.11.2024', image: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=1287&auto=format&fit=crop' },
+   { id: 3, title: 'AI Ethics Challenge', category: 'ETHICS', date: '05.01.2025', image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1332&auto=format&fit=crop' },
+   { id: 4, title: 'Quantum Computing Sprint', category: 'QUANTUM', date: '10.02.2025', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1470&auto=format&fit=crop' }
+];
+
+const courses = [
+   { title: 'MERN STACK', desc: 'Master full-stack development with MongoDB, Express, React, and Node.js.' },
+   { title: 'WEB DESIGN', desc: 'Crafting beautiful, responsive, and user-centric web experiences.' },
+   { title: 'UI/UX DESIGN', desc: 'The art of creating intuitive interfaces and delightful user journeys.' },
+   { title: 'DIGITAL MARKETING', desc: 'Strategic growth through modern marketing and data-driven insights.' },
+   { title: 'HR MANAGEMENT', desc: 'Building organizational excellence through human capital management.' },
+   { title: 'GENERATIVE AI', desc: 'Exploring the frontier of AI-driven creativity and automation.' }
+];
+
+const TypewriterHeader = () => {
+   const [text, setText] = useState('');
+   const [isDeleting, setIsDeleting] = useState(false);
+   const [loopNum, setLoopNum] = useState(0);
+   const [typingSpeed, setTypingSpeed] = useState(150);
+
+   const fullText = "Welcome to the CONTEST world";
 
    useEffect(() => {
-      const timer = setInterval(() => {
-         setHeroIndex((prev) => (prev + 1) % heroImages.length);
-      }, 2000);
-      return () => clearInterval(timer);
-   }, [heroImages.length]);
+      let handleType = setTimeout(() => {
+         const i = loopNum % fullText.length;
+         const updatedText = isDeleting 
+            ? fullText.substring(0, text.length - 1) 
+            : fullText.substring(0, text.length + 1);
 
-   // --- CONTEST CAROUSEL LOGIC ---
-   const initialContests = [
-      { id: 1, title: 'Visual Ethics Olympiad', category: 'DESIGN', date: 'Deadline: Oct 24, 2024', image: 'https://images.unsplash.com/photo-1541462608141-802f39682641?q=80&w=1470&auto=format&fit=crop' },
-      { id: 2, title: 'Sustainability Hackathon', category: 'INNOVATION', date: 'Starts: Nov 12, 2024', image: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=1287&auto=format&fit=crop' },
-      { id: 3, title: 'AI Ethics Challenge', category: 'ETHICS', date: 'Jan 05, 2025', image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1332&auto=format&fit=crop' },
-      { id: 4, title: 'Quantum Computing Sprint', category: 'QUANTUM', date: 'Feb 10, 2025', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1470&auto=format&fit=crop' }
-   ];
+         setText(updatedText);
 
+         if (!isDeleting && updatedText === fullText) {
+            setTypingSpeed(2000); // Wait at end
+            setIsDeleting(true);
+         } else if (isDeleting && updatedText === '') {
+            setIsDeleting(false);
+            setLoopNum(loopNum + 1);
+            setTypingSpeed(500);
+         } else {
+            setTypingSpeed(isDeleting ? 100 : 150);
+         }
+      }, typingSpeed);
+
+      return () => clearTimeout(handleType);
+   }, [text, isDeleting, loopNum, typingSpeed]);
+
+   return (
+      <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight flex flex-wrap items-center justify-center gap-x-2 gap-y-0 text-center leading-[1.2]">
+         <span className="text-slate-900">{text.substring(0, 15)}</span>
+         <span className="text-[#8cc63f]">{text.substring(15, 23)}</span>
+         <span className="text-[#fbc111]">{text.substring(23)}</span>
+         <span className="w-1 h-8 sm:h-12 bg-[#8cc63f] animate-pulse ml-1 rounded-full shrink-0"></span>
+      </h2>
+   );
+};
+
+const LandingPage = () => {
    const [contests, setContests] = useState([]);
-   const [currentIndex, setCurrentIndex] = useState(0);
+   const [liveContests, setLiveContests] = useState([]);
+   const [marqueeContests, setMarqueeContests] = useState([]);
    const [loading, setLoading] = useState(true);
+   const [liveLoading, setLiveLoading] = useState(true);
    const [error, setError] = useState(null);
+
+   // --- CAROUSEL LOGIC VIA CUSTOM HOOKS ---
+   const { currentIndex: heroIndex, setIndex: setHeroIndex } = useCarousel(heroImages.length, 2500);
+   const { currentIndex, next: handleNext, prev: handlePrev } = useCarousel(contests.length > 0 ? contests.length : 1, 3000);
 
    // --- DYNAMIC BACKEND FETCH PREPARATION ---
    useEffect(() => {
       const fetchContests = async () => {
          setLoading(true);
+         setLiveLoading(true);
          setError(null);
          try {
-            // Simulated API call - swap this with your actual endpoint
-            // const response = await fetch('YOUR_API_ENDPOINT/contests');
-            // const data = await response.json();
-            
-            setContests(initialContests);
+            const res = await api.get('/contests');
+            if (res.data.success) {
+               const allData = res.data.data;
+
+               // 1. Live Contests for Top Carousel
+               const ongoing = allData
+                  .filter(c => c.status === 'ONGOING')
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const mappedLive = ongoing.map(c => ({
+                   id: c._id,
+                   title: c.title,
+                   subtitle: c.description.substring(0, 120) + "...",
+                   thumbnailUrl: c.thumbnail?.url,
+                   tag: "Live Contest",
+                   domain: c.domain,
+                   buttonText: "Join Now"
+                }));
+               setLiveContests(mappedLive.slice(0, 5));
+
+               // 2. Marquee Contests (Shuffled all non-completed)
+               const marqueeData = allData
+                  .filter(c => c.status !== 'COMPLETED')
+                  .sort(() => Math.random() - 0.5)
+                  .map(c => ({
+                     title: c.title,
+                     desc: c.description.substring(0, 100) + "...",
+                     domain: c.domain || "General"
+                  }));
+               
+               // Ensure enough items for an infinite marquee (minimum 10)
+               let finalMarquee = [...marqueeData];
+               while (finalMarquee.length > 0 && finalMarquee.length < 10) {
+                  finalMarquee = [...finalMarquee, ...marqueeData];
+               }
+               setMarqueeContests(finalMarquee);
+
+               // 3. Featured section (using real data instead of initialContests)
+               const featured = allData.slice(0, 4).map(c => ({
+                  id: c._id,
+                  title: c.title,
+                  category: c.domain || "ACADEMIC",
+                  date: `End: ${formatDateDDMMYYYY(c.endDate)}`,
+                  image: c.thumbnail?.url || 'https://images.unsplash.com/photo-1541462608141-802f39682641?q=80&w=1470&auto=format&fit=crop'
+               }));
+               setContests(featured);
+            }
+            setLiveLoading(false);
          } catch (err) {
             console.error("Error fetching contests:", err);
             setError("Failed to load contests. Please try again later.");
+            setLiveLoading(false);
          } finally {
             setLoading(false);
          }
       };
       fetchContests();
    }, []);
-
-   // Auto-slide every 2 seconds for contests
-   useEffect(() => {
-      const timer = setInterval(() => {
-         handleNext();
-      }, 2000);
-      return () => clearInterval(timer);
-   }, [currentIndex, contests.length]);
 
    // Handle smooth scroll when landing with a hash
    useEffect(() => {
@@ -84,26 +188,10 @@ const LandingPage = () => {
       }
    }, []);
 
-   const handleNext = () => {
-      setCurrentIndex((prev) => (prev + 1) % contests.length);
-   };
-
-   const handlePrev = () => {
-      setCurrentIndex((prev) => (prev - 1 + contests.length) % contests.length);
-   };
-
    const getCardIndex = (offset) => {
+      if (!contests || contests.length === 0) return 0;
       return (currentIndex + offset + contests.length) % contests.length;
    };
-
-   const courses = [
-      { title: 'MERN STACK', desc: 'Master full-stack development with MongoDB, Express, React, and Node.js.' },
-      { title: 'WEB DESIGN', desc: 'Crafting beautiful, responsive, and user-centric web experiences.' },
-      { title: 'UI/UX DESIGN', desc: 'The art of creating intuitive interfaces and delightful user journeys.' },
-      { title: 'DIGITAL MARKETING', desc: 'Strategic growth through modern marketing and data-driven insights.' },
-      { title: 'HR MANAGEMENT', desc: 'Building organizational excellence through human capital management.' },
-      { title: 'GENERATIVE AI', desc: 'Exploring the frontier of AI-driven creativity and automation.' }
-   ];
 
    return (
       <div className="min-h-screen bg-[#f8faf2] overflow-x-hidden selection:bg-[#8cc63f]/30">
@@ -124,9 +212,25 @@ const LandingPage = () => {
         }
       `}} />
          <Navbar showAuth={true} />
+         {/* Navbar Spacer for Landing Page */}
+         <div className="h-16 sm:h-20 w-full bg-[#f8faf2]"></div>
+         <HeroCarousel contests={liveContests} loading={liveLoading} />
+         
+         {/* Typing Animation Section */}
+         <div className="bg-[#f8faf2] py-6 sm:py-8 border-b border-gray-100/50 overflow-hidden">
+            <div className="max-w-[1440px] mx-auto px-6 text-center">
+               <div className="inline-flex items-center justify-center gap-2 mb-2">
+                  <div className="h-[2px] w-8 bg-[#8cc63f] rounded-full"></div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#5c8a14]">Experience The Thrill</span>
+                  <div className="h-[2px] w-8 bg-[#fbc111] rounded-full"></div>
+               </div>
+               <TypewriterHeader />
+            </div>
+         </div>
 
+         <PageTransition>
          {/* Hero Section - WITH AUTO-SLIDING CAROUSEL */}
-         <section className="relative overflow-hidden pt-10 pb-12 md:pt-16 md:pb-20 px-6 sm:px-12 lg:px-24">
+         <section className="relative overflow-hidden pt-12 pb-12 md:pt-16 md:pb-20 px-6 sm:px-12 lg:px-24">
             <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                <div className="space-y-6 animate-in slide-in-from-left duration-1000">
                   <span className="inline-block bg-[#fbc111]/10 text-[#d4a017] px-4 py-1 rounded-xl text-[10px] font-black tracking-widest uppercase">Est. 2024</span>
@@ -159,6 +263,7 @@ const LandingPage = () => {
                            <img
                               key={idx}
                               src={img}
+                              loading={idx === 0 ? "eager" : "lazy"}
                               alt={`Scholastic Slide ${idx}`}
                               className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 transform-gpu ${
                                  idx === heroIndex ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-110 translate-x-full'
@@ -187,7 +292,7 @@ const LandingPage = () => {
          </section>
 
          {/* Institutional Pillars - COMPACT REFINED */}
-         <section id="history" className="py-10 bg-white/50">
+         <section id="aboutus" className="py-10 bg-white/50 scroll-mt-28">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
                <div className="mb-10 text-center sm:text-left">
                   <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Institutional Pillars</span>
@@ -225,7 +330,7 @@ const LandingPage = () => {
                      <div className="mt-8 h-1.5 w-16 bg-[#fbc111] rounded-full shadow-sm"></div>
                   </div>
 
-                  <div id="vision" className="bg-[#5c8a14] p-8 rounded-[40px] shadow-xl text-white relative overflow-hidden group">
+                  <div id="vision" className="bg-[#5c8a14] p-8 rounded-[40px] shadow-xl text-white relative overflow-hidden group scroll-mt-28">
                      <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                      <h3 className="text-xl font-black mb-4 relative z-10">The Vision</h3>
                      <p className="text-white/80 font-bold text-sm leading-relaxed mb-8 relative z-10">
@@ -241,7 +346,7 @@ const LandingPage = () => {
          </section>
 
          {/* Premium Course Tracks - INFINITE SLIDER COMPACT */}
-         <section id="courses" className="py-10 overflow-hidden">
+         <section id="courses" className="py-10 overflow-hidden scroll-mt-28">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mb-8">
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">Premium Course Tracks</h2>
@@ -269,7 +374,7 @@ const LandingPage = () => {
          </section>
 
          {/* Benefits & Contact - COMPACT REFINED */}
-         <section id="benefits" className="py-8 bg-white/30">
+         <section id="benefits" className="py-8 bg-white/30 scroll-mt-28">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
                <div className="bg-[#8cc63f] p-8 md:p-10 rounded-[48px] shadow-2xl space-y-8 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
@@ -291,24 +396,24 @@ const LandingPage = () => {
                   </div>
                </div>
 
-               <div id="contact" className="bg-[#fbc111] p-8 md:p-10 rounded-[48px] shadow-2xl space-y-8">
+               <div id="contact" className="bg-[#fbc111] p-8 md:p-10 rounded-[48px] shadow-2xl space-y-8 scroll-mt-28">
                   <h2 className="text-2xl md:text-3xl font-black text-slate-800 leading-tight">Contact Us</h2>
                   <div className="space-y-6">
-                     <div className="flex items-center gap-5 text-slate-800">
-                        <FiMail className="w-6 h-6 opacity-60" />
-                        <span className="font-black text-sm uppercase tracking-wide">admissions@desunacademy.edu</span>
+                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
+                        <FiMail className="shrink-0 text-slate-900" size={24} />
+                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left break-all">contact@desunacademy.in</span>
                      </div>
-                     <div className="flex items-center gap-5 text-slate-800">
-                        <FiPhone className="w-6 h-6 opacity-60" />
-                        <span className="font-black text-sm uppercase tracking-wide">+1 (800) 555-DESUN</span>
+                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
+                        <FiPhone className="shrink-0 text-slate-900" size={24} />
+                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left">+91 91470 61005</span>
                      </div>
-                     <div className="flex items-center gap-5 text-slate-800">
-                        <FiMapPin className="w-6 h-6 opacity-60" />
-                        <span className="font-black text-sm uppercase tracking-wide">Scholar Way, Austin, TX</span>
+                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
+                        <FiMapPin className="shrink-0 text-slate-900" size={24} />
+                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left">Kolkata, West Bengal, India</span>
                      </div>
                   </div>
                   <a
-                     href="mailto:admin@desun.com"
+                     href="mailto:contact@desunacademy.in"
                      className="block w-full bg-slate-900 hover:bg-[#8cc63f] text-white py-5 rounded-[20px] font-black text-xs uppercase tracking-widest text-center transition-all shadow-xl mt-4 active:scale-95"
                   >
                      Send Message
@@ -354,7 +459,69 @@ const LandingPage = () => {
                </div>
             </div>
          </section>
+         {/* Explore Categories - PREMIUM CARD GRID */}
+         <section className="py-12 md:py-16 bg-[#f8faf2]">
+            <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
+               <div className="text-center mb-12 space-y-3">
+                  <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-800">
+                     EXPLORE <span className="text-[#8cc63f]">CATEGORIES</span>
+                  </h2>
+                  <p className="text-gray-400 font-bold text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+                     Filter challenges by your expertise. Deep dive into specialized contests and showcase your mastery in specific domains.
+                  </p>
+               </div>
 
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {[
+                     { 
+                        title: 'MERN', 
+                        desc: 'Click to view all MERN contests.', 
+                        image: catMern, 
+                        domain: 'MERN STACK' 
+                     },
+                     { 
+                        title: 'UI/UX DESIGN', 
+                        desc: 'Click to view all UI/UX DESIGN contests.', 
+                        image: catUiux, 
+                        domain: 'DESIGNING' 
+                     },
+                     { 
+                        title: 'DIGITAL MARKETING', 
+                        desc: 'Click to view all DIGITAL MARKETING contests.', 
+                        image: catMarketing, 
+                        domain: 'MARKETING' 
+                     }
+                  ].map((cat, idx) => (
+                     <div 
+                        key={idx} 
+                        className="bg-white rounded-[48px] p-6 shadow-xl border border-gray-100 flex flex-col items-center text-center group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+                     >
+                        <div className="w-full h-[220px] rounded-[36px] overflow-hidden mb-6 relative">
+                           <img 
+                              src={cat.image} 
+                              alt={cat.title} 
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                           />
+                           {/* Soft Fade Effect from Screenshot */}
+                           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-100"></div>
+                        </div>
+                        
+                        <h3 className="text-xl font-black text-slate-900 mb-3">{cat.title}</h3>
+                        <p className="text-gray-400 font-bold text-[11px] leading-relaxed mb-6 px-4">
+                           {cat.desc}
+                        </p>
+                        
+                        <Link 
+                           to="/login"
+                           className="flex items-center gap-2 text-[#8cc63f] font-black text-[10px] uppercase tracking-widest hover:gap-3 transition-all"
+                        >
+                           Explore Now <FiArrowRight className="text-lg" />
+                        </Link>
+                     </div>
+                  ))}
+               </div>
+            </div>
+         </section>
 
          {/* Academic Contests Section with Loading/Error Handling */}
          <section className="py-12 bg-white/40 overflow-hidden">
@@ -406,8 +573,8 @@ const LandingPage = () => {
                      style={{ transform: 'translateX(-50%)' }}
                   >
                      <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                        <img src={contests[getCardIndex(-1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
-                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)].title}</h3></div>
+                        <img loading="lazy" src={contests[getCardIndex(-1)]?.image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)]?.title}</h3></div>
                      </div>
                   </div>
 
@@ -420,7 +587,8 @@ const LandingPage = () => {
                         
                         <div className="w-full h-[250px] md:h-[280px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
                            <img
-                              src={contests[currentIndex].image}
+                              loading="lazy"
+                              src={contests[currentIndex]?.image}
                               className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 transform-gpu"
                               alt="Active Contest"
                            />
@@ -429,16 +597,16 @@ const LandingPage = () => {
                         <div className="flex-1 space-y-4 text-center mt-6">
                            <div className="flex items-center justify-center gap-3">
                               <span className="text-[9px] font-black text-[#5c8a14] uppercase tracking-widest py-1 px-3 bg-[#8cc63f]/10 rounded-lg">
-                                 {contests[currentIndex].category}
+                                 {contests[currentIndex]?.category}
                               </span>
                               <FaTrophy className="text-[#fbc111] animate-bounce" size={18} />
                            </div>
                            <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                              {contests[currentIndex].title}
+                              {contests[currentIndex]?.title}
                            </h3>
                            <div className="flex items-center justify-center gap-3 py-3 border-t border-gray-50 mt-4">
                               <FiMapPin className="text-[#8cc63f] size={14}" />
-                              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex].date}</span>
+                              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex]?.date}</span>
                            </div>
                         </div>
                      </div>
@@ -450,8 +618,8 @@ const LandingPage = () => {
                      style={{ transform: 'translateX(50%)' }}
                   >
                      <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                        <img src={contests[getCardIndex(1)].image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
-                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)].title}</h3></div>
+                        <img loading="lazy" src={contests[getCardIndex(1)]?.image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                        <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)]?.title}</h3></div>
                      </div>
                   </div>
                </div>
@@ -459,6 +627,7 @@ const LandingPage = () => {
          </section>
 
          <Ratings />
+         </PageTransition>
 
          <Footer />
       </div>

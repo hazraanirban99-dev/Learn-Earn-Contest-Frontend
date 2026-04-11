@@ -1,3 +1,9 @@
+// ============================================================
+// PortalSelect.jsx — Reusable dropdown select for modals
+// Options list pass korle dynamic render kore.
+// Icon support with FiChevronDown integration for consistent UI.
+// ============================================================
+
 import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 

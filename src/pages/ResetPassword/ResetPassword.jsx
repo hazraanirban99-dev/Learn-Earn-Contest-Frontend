@@ -1,8 +1,16 @@
+// ============================================================
+// ResetPassword.jsx — Password recovery page
+// Forgot password link theke email verification code validation handle kore.
+// New password set korar options r success alerts ekhane implement kora.
+// ============================================================
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar, Footer, InputField, Button, Logo } from '../../components';
 import { FiLock, FiArrowRight } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
+import PageTransition from '../../components/Common/PageTransition';
 
 const ResetPassword = () => {
     const { token } = useParams();
@@ -22,25 +30,20 @@ const ResetPassword = () => {
 
         setLoading(true);
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/v1/users/password/reset/${token}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password, confirmPassword })
+            const response = await api.put(`/users/password/reset/${token}`, {
+                password, 
+                confirmPassword 
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (response.data.success) {
                 toast.success("Password reset successfully!");
                 navigate('/login');
             } else {
-                toast.error(data.message || "Failed to reset password.");
+                toast.error(response.data.message || "Failed to reset password.");
             }
         } catch (error) {
             console.error("Reset Password Error:", error);
-            toast.error("Server connection failed.");
+            toast.error(error.message || "Server connection failed.");
         } finally {
             setLoading(false);
         }
@@ -49,8 +52,8 @@ const ResetPassword = () => {
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-r from-[#fbc111] to-[#8cc63f] overflow-x-hidden">
             <Navbar />
-            
-            <main className="flex-1 flex items-center justify-center px-4 py-6 md:py-10 lg:py-14">
+            <PageTransition>
+                <main className="flex-1 flex items-center justify-center pt-24 px-4 py-6 md:py-10 lg:py-14">
                 <div className="w-full max-w-[1000px] flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                     
                     {/* Left Panel - Branding */}
@@ -116,7 +119,8 @@ const ResetPassword = () => {
                         </div>
                     </div>
                 </div>
-            </main>
+                </main>
+            </PageTransition>
             
             <Footer />
         </div>

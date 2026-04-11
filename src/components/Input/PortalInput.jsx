@@ -1,3 +1,9 @@
+// ============================================================
+// PortalInput.jsx — Specialized input for Admin Modals
+// Compact design with borderless-like focused states.
+// Direct prop mapping for clean value binding in Edit Modals.
+// ============================================================
+
 import React from 'react';
 
 const PortalInput = React.memo(({ label, id, value, onChange, placeholder, icon: Icon, subNote, type = 'text', rightElement, borderColor }) => (

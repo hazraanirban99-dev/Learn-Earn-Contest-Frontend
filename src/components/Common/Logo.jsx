@@ -1,6 +1,14 @@
+// ============================================================
+// Logo.jsx — Brand logo component with premium aesthetics
+// Green r Gold color combination use kora hoyeche.
+// SVG filters use kora hoyeche glassmorphism effect er jonno.
+// Text animation r hover scaling effect ekhane implement kora.
+// ============================================================
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/desun-logo.png';
+import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
+const logo = getOptimizedUrl(CLOUDINARY_ASSETS["desun-logo.png"]);
 
 /**
  * Reusable Logo component for DESUN ACADEMY branding.

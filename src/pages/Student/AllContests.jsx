@@ -1,10 +1,22 @@
+// ============================================================
+// AllContests.jsx — Student er sob contest dekhার page
+// Backend theke sob contest fetch hoy ekhane.
+// Domain filter (MERN, UI/UX etc) diye filter korte para jay.
+// Search bar e contest title diye khuja jay.
+// ContestCard component diye prottekta contest dekhano hoy.
+// Card e click korle ContestDetails page e navigate hoy.
+// ============================================================
+
 import React, { useState, useEffect } from 'react';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import ContestCard from '../../components/Cards/ContestCard';
 import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import api from '../../utils/api';
+import { toast } from 'react-toastify';
+import PageTransition from '../../components/Common/PageTransition';
+import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 
 const AllContests = () => {
    const [loading, setLoading] = useState(true);
@@ -17,18 +29,23 @@ const AllContests = () => {
    const [selectedStatuses, setSelectedStatuses] = useState([]);
    const [visibleCount, setVisibleCount] = useState(6);
 
+   // Mobile Dropdown states
+   const [isDomainOpen, setIsDomainOpen] = useState(false);
+   const [isStatusOpen, setIsStatusOpen] = useState(false);
+   const domainRef = React.useRef(null);
+   const statusRef = React.useRef(null);
+
    // Logic: Only enable infinite scroll when filters are active
    const isFilterActive = searchQuery.trim() !== '' || selectedDomains.length > 0 || selectedStatuses.length > 0;
 
    // Infinite Scroll Listener
    useEffect(() => {
       if (!isFilterActive) {
-         setVisibleCount(6); // Reset to base set when filters are cleared
+         setVisibleCount(6);
          return;
       }
 
       const handleScroll = () => {
-         // Check if user scrolled near the bottom of the page
          if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 200) {
             setVisibleCount(prev => prev + 6);
          }
@@ -38,128 +55,76 @@ const AllContests = () => {
       return () => window.removeEventListener('scroll', handleScroll);
    }, [isFilterActive]);
 
+   // Click away for dropdowns
    useEffect(() => {
-      // =========================================================================
-      // 🚀 [BACKEND] FETCH CAROUSEL SLIDES + ALL CONTESTS
-      // =========================================================================
-      // Replace all mock data below with 2 API calls:
-      //
-      // CAROUSEL: GET /api/v1/contests/featured
-      //   Returns: [{ id, title, subtitle, thumbnailUrl, tag, buttonText }]
-      //   → Replace the setCarouselData([...]) array below
-      //
-      // CONTESTS: GET /api/v1/contests?status=all&domain=all
-      //   Returns: [{ id, title, desc, domain, status, dateValue, dateInfo }]
-      //   → Replace the baseContests array below
-      //   → Remove the duplicate-expansion loop (lines after baseContests)
-      //   → Remove the fake setTimeout delay entirely
-      //   Note: icon field can be derived from domain on frontend
-      // =========================================================================
-      const fetchData = async () => {
+      const handleClickOutside = (event) => {
+         if (domainRef.current && !domainRef.current.contains(event.target)) setIsDomainOpen(false);
+         if (statusRef.current && !statusRef.current.contains(event.target)) setIsStatusOpen(false);
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+   }, []);
+
+   useEffect(() => {
+      // Backend theke data fetch korar logic
+      const fetchAllData = async () => {
          setLoading(true);
          try {
+            // Fetch All Contests Data first
+            const contestsRes = await api.get('/contests');
+            if (contestsRes.data.success) {
+               const allData = contestsRes.data.data;
 
-            // Carousel 3 slides for this page to EXACTLY match dashboard
-            setCarouselData([
-               {
-                  id: 101,
-                  title: "Master the Art of Innovation",
-                  subtitle: "Join a community of elite scholars and creators at Desun Academy. Transform your potential into mastery.",
-                  thumbnailUrl: "https://images.unsplash.com/photo-1542621334-a254cf47733d?q=80&w=1470&auto=format&fit=crop",
-                  tag: "Enrolling Now",
-                  buttonText: "Explore Programs"
-               },
-               {
-                  id: 102,
-                  title: "Global Code Sprint",
-                  subtitle: "Compete globally in real-time algorithm challenges and win exclusive networking opportunities.",
-                  thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1470&auto=format&fit=crop",
-                  tag: "Enrolling Now",
-                  buttonText: "Explore Programs"
-               },
-               {
-                  id: 103,
-                  title: "UX/UI Atelier Challenge",
-                  subtitle: "Design the future interfaces of web3. Collaborative design sprints with industry veterans.",
-                  thumbnailUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1400&auto=format&fit=crop",
-                  tag: "Enrolling Now",
-                  buttonText: "Explore Programs"
-               }
-            ]);
+               // 1. Carousel Data (Latest 5 UPCOMING)
+               const upcomingContests = allData
+                  .filter(c => c.status === 'UPCOMING')
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+               
+               const mappedCarousel = upcomingContests.slice(0, 5).map(c => ({
+                  id: c._id,
+                  title: c.title,
+                  subtitle: c.description.substring(0, 100) + "...",
+                  thumbnailUrl: c.thumbnail?.url,
+                  tag: "Coming Soon",
+                  buttonText: "Join Contest"
+               }));
+               setCarouselData(mappedCarousel);
 
-            // Contest Data
-            const baseContests = [
-               {
-                  id: 1,
-                  title: "Algorithmic Odyssey",
-                  desc: "Master complex data structures and solve real-world efficiency problems in this 48-hour sprint.",
-                  domain: "Development",
-                  status: "ONGOING",
-                  icon: <FiCode />,
-                  dateInfo: "ENDS IN",
-                  dateValue: "12h"
-               },
-               {
-                  id: 2,
-                  title: "Python Pro Challenge",
-                  desc: "A deep dive into backend optimization and clean code practices using Python frameworks.",
-                  domain: "Development",
-                  status: "UPCOMING",
-                  icon: <FiCode />
-               },
-               {
-                  id: 3,
-                  title: "Visual Storytelling",
-                  desc: "A design challenge focused on minimalist composition and emotional color theory application.",
-                  domain: "UI/UX",
-                  status: "ONGOING",
-                  icon: <FiLayout />
-               },
-               {
-                  id: 4,
-                  title: "Accessibility Masterclass",
-                  desc: "Designing inclusive interfaces that cater to users with diverse functional needs.",
-                  domain: "UI/UX",
-                  status: "UPCOMING",
-                  icon: <FiLayout />
-               },
-               {
-                  id: 5,
-                  title: "Growth Hacking Summit",
-                  desc: "Strategic campaign planning and data-driven optimization for scaling startups.",
-                  domain: "Marketing",
-                  status: "UPCOMING",
-                  icon: <FiTrendingUp />
-               },
-               {
-                  id: 6,
-                  title: "SEO Performance Blast",
-                  desc: "Master technical SEO and content clustering to dominate search engine results.",
-                  domain: "Marketing",
-                  status: "ONGOING",
-                  icon: <FiTrendingUp />
-               }
-            ];
+               // 2. All Contests List Data
+               const domainMap = {
+                  'MERN': 'MERN',
+                  'UIUX': 'UI/UX',
+                  'DIGITAL MARKETING': 'Digital Marketing',
+                  'Development': 'MERN'
+               };
 
-            // Duplicating base contests to provide enough data for infinite scrolling demo
-            const expandedContests = [];
-            for (let i = 0; i < 6; i++) {
-               baseContests.forEach(bc => expandedContests.push({ ...bc, id: `${bc.id}-${i}` }));
+               const mappedContests = allData.map(c => ({
+                  id: c._id,
+                  title: c.title,
+                  desc: c.description,
+                  domain: domainMap[c.domain] || c.domain || 'General',
+                  status: c.status,
+                  prize: c.cashPrize && c.cashPrize > 0 ? `₹${c.cashPrize}` : null,
+                  dateInfo: c.status === 'ONGOING' ? "ENDS SOON" : c.status === 'UPCOMING' ? "STARTS" : "COMPLETED ON",
+                  dateValue: formatDateDDMMYYYY(c.endDate),
+                  thumbnail: c.thumbnail?.url || null,
+                  winnerName: c.isWinnerDeclared ? (c.winner?.name || "TBA") : null,
+                  participantsCount: c.participantsCount || 0
+               }));
+               setAllContests(mappedContests);
             }
-
-            setAllContests(expandedContests);
-
          } catch (err) {
             console.error(err);
+            toast.error("Failed to load contests from server.");
          } finally {
             setLoading(false);
          }
       };
 
-      fetchData();
+      fetchAllData();
    }, []);
 
-   const domains = ['Development', 'UI/UX', 'Marketing'];
+   const domains = ['MERN', 'UI/UX', 'Digital Marketing'];
    const statuses = ['Ongoing', 'Upcoming', 'Completed'];
 
    const toggleFilter = React.useCallback((type, value) => {
@@ -170,23 +135,24 @@ const AllContests = () => {
       }
    }, []);
 
-   // Filter Logic - Memoized to prevent re-calculation on scroll
    const filteredContests = React.useMemo(() => {
       return allContests.filter(contest => {
          const matchesSearch = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             contest.desc.toLowerCase().includes(searchQuery.toLowerCase());
          const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(contest.domain);
-         const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(contest.status.charAt(0) + contest.status.slice(1).toLowerCase());
+         
+         // Map backend status to filter status label
+         const displayStatus = contest.status.charAt(0) + contest.status.slice(1).toLowerCase();
+         const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(displayStatus);
+         
          return matchesSearch && domainMatch && statusMatch;
       });
    }, [allContests, searchQuery, selectedDomains, selectedStatuses]);
 
-   // Infinite scroll slice before grouping
    const visibleContests = React.useMemo(() => {
       return filteredContests.slice(0, visibleCount);
    }, [filteredContests, visibleCount]);
 
-   // Grouping Logic - Memoized
    const groupedContests = React.useMemo(() => {
       return domains.reduce((acc, domain) => {
          const contestsInDomain = visibleContests.filter(c => c.domain === domain);
@@ -197,128 +163,142 @@ const AllContests = () => {
 
    const getDomainColor = React.useCallback((domain) => {
       switch (domain) {
-         case 'Development': return 'text-[#8cc63f]';
+         case 'MERN': return 'text-[#8cc63f]';
          case 'UI/UX': return 'text-[#3f8cc6]';
-         case 'Marketing': return 'text-[#fbc111]';
+         case 'Digital Marketing': return 'text-[#fbc111]';
          default: return 'text-gray-400';
       }
    }, []);
 
    const getDomainIcon = React.useCallback((domain) => {
       switch (domain) {
-         case 'Development': return <FiGlobe size={24} />;
-         case 'UI/UX': return <FiLayout size={24} />;
-         case 'Marketing': return <FiTrendingUp size={24} />;
+         case 'MERN': 
+         case 'Web Development': return <FiGlobe size={24} />;
+         case 'UI/UX': 
+         case 'UIUX': return <FiLayout size={24} />;
+         case 'Digital Marketing': 
+         case 'DIGITAL MARKETING': return <FiTrendingUp size={24} />;
          default: return <FiGlobe size={24} />;
       }
    }, []);
 
+   const FilterSection = ({ type, data, selected, toggle }) => (
+      <div className="space-y-3">
+         {data.map(val => (
+            <div key={val} onClick={() => toggle(type, val)} className="flex items-center gap-3 cursor-pointer group select-none">
+               <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${selected.includes(val) ? 'bg-[#8cc63f] border-[#8cc63f]' : 'border-gray-200 group-hover:border-[#8cc63f]'}`}>
+                  {selected.includes(val) && (
+                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                  )}
+               </div>
+               <span className={`text-sm font-bold truncate ${selected.includes(val) ? 'text-slate-800' : 'text-gray-500 group-hover:text-slate-700'}`}>{val}</span>
+            </div>
+         ))}
+      </div>
+   );
+
    return (
       <div className="min-h-screen bg-[#f8faf2] font-sans">
          <UserNavbar />
-
-         {/* Hero Carousel */}
-         <HeroCarousel contests={carouselData} loading={loading} />
-
-         {/* Search Bar (Below Carousel) */}
-         <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mt-8">
-            <div className="bg-white p-2 rounded-full shadow-lg border border-[#fbc111]/40 flex items-center max-w-2xl mx-auto">
-               <div className="pl-6 pr-4 text-[#8cc63f]">
-                  <FiSearch size={20} />
+         <PageTransition>
+            <HeroCarousel contests={carouselData} loading={loading} />
+            <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mt-8">
+               <div className="bg-white p-2 rounded-full shadow-lg border border-[#fbc111]/40 flex items-center max-w-2xl mx-auto">
+                  <div className="pl-6 pr-4 text-[#8cc63f]">
+                     <FiSearch size={20} />
+                  </div>
+                  <input
+                     type="text"
+                     placeholder="Search contests..."
+                     value={searchQuery}
+                     onChange={(e) => setSearchQuery(e.target.value)}
+                     className="w-full bg-transparent border-none outline-none text-slate-800 placeholder-gray-400 font-bold py-4"
+                  />
                </div>
-               <input
-                  type="text"
-                  placeholder="Search contests..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none text-slate-800 placeholder-gray-400 font-bold py-4"
-               />
             </div>
-         </div>
 
-         <section className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 py-16 flex flex-col lg:flex-row gap-12">
-
-            {/* LEFT SIDEBAR - FILTERS */}
-            <aside className="w-full lg:w-64 shrink-0 space-y-8">
-               <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                  <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
-                     <FiFilter className="text-[#8cc63f]" size={18} /> Domain
-                  </h3>
-                  <div className="space-y-3">
-                     {domains.map(domain => (
-                        <label key={domain} onClick={() => toggleFilter('domain', domain)} className="flex items-center gap-3 cursor-pointer group">
-                           <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${selectedDomains.includes(domain) ? 'bg-[#8cc63f] border-[#8cc63f]' : 'border-gray-200 group-hover:border-[#8cc63f]'
-                              }`}>
-                              {selectedDomains.includes(domain) && (
-                                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                              )}
-                           </div>
-                           <span className={`text-sm font-bold ${selectedDomains.includes(domain) ? 'text-slate-800' : 'text-gray-500'}`}>{domain}</span>
-                        </label>
-                     ))}
-                  </div>
-               </div>
-
-               <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                  <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
-                     <FiFilter className="text-[#fbc111]" size={18} /> Status
-                  </h3>
-                  <div className="space-y-3">
-                     {statuses.map(status => (
-                        <label key={status} onClick={() => toggleFilter('status', status)} className="flex items-center gap-3 cursor-pointer group">
-                           <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${selectedStatuses.includes(status) ? 'bg-[#8cc63f] border-[#8cc63f]' : 'border-gray-200 group-hover:border-[#8cc63f]'
-                              }`}>
-                              {selectedStatuses.includes(status) && (
-                                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                              )}
-                           </div>
-                           <span className={`text-sm font-bold ${selectedStatuses.includes(status) ? 'text-slate-800' : 'text-gray-500'}`}>{status}</span>
-                        </label>
-                     ))}
-                  </div>
-               </div>
-            </aside>
-
-            {/* RIGHT CONTENT - GRID LISTINGS */}
-            <div className="flex-1 space-y-16">
-               {loading ? (
-                  <div className="space-y-12">
-                     {[1, 2, 3].map(i => (
-                        <div key={i} className="animate-pulse">
-                           <div className="w-48 h-6 bg-gray-200 rounded mb-6"></div>
-                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="h-64 bg-white rounded-[40px]"></div><div className="h-64 bg-white rounded-[40px]"></div></div>
-                        </div>
-                     ))}
-                  </div>
-               ) : Object.keys(groupedContests).length === 0 ? (
-                  <div className="text-center py-20">
-                     <div className="text-6xl mb-4">🔍</div>
-                     <h3 className="text-2xl font-black text-slate-800 mb-2">No contests found</h3>
-                     <p className="text-gray-500 font-bold">Try adjusting your filters to find what you're looking for.</p>
-                  </div>
-               ) : (
-                  Object.entries(groupedContests).map(([domain, contests]) => (
-                     <div key={domain}>
-                     
-                     <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3 mb-8">
-                        <span className={getDomainColor(domain)}>
-                           {getDomainIcon(domain)}
-                        </span>
-                        {domain}
-                     </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           {contests.map((contest, idx) => (
-                              <ContestCard key={contest.id} contest={contest} index={idx} variant="full" />
-                           ))}
-                        </div>
+            {/* MOBILE VIEW FILTER BAR (Visible only on mobile/tablet) */}
+            <div className="lg:hidden max-w-[1440px] mx-auto px-6 mt-6 flex flex-wrap gap-3 pb-2 relative z-50">
+               {/* Domain Dropdown */}
+               <div className="relative shrink-0" ref={domainRef}>
+                  <button 
+                     onClick={() => setIsDomainOpen(!isDomainOpen)}
+                     className={`flex items-center gap-2 px-6 py-3 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${selectedDomains.length > 0 ? 'bg-[#8cc63f] border-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                  >
+                     <FiFilter size={14} /> Domain {selectedDomains.length > 0 && `(${selectedDomains.length})`}
+                  </button>
+                  {isDomainOpen && (
+                     <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                        <FilterSection type="domain" data={domains} selected={selectedDomains} toggle={toggleFilter} />
                      </div>
-                  ))
-               )}
+                  )}
+               </div>
+
+               {/* Status Dropdown */}
+               <div className="relative shrink-0" ref={statusRef}>
+                  <button 
+                      onClick={() => setIsStatusOpen(!isStatusOpen)}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${selectedStatuses.length > 0 ? 'bg-[#fbc111] border-[#fbc111] text-slate-900 shadow-lg shadow-[#fbc111]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                  >
+                     <FiTrendingUp size={14} /> Status {selectedStatuses.length > 0 && `(${selectedStatuses.length})`}
+                  </button>
+                  {isStatusOpen && (
+                     <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                        <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
+                     </div>
+                  )}
+               </div>
             </div>
 
-         </section>
+            <section className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 py-12 lg:py-16 flex flex-col lg:flex-row gap-12">
+               {/* DESKTOP SIDEBAR (Visible only on large screens) */}
+               <aside className="hidden lg:block w-64 shrink-0 space-y-8">
+                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 sticky top-24">
+                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <FiFilter className="text-[#8cc63f]" size={18} /> Domain
+                     </h3>
+                     <FilterSection type="domain" data={domains} selected={selectedDomains} toggle={toggleFilter} />
+                     
+                     <div className="my-8 border-t border-gray-50"></div>
 
+                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <FiTrendingUp className="text-[#fbc111]" size={18} /> Status
+                     </h3>
+                     <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
+                  </div>
+               </aside>
+               <div className="flex-1 space-y-16">
+                  {loading ? (
+                     <div className="space-y-12">
+                        {[1, 2, 3].map(i => (
+                           <div key={i} className="animate-pulse">
+                              <div className="w-48 h-6 bg-gray-200 rounded mb-6"></div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <div className="h-64 bg-white rounded-[40px]"></div>
+                                 <div className="h-64 bg-white rounded-[40px]"></div>
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+                  ) : Object.keys(groupedContests).length === 0 ? (
+                     <div className="text-center py-20"><h3 className="text-2xl font-black text-slate-800 mb-2">No contests found</h3></div>
+                  ) : (
+                     Object.entries(groupedContests).map(([domain, contests]) => (
+                        <div key={domain}>
+                           <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3 mb-8">
+                              <span className={getDomainColor(domain)}>{getDomainIcon(domain)}</span>{domain}
+                           </h2>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              {contests.map((contest, idx) => (
+                                 <ContestCard key={contest.id} contest={contest} index={idx} variant="full" />
+                              ))}
+                           </div>
+                        </div>
+                     ))
+                  )}
+               </div>
+            </section>
+         </PageTransition>
          <Footer />
       </div>
    );

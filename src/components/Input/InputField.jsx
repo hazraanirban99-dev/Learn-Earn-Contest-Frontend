@@ -1,7 +1,14 @@
+// ============================================================
+// InputField.jsx — Shared input component with custom icons
+// Label, Placeholder, Type, r Icon props handle kora hoy.
+// Border status (success/error) dynamically apply kora jay.
+// Focus states e glow effect build kora ache premium look er jonno.
+// ============================================================
+
 import React from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
-const InputField = React.memo(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight, onLabelRightClick }) => {
+const InputField = React.memo(React.forwardRef(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight, onLabelRightClick }, ref) => {
   const isTextArea = type === 'textarea';
 
   return (
@@ -20,11 +27,12 @@ const InputField = React.memo(({ label, type, name, value, onChange, placeholder
         {type === 'select' ? (
           <>
             <select
+              ref={ref}
               name={name}
               value={value}
               onChange={onChange}
               required={required}
-              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-sm font-medium appearance-none ${!Icon ? 'pl-4' : ''} pr-10 cursor-pointer`}
+              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium appearance-none ${!Icon ? 'pl-4' : ''} pr-10 cursor-pointer`}
             >
               <option value="" disabled hidden>{placeholder || "Select an option"}</option>
               {options && options.map((opt) => (
@@ -39,27 +47,29 @@ const InputField = React.memo(({ label, type, name, value, onChange, placeholder
           </>
         ) : isTextArea ? (
           <textarea
+            ref={ref}
             name={name}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             required={required}
-            className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5 pt-1`}
+            className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5 pt-1`}
           />
         ) : (
           <input
+            ref={ref}
             type={type}
             name={name}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             required={required}
-            className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400`}
+            className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400`}
           />
         )}
       </div>
     </div>
   );
-});
+}));
 
 export default InputField;

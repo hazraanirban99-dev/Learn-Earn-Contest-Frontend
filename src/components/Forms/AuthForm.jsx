@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
+// ============================================================
+// AuthForm.jsx — Shared Login/Register form structure
+// Form status loading handle kore r errors display kore.
+// User context (auth) access kore register/login call korar jonno.
+// Glassmorphism design system follow kora hoyeche.
+// Input validation hints r error messages er styling ekhane ache.
+// ============================================================
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '../index';
 import {
@@ -11,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { InputField, Button, SocialButton } from '../index';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
 
 const AuthForm = ({ type }) => {
   const isRegister = type === 'register';
@@ -18,6 +27,21 @@ const AuthForm = ({ type }) => {
   const navigate = useNavigate();
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    // Normalize scroll position to the top instantly so that both Login and Register 
+    // start from the same position, yielding a consistent top-to-bottom focus trajectory.
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    const timer = setTimeout(() => {
+      // Allow browser to natively scroll input into view (works best with mobile keyboards)
+      if (firstInputRef.current) {
+        firstInputRef.current.focus();
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [type]);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -55,25 +79,11 @@ const AuthForm = ({ type }) => {
 
       setLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/v1/users/password/forgot`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email: formData.email })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          toast.success(data.message || "Reset link sent to your email!");
-          setIsForgotPassword(false); // Go back to login after success
-        } else {
-          toast.error(data.message || "Failed to send reset link.");
-        }
+        const { data } = await api.post('/users/password/forgot', { email: formData.email });
+        toast.success(data.message || "Reset link sent to your email!");
+        setIsForgotPassword(false);
       } catch (error) {
-        console.error("Forgot Password Error:", error);
-        toast.error("Server connection failed.");
+        toast.error(error.message || "Failed to send reset link.");
       } finally {
         setLoading(false);
       }
@@ -89,100 +99,56 @@ const AuthForm = ({ type }) => {
         toast.error("Please accept the Terms of Service.");
         return;
       }
-      console.log("Registration Attempt:", formData);
       
-      // =========================================================================
-      // 🚀 BACKEND API INTEGRATION: REGISTRATION (USING FETCH)
-      // =========================================================================
-      /*
+      setLoading(true);
       try {
-        const response = await fetch('http://YOUR_BACKEND_URL/api/v1/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            fullName: formData.fullName,
-            contactNumber: formData.contactNumber,
+        // Backend e registration data pathano hoche
+        const { data } = await api.post('/users/register', formData);
+        
+        if (data.success) {
+          toast.success("Account created! Logging in...");
+          
+          // Registration er por automatic login korar cesta
+          const loginRes = await api.post('/users/login', {
             email: formData.email,
-            gender: formData.gender,
-            address: formData.address,
             password: formData.password
-          })
-        });
-
-        const data = await response.json(); // Data from backend
-
-        if (response.ok) {
-          // Success: Use context login and redirect
-          login({ email: data.user.email, name: data.user.name, token: data.token });
-          navigate('/admin/dashboard');
-        } else {
-          toast.error(data.message || "Registration failed!");
+          });
+          
+          login(loginRes.data.data.user);
+          navigate(loginRes.data.data.user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
         }
       } catch (error) {
-        console.error("API Error:", error);
-        toast.error("Something went wrong with the server.");
-      }
-      */
-      
-      // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      const role = formData.email.trim().toLowerCase() === 'admin@gmail.com' ? 'admin' : 'student';
-      login({ email: formData.email, name: formData.fullName, role });
-      
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/student/dashboard');
+        toast.error(error.message || "Registration failed!");
+      } finally {
+        setLoading(false);
       }
     } else {
-      console.log("Login Attempt:", formData);
-      
-      // =========================================================================
-      // 🚀 BACKEND API INTEGRATION: LOGIN (USING FETCH)
-      // =========================================================================
-      /*
+      setLoading(true);
       try {
-        const response = await fetch('http://YOUR_BACKEND_URL/api/v1/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password
-          })
+        // Backend e login data pathano hoche
+        const { data } = await api.post('/users/login', {
+          email: formData.email,
+          password: formData.password
         });
 
-        const data = await response.json(); // Convert to JSON
-
-        if (response.ok) {
-          // Success: Save user data in context
-          login({ email: data.user.email, name: data.user.name, token: data.token });
-          navigate('/admin/dashboard');
-        } else {
-          toast.error(data.message || "Invalid email or password!");
+        if (data.success) {
+          toast.success(`Welcome back ${data.data.user.name}!`);
+          login(data.data.user);
+          
+          // Role base redirection
+          if (data.data.user.role === 'admin') {
+            navigate('/admin/dashboard');
+          } else {
+            navigate('/student/dashboard');
+          }
         }
       } catch (error) {
-        console.error("API Error:", error);
-        toast.error("Server connection failed.");
-      }
-      */
-      
-      // MOCK BEHAVIOR (DELETE THIS WHEN API IS READY):
-      const role = formData.email.trim().toLowerCase() === 'admin@gmail.com' ? 'admin' : 'student';
-      login({ 
-        email: formData.email, 
-        name: role === 'admin' ? 'Admin User' : 'Student User',
-        role 
-      });
-
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/student/dashboard');
+        toast.error(error.message || "Invalid email or password!");
+      } finally {
+        setLoading(false);
       }
     }
+
   };
 
   return (
@@ -213,6 +179,7 @@ const AuthForm = ({ type }) => {
         {isRegister && (
           <>
             <InputField
+              ref={firstInputRef}
               label="Full Name" type="text" name="fullName" value={formData.fullName}
               onChange={handleChange} placeholder="Alok Nandy" icon={FiUser} required
             />
@@ -224,6 +191,7 @@ const AuthForm = ({ type }) => {
         )}
 
         <InputField
+          ref={!isRegister ? firstInputRef : null}
           label="Email Address"
           type="email"
           name="email"
@@ -264,7 +232,7 @@ const AuthForm = ({ type }) => {
             <InputField
               label="Interested In" type="select" name="interestedIn" value={formData.interestedIn}
               onChange={handleChange} placeholder="Select your field of interest" icon={FiBookOpen} required
-              options={['Web Development', 'UI/UX', 'Digital Marketing']}
+              options={['MERN', 'UI/UX', 'Digital Marketing']}
             />
           </>
         )}

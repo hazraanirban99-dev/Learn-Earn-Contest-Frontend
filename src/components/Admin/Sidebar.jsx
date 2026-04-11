@@ -1,3 +1,12 @@
+// ============================================================
+// Sidebar.jsx — Admin layout er left sidebar navigation
+// Prottekta nav item e icon + label + active indicator ache.
+// Active route == green text + right side colored bar indicator.
+// /admin/contests/create te thakleo "Manage Contests" active dekhabe.
+// Mobile e isOpen prop diye slide-in sidebar hoy (AdminLayout handle kore).
+// onClose prop diye mobile sidebar er X button close hoy.
+// ============================================================
+
 import React from 'react';
 import { Logo } from '../index';
 import { 

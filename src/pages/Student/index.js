@@ -1,3 +1,8 @@
+// ============================================================
+// pages/Student/index.js — Student related pages er export hub
+// Dashboards, details, r submission pages ekhane export kora hoy.
+// ============================================================
+
 export { default as StudentDashboard } from './StudentDashboard';
 export { default as AllContests } from './AllContests';
 export { default as ContestDetails } from './ContestDetails';

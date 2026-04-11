@@ -1,3 +1,9 @@
+// ============================================================
+// SocialButton.jsx — Circular social media link buttons
+// Icon selection logic dynamically handle kore (GitHub, LinkedIn, Twitter).
+// Premium hover styles with background shifts.
+// ============================================================
+
 import React from 'react';
 
 const SocialButton = ({ text, onClick, icon: Icon, iconColor = "" }) => {

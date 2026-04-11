@@ -1,3 +1,11 @@
+// ============================================================
+// AdminDashboard.jsx — Admin er main overview page
+// Ekhane StatCards, EnrollmentChart (bar chart), RecentContests table,
+// RecentActivity feed, UpcomingContest card, r SkillTrajectory widget ache.
+// Sob data AdminDashboardContext theke ase — directly API call hoy na ekhane.
+// Monthly/Weekly toggle ache chart er view change korar jonno.
+// ============================================================
+
 import React from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import StatCard from '../../components/Admin/StatCard';
@@ -45,14 +53,10 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Stats Grid — 4 cards in one row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {stats.map((stat, idx) => (
-            <StatCard 
-              key={idx} 
-              {...stat} 
-              showTrend={idx > 1} // Hide trends for Total Contests and Total Participants
-            />
+            <StatCard key={idx} {...stat} showTrend={false} />
           ))}
         </div>
 

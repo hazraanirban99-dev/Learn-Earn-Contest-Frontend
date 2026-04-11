@@ -1,3 +1,14 @@
+// ============================================================
+// ManageUsers.jsx — Admin e sob student/user manage korar page
+// UserContext theke users[] list fetch kora hoy.
+// Name diye search korle suggestions dropdown theke click kora jay.
+// Contest filter diye shudhu oi contest er participant dekhano jay (mock data).
+// Edit icon click korle EditUserModal open hoy.
+// Trash icon click korle confirmation toast e delete confirm korte hoy.
+// Name er niche "PARTICIPANT MEMBER" label dekhano hoy (yellow text).
+// CSV export button ache sob user download korar jonno.
+// ============================================================
+
 import React, { useState } from 'react';
 import { useUsers } from '../../context/UserContext';
 import EditUserModal from '../../components/Admin/EditUserModal';
@@ -5,6 +16,7 @@ import AdminLayout from '../../layouts/AdminLayout';
 import { FiSearch, FiDownload, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiShield } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { exportToCSV } from '../../utils/exportUtils';
+import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 
 const ManageUsers = () => {
   const { users, updateUser, deleteUser } = useUsers();
@@ -29,8 +41,8 @@ const ManageUsers = () => {
     const lowerSearch = searchTerm.toLowerCase();
     
     const userMatches = users
-      .filter(u => u.name.toLowerCase().includes(lowerSearch) || u.regId.toLowerCase().includes(lowerSearch))
-      .map(u => ({ type: 'user', label: `${u.name} (@${u.regId})`, value: u.name, id: u.id }));
+      .filter(u => u.name.toLowerCase().includes(lowerSearch))
+      .map(u => ({ type: 'user', label: u.name, value: u.name, id: u.id }));
 
     const contestMatches = contests
       .filter(c => c.toLowerCase().includes(lowerSearch))
@@ -53,8 +65,7 @@ const ManageUsers = () => {
 
     return users.filter(user => 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.regId.toLowerCase().includes(searchTerm.toLowerCase())
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [users, searchTerm, selectedFilter, userContests]);
 
@@ -242,7 +253,7 @@ const ManageUsers = () => {
                         <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-gray-100 shadow-sm" />
                         <div>
                           <div className="font-black text-slate-800 text-[15px]">{user.name}</div>
-                          <div className="text-[11px] text-gray-400 font-bold tracking-wider mt-0.5">ID: {user.regId}</div>
+                          <div className="text-[9px] text-[#fbc111] font-black tracking-widest mt-0.5 uppercase">PARTICIPANT MEMBER</div>
                         </div>
                       </div>
                     </td>
@@ -263,7 +274,7 @@ const ManageUsers = () => {
                     </td>
                     <td className="py-5 px-6">
                       <div className="text-[13px] font-bold text-slate-600 mb-0.5">
-                        {user.registrationDate.includes('/') ? new Date(user.registrationDate).toLocaleDateString('end-US', { month: 'short', day: 'numeric', year: 'numeric' }) : user.registrationDate}
+                        {formatDateDDMMYYYY(user.registrationDate)}
                       </div>
                       <div className="text-[11px] text-gray-400 font-bold uppercase">{user.registrationTime}</div>
                     </td>

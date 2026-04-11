@@ -1,19 +1,73 @@
+// ============================================================
+// UserNavbar.jsx — Student dashboard er header/navigation
+// User profile data display kore (name, avatar, domain).
+// Logout functionality integrated context theke move kore.
+// Notifications badge show kore real-time updates er jonno.
+// Mobile menu toggle logic ache student specific routes navigate korar jonno.
+// ============================================================
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
 import ProfileModal from '../Modals/ProfileModal';
-import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2 } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2, FiRefreshCw, FiBell, FiCheck, FiXCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
 
 const UserNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
+  const notifRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user: currentUser } = useAuth();
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get('/student/notifications');
+      if (res.data.success) {
+        setNotifications(res.data.data);
+      }
+    } catch (err) {
+      console.error("Notif fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      return () => clearInterval(interval);
+    }
+  }, [currentUser]);
+
+  const handleNotificationAction = async (notifId, status) => {
+    try {
+      const res = await api.post('/student/notifications/respond', { notificationId: notifId, status });
+      if (res.data.success) {
+        toast.success(`Team Invite ${status === 'ACCEPTED' ? 'Accepted! 🎉' : 'Declined.'}`, {
+            theme: "colored",
+            position: "top-right"
+        });
+        if (status === 'ACCEPTED') {
+            toast.info("Congratulation both party! Team created successfully.", { position: "top-right" });
+        }
+        fetchNotifications();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to respond to invite.");
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'S';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  };
 
   const navLinks = [
     { label: 'Home', path: '/student/dashboard' },
@@ -21,16 +75,15 @@ const UserNavbar = () => {
     { label: 'Submissions', path: '/student/submissions' },
   ];
 
-  // Dummy user mimicking backend data
-  const currentUser = { 
-    name: 'Alex', 
-    avatar: null // if null, shows standard icon
-  };
+  const firstName = currentUser?.name ? currentUser.name.split(' ')[0] : 'Student';
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
          setIsDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+         setIsNotifOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -42,9 +95,51 @@ const UserNavbar = () => {
     navigate('/login', { replace: true });
   };
 
-  const handleDelete = () => {
-    // Delete logic placeholder
-    toast.info("Delete Profile Clicked!");
+  const handleDelete = async () => {
+    const ConfirmAccountDelete = ({ closeToast }) => (
+      <div className="p-1">
+        <p className="text-[12px] font-black text-slate-800 mb-3 uppercase tracking-tight leading-tight">
+           Final Warning: Are you sure you want to delete your account? 
+           <span className="block text-[10px] text-red-500 mt-1 lowercase font-bold italic">* This action is irreversible.</span>
+        </p>
+        <div className="flex justify-end gap-2 px-2 pb-1">
+          <button 
+            onClick={closeToast} 
+            className="bg-gray-100 text-gray-500 px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={async () => {
+              try {
+                const response = await api.delete('/users/profile');
+                if (response.data.success) {
+                  toast.success("Account deleted successfully. We're sorry to see you go.");
+                  logout();
+                  navigate('/login', { replace: true });
+                }
+              } catch (error) {
+                console.error("Delete account error:", error);
+                toast.error("Failed to delete account.");
+              }
+              closeToast();
+            }}
+            className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+          >
+            Confirm Delete
+          </button>
+        </div>
+      </div>
+    );
+
+    toast.info(<ConfirmAccountDelete />, { 
+        autoClose: false, 
+        closeOnClick: false, 
+        draggable: false, 
+        theme: "light",
+        position: "top-right",
+        icon: false // Remove default info icon to keep it clean
+    });
   };
 
   return (
@@ -81,18 +176,90 @@ const UserNavbar = () => {
           })}
         </div>
 
-        {/* 3. USER PROFILE (Right) */}
-        <div className="flex items-center gap-4">
+        {/* 3. USER ACTIONS (Right) */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button 
+            onClick={() => window.location.reload()}
+            className="hidden sm:flex p-2.5 text-slate-500 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+            title="Refresh Page"
+          >
+            <FiRefreshCw size={18} className="transition-transform duration-500 group-hover:rotate-180 group-active:scale-95" />
+          </button>
+
+          {/* Notifications Bell */}
+          <div className="relative" ref={notifRef}>
+             <button 
+                onClick={() => setIsNotifOpen(!isNotifOpen)}
+                className="p-2.5 text-slate-500 hover:text-[#fbc111] hover:bg-[#fbc111]/10 rounded-xl transition-all relative group"
+                title="Notifications"
+             >
+                <FiBell size={20} className="group-hover:rotate-12 transition-transform" />
+                {notifications.length > 0 && (
+                   <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-[#f8faf2] animate-bounce">
+                      {notifications.length}
+                   </span>
+                )}
+             </button>
+
+             {isNotifOpen && (
+                <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Notifications</h3>
+                        {notifications.length > 0 && <span className="text-[10px] font-bold text-[#8cc63f]">{notifications.length} Pending</span>}
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                            <div className="p-10 text-center">
+                                <FiBell className="mx-auto text-gray-200 mb-4" size={32} />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">No new alerts</p>
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-gray-50">
+                                {notifications.map(notif => (
+                                    <div key={notif._id} className="p-4 hover:bg-gray-50/50 transition-colors">
+                                        <div className="flex gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-[#fbc111]/20 flex items-center justify-center shrink-0">
+                                                <FiUser className="text-[#ebaa00]" size={14} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[11px] font-medium text-slate-700 leading-tight">
+                                                    <span className="font-black">{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span>
+                                                </p>
+                                                <div className="flex gap-2 mt-3">
+                                                    <button 
+                                                        onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')}
+                                                        className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332] transition-colors flex items-center justify-center gap-1"
+                                                    >
+                                                        <FiCheck size={12} /> Accept
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleNotificationAction(notif._id, 'DECLINED')}
+                                                        className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-1"
+                                                    >
+                                                        <FiXCircle size={12} /> Deny
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+             )}
+          </div>
+
           <div className="hidden lg:flex items-center gap-3 relative" ref={dropdownRef}>
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-3 hover:bg-white/50 p-1.5 pr-4 rounded-full transition-all border border-transparent hover:border-gray-200"
             >
-              <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30">
-                 {currentUser.avatar ? (
-                    <img src={currentUser.avatar} alt="User" className="w-full h-full rounded-full object-cover" />
+              <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black text-xs">
+                 {currentUser.avatar?.url ? (
+                    <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
                  ) : (
-                    <FiUser size={18} />
+                    getInitials(currentUser.name)
                  )}
               </div>
               <span className="text-sm font-black text-slate-800 tracking-wide">Hi, {currentUser.name}</span>
@@ -102,8 +269,12 @@ const UserNavbar = () => {
             {isDropdownOpen && (
                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                     <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                        <FiUser size={14} />
+                     <div className="w-8 h-8 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-[10px]">
+                        {currentUser.avatar?.url ? (
+                            <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                            getInitials(currentUser.name)
+                        )}
                      </div>
                      <div className="flex flex-col">
                         <span className="text-sm font-black text-slate-800 leading-none">{currentUser.name}</span>
@@ -145,8 +316,12 @@ const UserNavbar = () => {
         <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-2xl p-6 flex flex-col gap-6 animate-in slide-in-from-top-2 duration-200 z-[99]">
           
           <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
-             <div className="w-12 h-12 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30">
-                <FiUser size={20} />
+             <div className="w-12 h-12 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black">
+                {currentUser.avatar?.url ? (
+                    <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
+                ) : (
+                    getInitials(currentUser.name)
+                )}
              </div>
              <div>
                 <p className="text-lg font-black text-slate-800">Hi, {currentUser.name}</p>
@@ -170,6 +345,12 @@ const UserNavbar = () => {
           </div>
           
           <div className="flex flex-col gap-4 pt-4 border-t border-gray-50">
+            <button 
+              onClick={() => window.location.reload()}
+              className="flex sm:hidden items-center gap-3 text-sm font-black text-gray-500 hover:text-[#8cc63f] uppercase tracking-widest text-left"
+            >
+              <FiRefreshCw size={18} /> Refresh Page
+            </button>
             <button 
               onClick={() => {
                   setIsMobileMenuOpen(false);

@@ -1,6 +1,16 @@
+// ============================================================
+// Footer.jsx — Global footer component
+// Navigation links, social media buttons, r platform info niche thake.
+// Mobile responsive layout (column to grid).
+// Premium dark theme focus with subtle gradients.
+// Copyright info r newsletter signup form design ekhane ache.
+// ============================================================
+
 import React from 'react';
 import { Logo } from '../index';
-import partnerLogos from '../../assets/partner-logos.png';
+import { getOptimizedUrl, CLOUDINARY_ASSETS } from '../../utils/cloudinary';
+const partnerLogos = getOptimizedUrl(CLOUDINARY_ASSETS["partner-logos.png"]);
+import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 
 const Footer = () => {
   const companyLinks = [
@@ -73,13 +83,21 @@ const Footer = () => {
               Contact
               <span className="absolute bottom-0 left-0 w-1/2 h-[2.5px] bg-[#fbc111] rounded-full" />
             </h4>
-            <div className="flex flex-col gap-3 text-[12px] font-medium leading-snug opacity-80">
-              <p>
-                11th Floor, Ambuja Neotia Eco Station, Sector V, Salt lake, Kolkata 700091
-              </p>
-              <p className="text-sm font-black tracking-wider text-[#fbc111]">
-                +91 942 969 1888
-              </p>
+            <div className="flex flex-col gap-5 text-[12px] font-medium leading-snug opacity-90">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                <FiMapPin className="shrink-0 text-[#fbc111]" size={16} />
+                <p className="max-w-[250px] md:max-w-none">
+                  11th Floor, Ambuja Neotia Eco Station, Sector V, Salt lake, Kolkata 700091
+                </p>
+              </div>
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                <FiMail className="shrink-0 text-[#fbc111]" size={18} />
+                <a href="mailto:contact@desunacademy.in" className="hover:text-[#fbc111] transition-colors">contact@desunacademy.in</a>
+              </div>
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                <FiPhone className="shrink-0 text-[#fbc111]" size={16} />
+                <a href="tel:+919147061005" className="text-sm font-black tracking-wider text-[#fbc111] hover:underline">+91 91470 61005</a>
+              </div>
             </div>
           </div>
         </div>

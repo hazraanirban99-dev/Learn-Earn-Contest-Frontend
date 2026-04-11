@@ -1,3 +1,10 @@
+// ============================================================
+// StatusUpdateMenu.jsx — Admin contest list e status update korar context menu
+// Current status onujayi toggle option (Upcoming, Ongoing, Completed) show kore.
+// Parent handler (onStatusUpdate) ke call kore status logic trigger korar jonno.
+// Outside click detect kore automatic menu close hoy.
+// ============================================================
+
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMoreVertical, FiClock, FiPlay, FiCheckCircle } from 'react-icons/fi';
 

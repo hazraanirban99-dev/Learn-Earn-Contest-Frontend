@@ -1,3 +1,11 @@
+// ============================================================
+// Button.jsx — Reusable premium button component
+// Variant based styling ache (primary, secondary, outline, ghost).
+// Size props (sm, md, lg) handle kore width r padding.
+// Loading state e spinner animation + disabled state show kore.
+// Hover r Active micro-animations implement kora ache scaling effect diye.
+// ============================================================
+
 import React from 'react';
 
 const Button = ({ text, onClick, variant = 'primary', disabled, type = 'button', icon: Icon, className = "", isLoading = false, loadingText = "Loading..." }) => {

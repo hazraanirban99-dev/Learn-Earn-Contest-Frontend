@@ -1,108 +1,104 @@
+// ============================================================
+// UserContext.jsx — Admin er jonno sob user/student data manage kora hoy ekhane
+// Admin dashboard load hole backend theke sob student fetch hoy.
+// Manage Users page ei context er users[] array consume kore.
+// updateUser() ar deleteUser() diye admin actions kora hoy.
+// ============================================================
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { formatDateDDMMYYYY } from '../utils/dateUtils';
+import api from '../utils/api';
+import { toast } from 'react-toastify';
+import { useAuth } from './AuthContext';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [users, setUsers] = useState([
-    // =========================================================================
-    // 🚀 [BACKEND] FETCH ALL REGISTERED USERS
-    // =========================================================================
-    // Replace this entire mock array with a useEffect fetch:
-    //
-    // useEffect(() => {
-    //   const fetchUsers = async () => {
-    //     const res = await fetch('http://YOUR_BACKEND_URL/api/v1/admin/users', {
-    //       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    //     });
-    //     const data = await res.json();
-    //     if (res.ok) setUsers(data.users);
-    //     // Expected shape per user: { id, name, regId, email, phone, domain,
-    //     //   registrationDate, registrationTime, avatar }
-    //   };
-    //   fetchUsers();
-    // }, []);
-    // =========================================================================
-    {
-      id: 1,
-      name: 'Elena Vance',
-      regId: 'DSC-2024-0089',
-      email: 'e.vance@academy.edu',
-      phone: '+1 (555) 234-8901',
-      domain: 'UI/UX Design',
-      registrationDate: '10/12/2023',
-      registrationTime: '14:45 PM',
-      avatar: 'https://ui-avatars.com/api/?name=Elena+Vance&background=random'
-    },
-    {
-      id: 2,
-      name: 'Marcus Thorne',
-      regId: 'DSC-2024-1142',
-      email: 'm.thorne@dev.io',
-      phone: '+1 (555) 902-3344',
-      domain: 'Development',
-      registrationDate: '10/14/2023',
-      registrationTime: '09:12 AM',
-      avatar: 'https://ui-avatars.com/api/?name=Marcus+Thorne&background=random'
-    },
-    {
-      id: 3,
-      name: 'Sienna Brooks',
-      regId: 'DSC-2024-0556',
-      email: 's.brooks@growth.com',
-      phone: '+1 (555) 771-0023',
-      domain: 'Marketing',
-      registrationDate: '10/15/2023',
-      registrationTime: '11:30 AM',
-      avatar: 'https://ui-avatars.com/api/?name=Sienna+Brooks&background=random'
-    },
-    {
-      id: 4,
-      name: 'Julian Kaine',
-      regId: 'DSC-2024-0992',
-      email: 'j.kaine@design.studio',
-      phone: '+1 (555) 443-1221',
-      domain: 'UI/UX Design',
-      registrationDate: '10/16/2023',
-      registrationTime: '16:20 PM',
-      avatar: 'https://ui-avatars.com/api/?name=Julian+Kaine&background=random'
-    }
-  ]);
+  // AuthContext theke current logged-in user ar loading state newa hocche
+  const { user, loading: authLoading } = useAuth();
+  const [users, setUsers] = useState([]);    // Backend theke asha sob student er list
+  const [loading, setLoading] = useState(false);
 
-  const updateUser = (id, updatedData) => {
-    // =========================================================================
-    // 🚀 [BACKEND] UPDATE USER — Endpoint: PATCH /api/v1/admin/users/:id
-    // =========================================================================
-    // await fetch(`http://YOUR_BACKEND_URL/api/v1/admin/users/${id}`, {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-    //   },
-    //   body: JSON.stringify(updatedData) // Send only the changed fields
-    // });
-    // =========================================================================
-    setUsers(users.map(user => user.id === id ? { ...user, ...updatedData } : user));
+  // Admin login korle backend theke sob student fetch kora hocche
+  useEffect(() => {
+    const fetchUsers = async () => {
+      // Auth check shesh na hole wait koro — nahole premature request jabe
+      if (authLoading) return;
+      
+      // Jodi admin na hoy, users array khali thakbe
+      if (!user || user.role !== 'admin') {
+        setUsers([]);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        // Sudhu student role er users fetch korchi — admin filter out hobe backend e
+        const { data } = await api.get('/admin/users?role=student');
+        if (data.success) {
+          // Backend er raw data ke frontend er expected format e map kora hocche
+          const mappedUsers = data.data.map(u => ({
+            id: u._id,
+            name: u.name,
+            regId: `LNE-${u._id.substring(0, 4).toUpperCase()}`, // Dummy registration ID
+            email: u.email,
+            phone: u.contactNumber || 'N/A',
+            domain: u.domain || 'Not Assigned',
+            registrationDate: formatDateDDMMYYYY(u.registrationDate), // DD/MM/YYYY format e
+            avatar: u.avatar?.url || `https://ui-avatars.com/api/?name=${u.name}&background=random` // Avatar na thakle UI Avatar use hobe
+          }));
+          setUsers(mappedUsers);
+        }
+      } catch (error) {
+        // 401 Unauthorized hole quietly fail koro (user just logged out hoyeche)
+        if (error.response?.status !== 401) {
+          console.error("Fetch users error:", error);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [user?.role, user?._id, authLoading]); // user change hole refetch korbe
+
+  // Admin jodi kono user er info edit kore
+  const updateUser = async (id, updatedData) => {
+    try {
+      const { data } = await api.patch(`/admin/users/${id}`, updatedData);
+      if (data.success) {
+        // Shudhu oi user ta update kora hobe, baki gulo same thakbe
+        setUsers(users.map(user => user.id === id ? { ...user, ...updatedData } : user));
+        toast.success("User updated successfully");
+      }
+    } catch (err) {
+      toast.error("Failed to update user");
+    }
   };
 
-  const deleteUser = (id) => {
-    // =========================================================================
-    // 🚀 [BACKEND] DELETE USER — Endpoint: DELETE /api/v1/admin/users/:id
-    // =========================================================================
-    // await fetch(`http://YOUR_BACKEND_URL/api/v1/admin/users/${id}`, {
-    //   method: 'DELETE',
-    //   headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    // });
-    // =========================================================================
-    setUsers(users.filter(user => user.id !== id));
+  // Admin jodi kono user delete kore
+  const deleteUser = async (id) => {
+    try {
+      const { data } = await api.delete(`/admin/users/${id}`);
+      if (data.success) {
+        // Deleted user ta filter kore list theke baad kora hocche
+        setUsers(users.filter(user => user.id !== id));
+        toast.success("User deleted successfully");
+      }
+    } catch (err) {
+      toast.error("Failed to delete user");
+    }
   };
 
   return (
-    <UserContext.Provider value={{ users, updateUser, deleteUser }}>
+    // users, loading, updateUser, deleteUser — ei values pura admin section use korbe
+    <UserContext.Provider value={{ users, loading, updateUser, deleteUser }}>
       {children}
     </UserContext.Provider>
   );
 };
 
+// Custom hook — jebhaba component user list lagbe, useUsers() call korbe
 export const useUsers = () => {
   const context = useContext(UserContext);
   if (!context) {
@@ -110,3 +106,4 @@ export const useUsers = () => {
   }
   return context;
 };
+

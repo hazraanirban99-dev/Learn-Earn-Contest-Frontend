@@ -1,3 +1,10 @@
+// ============================================================
+// DropZone.jsx — Advanced file upload component (Drag & Drop)
+// Files (Thumbnail, PDF) select korle preview trigger kore.
+// File size r type validation checks ache.
+// Animation logic ache dragging state detect korar jonno.
+// ============================================================
+
 import React, { useState, useRef, useCallback } from 'react';
 import { FiUploadCloud, FiCheck } from 'react-icons/fi';
 

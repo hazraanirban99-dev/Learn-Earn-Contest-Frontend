@@ -1,17 +1,105 @@
-import React, { useState } from 'react';
+// ============================================================
+// CreateContest.jsx — Admin er notun contest create korar page
+// Ekhane Admin contest er Title, Description, Thumbnail, Syllabus upload kore.
+// Domain (MERN/UIUX/Marketing), Rigor (Easy/Medium/Hard) select kora jay.
+// StartDate r EndDate set kora hoy jate automatic status calculate hoy.
+// Solo vs Team option ache — Team hole Max Team Size configure kora jay.
+// Cash Prize, Certificate, Internship offer er options ache.
+// Submit hole multipart/form-data diye API call hoy.
+// ============================================================
+
+import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus, FiMinus, FiUser, FiUsers } from 'react-icons/fi';
 import AdminLayout from '../../layouts/AdminLayout';
 import Button from '../../components/Button/Button';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
 
 const CreateContest = () => {
-  const [rigor, setRigor] = useState('Easy');
-  const [domain, setDomain] = useState('Development');
-  const [cashPrize, setCashPrize] = useState('');
-  const [expertCertificate, setExpertCertificate] = useState('No');
-  const [internshipOffer, setInternshipOffer] = useState('No');
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [rigor, setRigor] = useState('Medium');
+  const [domain, setDomain] = useState('MERN');
   const [projectType, setProjectType] = useState('Solo');
   const [teamSize, setTeamSize] = useState(2);
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    cashPrize: '0',
+    expertCertificate: 'No',
+    internshipOffer: 'No'
+  });
+
+  const [files, setFiles] = useState({
+    thumbnail: null,
+    syllabus: null
+  });
+
+  const [previews, setPreviews] = useState({
+    thumbnail: null,
+    syllabusName: null
+  });
+
+  const thumbnailInputRef = useRef(null);
+  const syllabusInputRef = useRef(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles({ ...files, [type]: file });
+      if (type === 'thumbnail') {
+        setPreviews({ ...previews, thumbnail: URL.createObjectURL(file) });
+      } else {
+        setPreviews({ ...previews, syllabusName: file.name });
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.description || !formData.startDate || !formData.endDate) {
+      return toast.error("Please fill all required fields");
+    }
+    if (!files.thumbnail) {
+      return toast.error("Thumbnail is required");
+    }
+
+    setLoading(true);
+    try {
+      const data = new FormData();
+      Object.keys(formData).forEach(key => data.append(key, formData[key]));
+      const allowedDomains = ['MERN', 'UIUX', 'DIGITAL MARKETING'];
+      data.append('domain', allowedDomains.includes(domain) ? domain : 'MERN');
+      data.append('rigor', rigor);
+      data.append('projectType', projectType);
+      data.append('maxTeamSize', projectType === 'Team' ? teamSize : 1);
+      
+      if (files.thumbnail) data.append('thumbnail', files.thumbnail);
+      if (files.syllabus) data.append('syllabus', files.syllabus);
+
+      const response = await api.post('/admin/contests/create', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (response.data.success) {
+        toast.success("Contest Created Successfully!");
+        navigate('/admin/contests');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to create contest");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AdminLayout>
@@ -24,8 +112,8 @@ const CreateContest = () => {
               <span className="text-[#8cc63f]">›</span>
               <span className="text-[#8cc63f]">NEW SCHOLASTIC CHALLENGE</span>
             </nav>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
-              Craft New Contest
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+              Craft New <span className="text-[#8cc63f]">Contest</span>
             </h1>
             <div className="border-l-4 border-[#fbc111] pl-4 sm:pl-6 py-1 bg-yellow-50/30 rounded-r-xl max-w-xl">
               <p className="text-gray-500 font-bold text-base sm:text-lg leading-relaxed italic opacity-90">
@@ -33,24 +121,13 @@ const CreateContest = () => {
               </p>
             </div>
           </div>
-          
-          {/* Top Right Illustration Placeholder */}
-          <div className="hidden lg:block relative">
-            <div className="w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl absolute inset-0 -z-10" />
-            <div className="w-24 h-24 rounded-full border-2 border-yellow-100 flex items-center justify-center bg-white/50 backdrop-blur-sm shadow-inner relative overflow-hidden group">
-               <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-               <svg className="w-12 h-12 text-yellow-500/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-               </svg>
-            </div>
-          </div>
         </div>
 
         {/* --- Main Form Grid --- */}
-        <div className="grid grid-cols-12 gap-6 sm:gap-8 mt-4">
+        <div className="grid grid-cols-12 gap-6 lg:gap-8 mt-4">
           
           {/* LEFT COLUMN (Title & Description) */}
-          <div className="col-span-12 xl:col-span-8 space-y-10">
+          <div className="col-span-12 lg:col-span-8 space-y-10">
             
             {/* Contest Title */}
             <div className="space-y-4 group">
@@ -60,12 +137,12 @@ const CreateContest = () => {
               <div className="relative">
                 <input 
                   type="text" 
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
                   placeholder="e.g., The Bauhaus Revival..."
                   className="w-full bg-[#f8faf6]/80 border-2 border-transparent focus:border-[#8cc63f]/30 focus:bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-5 text-base sm:text-lg font-bold text-slate-800 placeholder-gray-300 outline-none transition-all shadow-sm group-hover:shadow-md"
                 />
-                <div className="absolute top-0 right-0 h-full flex items-center pr-6 opacity-0 group-focus-within:opacity-100 transition-opacity">
-                  <div className="w-2 h-2 bg-[#8cc63f] rounded-full animate-pulse" />
-                </div>
               </div>
             </div>
 
@@ -75,32 +152,49 @@ const CreateContest = () => {
                 PROJECT DESCRIPTION
               </label>
               <div className="bg-[#f8faf6]/50 border-2 border-transparent focus-within:border-[#8cc63f]/20 focus-within:bg-white rounded-[32px] overflow-hidden shadow-sm transition-all group-hover:shadow-md">
-                {/* Toolbar */}
                 <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex flex-wrap items-center gap-4 sm:gap-6 bg-white/50 backdrop-blur-sm">
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiBold size={16} strokeWidth={3} /></button>
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiItalic size={16} strokeWidth={3} /></button>
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiList size={16} strokeWidth={3} /></button>
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiLink size={16} strokeWidth={3} /></button>
                 </div>
-                {/* Textarea */}
                 <textarea 
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
                   rows={10}
                   placeholder="Elaborate on the vision, goals, and academic requirements..."
                   className="w-full bg-transparent px-5 sm:px-8 py-5 sm:py-8 text-sm sm:text-base text-slate-600 font-bold placeholder-gray-300 outline-none resize-none leading-relaxed"
                 />
               </div>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
               <div className="space-y-4 group">
                 <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
                   CONTEST THUMBNAIL (JPG/PNG)
                 </label>
-                <div className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#fbc111]/40 hover:bg-[#fbc111]/5 cursor-pointer h-full">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                <input 
+                  type="file" 
+                  ref={thumbnailInputRef}
+                  onChange={(e) => handleFileChange(e, 'thumbnail')}
+                  className="hidden" 
+                  accept="image/*"
+                />
+                <div 
+                  onClick={() => thumbnailInputRef.current.click()}
+                  className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#fbc111]/40 hover:bg-[#fbc111]/5 cursor-pointer h-full relative overflow-hidden group"
+                >
+                  {previews.thumbnail && (
+                    <img src={previews.thumbnail} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-10 transition-opacity" />
+                  )}
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform relative z-10">
                     <FiUploadCloud size={20} className="text-yellow-400" />
                   </div>
-                  <div className="text-center">
-                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">Upload Thumbnail</p>
+                  <div className="text-center relative z-10">
+                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                      {previews.thumbnail ? 'Change Thumbnail' : 'Upload Thumbnail'}
+                    </p>
                     <p className="text-gray-400 font-bold text-[9px] sm:text-[10px]">16:9 Aspect Ratio / Max 5MB</p>
                   </div>
                 </div>
@@ -110,12 +204,24 @@ const CreateContest = () => {
                 <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f] transition-colors">
                   PROJECT BRIEF & SYLLABUS (PDF)
                 </label>
-                <div className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 cursor-pointer h-full">
+                <input 
+                  type="file" 
+                  ref={syllabusInputRef}
+                  onChange={(e) => handleFileChange(e, 'syllabus')}
+                  className="hidden" 
+                  accept="application/pdf"
+                />
+                <div 
+                  onClick={() => syllabusInputRef.current.click()}
+                  className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 cursor-pointer h-full group"
+                >
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                     <FiUploadCloud size={20} className="text-[#8cc63f]" />
                   </div>
                   <div className="text-center">
-                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">Upload Syllabus</p>
+                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                      {previews.syllabusName || 'Upload Syllabus PDF'}
+                    </p>
                     <p className="text-gray-400 font-bold text-[9px] sm:text-[10px]">PDF format / Max 25MB</p>
                   </div>
                 </div>
@@ -132,7 +238,6 @@ const CreateContest = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Toggle Solo/Team */}
                 <div className="bg-[#f8faf6]/50 p-2 rounded-[28px] flex gap-2 border border-white shadow-inner min-h-[70px]">
                   {[
                     { id: 'Solo', icon: FiUser, label: 'Solo Project' },
@@ -140,6 +245,7 @@ const CreateContest = () => {
                   ].map((type) => (
                     <button
                       key={type.id}
+                      type="button"
                       onClick={() => setProjectType(type.id)}
                       className={`flex-1 flex items-center justify-center gap-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
                         projectType === type.id 
@@ -153,7 +259,6 @@ const CreateContest = () => {
                   ))}
                 </div>
 
-                {/* Team Size Stepper (Shown only if Team selected) */}
                 <div className={`transition-all duration-500 overflow-hidden ${projectType === 'Team' ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
                   <div className="bg-white border-2 border-[#8cc63f]/10 rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
                     <div className="flex flex-col px-6">
@@ -162,7 +267,6 @@ const CreateContest = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 mr-1">
-                      {/* Minus Button */}
                       <button 
                         type="button"
                         onClick={() => setTeamSize(Math.max(2, teamSize - 1))}
@@ -170,8 +274,6 @@ const CreateContest = () => {
                       >
                          <FiMinus size={20} strokeWidth={3} />
                       </button>
-                      
-                      {/* Plus Button */}
                       <button 
                         type="button"
                         onClick={() => setTeamSize(Math.min(10, teamSize + 1))}
@@ -181,16 +283,13 @@ const CreateContest = () => {
                       </button>
                     </div>
                   </div>
-                  <p className="text-[9px] font-bold text-gray-300 italic mt-3 px-4">
-                    Set the maximum number of scholars permitted per collective effort.
-                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* RIGHT COLUMN (Settings) */}
-          <div className="col-span-12 xl:col-span-4 space-y-10">
+          <div className="col-span-12 lg:col-span-4 space-y-10">
             
             {/* Scholastic Domain */}
             <div className="space-y-4">
@@ -203,9 +302,9 @@ const CreateContest = () => {
                   onChange={(e) => setDomain(e.target.value)}
                   className="w-full bg-[#f1f8e8] border-2 border-white rounded-[20px] px-5 sm:px-6 py-4 sm:py-5 text-sm sm:text-base text-slate-800 font-black appearance-none outline-none focus:bg-white focus:border-[#8cc63f]/20 transition-all cursor-pointer shadow-sm"
                 >
-                  <option>MERN</option>
-                  <option>UI/UX</option>
-                  <option>DIGITAL MARKETING</option>
+                  <option value="MERN">MERN</option>
+                  <option value="UIUX">UIUX</option>
+                  <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
                 </select>
                 <div className="absolute right-5 sm:right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#8cc63f]">
                   <FiChevronDown size={20} strokeWidth={3} />
@@ -218,12 +317,13 @@ const CreateContest = () => {
               <label className="text-[11px] font-black uppercase tracking-widest text-gray-400">
                 ACADEMIC RIGOR
               </label>
-              <div className="bg-[#f1f8e8]/50 p-1.5 sm:p-2 rounded-[24px] flex flex-wrap sm:flex-nowrap gap-2 border border-white shadow-inner">
+              <div className="bg-[#f1f8e8]/50 p-1.5 sm:p-2 rounded-[24px] flex flex-wrap lg:flex-nowrap gap-2 border border-white shadow-inner">
                 {['Easy', 'Medium', 'Hard'].map((lvl) => (
                   <button
                     key={lvl}
+                    type="button"
                     onClick={() => setRigor(lvl)}
-                    className={`flex-1 min-w-[70px] py-3 sm:py-4 px-2 rounded-2xl text-[10px] sm:text-[12px] font-black uppercase tracking-widest transition-all ${
+                    className={`flex-1 min-w-[60px] py-3 px-2 rounded-2xl text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${
                       rigor === lvl 
                         ? 'bg-[#8cc63f] text-white shadow-lg scale-105' 
                         : 'text-gray-500 hover:text-slate-800 hover:bg-white/50'
@@ -241,70 +341,77 @@ const CreateContest = () => {
                 SCHOLASTIC WINDOW
               </label>
               <div className="space-y-4">
-                <div className="bg-white border-2 border-gray-50 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 shadow-sm hover:border-[#8cc63f]/20 transition-all group">
-                  <div className="p-2.5 sm:p-3 bg-yellow-50 rounded-xl group-hover:scale-110 transition-transform">
-                    <FiCalendar className="text-yellow-500" size={18} sm:size={20} />
+                <div className="bg-white border-2 border-gray-100 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                  <div className="flex items-center gap-3 px-1">
+                    <FiCalendar className="text-[#8cc63f]" size={16} />
+                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">START DATE & TIME</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] sm:text-[9px] font-black text-[#8cc63f] uppercase tracking-widest">START DATE</span>
-                    <input type="date" className="bg-transparent font-black text-slate-800 outline-none uppercase text-xs sm:text-sm" />
-                  </div>
+                  <input 
+                    type="datetime-local" 
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 outline-none text-sm"
+                  />
                 </div>
-                <div className="bg-white border-2 border-gray-50 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 shadow-sm hover:border-[#8cc63f]/20 transition-all group">
-                  <div className="p-2.5 sm:p-3 bg-yellow-50 rounded-xl group-hover:scale-110 transition-transform">
-                    <FiCalendar className="text-yellow-500" size={18} sm:size={20} />
+                <div className="bg-white border-2 border-gray-100 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                  <div className="flex items-center gap-3 px-1">
+                    <FiCalendar className="text-[#8cc63f]" size={16} />
+                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">END DATE & TIME</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] sm:text-[9px] font-black text-[#8cc63f] uppercase tracking-widest">END DATE</span>
-                    <input type="date" className="bg-transparent font-black text-slate-800 outline-none uppercase text-xs sm:text-sm" />
-                  </div>
+                  <input 
+                    type="datetime-local" 
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 outline-none text-sm"
+                  />
                 </div>
               </div>
             </div>
 
             <div className="pt-6 sm:pt-10">
-              <div className="bg-white border-2 border-yellow-200 rounded-[32px] p-6 sm:p-8 space-y-6 relative overflow-hidden group shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all">
-                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-yellow-400/5 rounded-full blur-2xl group-hover:bg-yellow-400/10 transition-colors" />
+              <div className="bg-white border-2 border-green-200 rounded-[32px] p-6 sm:p-8 space-y-6 relative overflow-hidden group shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all">
+                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-green-400/5 rounded-full blur-2xl group-hover:bg-green-400/10 transition-colors" />
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-yellow-500 flex items-center justify-center text-yellow-500 bg-yellow-50">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-green-500 flex items-center justify-center text-green-500 bg-green-50">
                     <FiAward size={14} sm:size={16} strokeWidth={3} />
                   </div>
-                  <label className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#fbc111]">
+                  <label className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-green-600">
                     AWARD AND RECOGNITION
                   </label>
                 </div>
 
                  <div className="space-y-5">
-                  {/* Cash Prize */}
                   <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">CASH PRIZE (₹)</label>
+                    <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-green-600 uppercase">Cash Prize</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-[#fbc111]">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-[#8cc63f]">₹</span>
                       <input 
                         type="number"
+                        name="cashPrize"
                         placeholder="0.00"
-                        value={cashPrize}
-                        onChange={(e) => setCashPrize(e.target.value)}
-                        className="w-full bg-yellow-50/50 border border-yellow-100 rounded-2xl pl-10 pr-4 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-slate-700 placeholder-yellow-300 outline-none focus:bg-white focus:border-yellow-300 transition-all shadow-sm"
+                        value={formData.cashPrize}
+                        onChange={handleInputChange}
+                        className="w-full bg-green-50/20 border border-green-100 rounded-2xl pl-10 pr-4 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-slate-700 placeholder-green-200 outline-none focus:bg-white focus:border-green-300 transition-all shadow-sm"
                       />
                     </div>
                   </div>
 
-                  {/* Yes/No Options Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Expert Certificate */}
                     <div className="space-y-2">
-                      <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">EXPERT CERTIFICATE</label>
-                      <div className="flex bg-yellow-50/50 p-1 rounded-2xl border border-yellow-100 h-[50px] sm:h-[58px]">
+                      <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-green-600 uppercase">Expert Certificate</label>
+                      <div className="flex bg-green-50/20 p-1 rounded-2xl border border-green-100 h-[50px] sm:h-[58px]">
                         {['Yes', 'No'].map((opt) => (
                           <button
                             key={opt}
-                            onClick={() => setExpertCertificate(opt)}
+                            type="button"
+                            onClick={() => setFormData({...formData, expertCertificate: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
-                              expertCertificate === opt 
-                                ? 'bg-white text-[#fbc111] shadow-sm' 
-                                : 'text-yellow-400/60 hover:text-yellow-500'
+                              formData.expertCertificate === opt 
+                                ? 'bg-white text-green-600 shadow-sm' 
+                                : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >
                             {opt}
@@ -313,18 +420,18 @@ const CreateContest = () => {
                       </div>
                     </div>
 
-                    {/* Internship Offer */}
                     <div className="space-y-2">
-                      <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-[#fbc111]/70 uppercase">INTERNSHIP OFFER</label>
-                      <div className="flex bg-yellow-50/50 p-1 rounded-2xl border border-yellow-100 h-[50px] sm:h-[58px]">
+                      <label className="text-[9px] sm:text-[10px] font-black tracking-widest text-green-600 uppercase">Internship Offer</label>
+                      <div className="flex bg-green-50/20 p-1 rounded-2xl border border-green-100 h-[50px] sm:h-[58px]">
                         {['Yes', 'No'].map((opt) => (
                           <button
                             key={opt}
-                            onClick={() => setInternshipOffer(opt)}
+                            type="button"
+                            onClick={() => setFormData({...formData, internshipOffer: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
-                              internshipOffer === opt 
-                                ? 'bg-white text-[#fbc111] shadow-sm' 
-                                : 'text-yellow-400/60 hover:text-yellow-500'
+                              formData.internshipOffer === opt 
+                                ? 'bg-white text-green-600 shadow-sm' 
+                                : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >
                             {opt}
@@ -334,57 +441,16 @@ const CreateContest = () => {
                     </div>
                   </div>
                 </div>
-
-                <p className="text-[9px] font-bold text-[#fbc111]/50 leading-relaxed px-1 text-center italic">
-                  Awards will be digitally authenticated via Secure Ledger.
-                </p>
               </div>
             </div>
 
             {/* CTA Button */}
             <div className="pt-6">
               <Button 
-                text="Finalize & Create Contest"
-                onClick={async () => {
-                  // =========================================================================
-                  // 🚀 [BACKEND] CREATE CONTEST
-                  // =========================================================================
-                  // Endpoint: POST /api/v1/admin/contests/create
-                  // Content-Type: multipart/form-data  (because of file uploads)
-                  //
-                  // const formPayload = new FormData();
-                  // formPayload.append('title', <contest title input value>);
-                  // formPayload.append('description', <textarea value>);
-                  // formPayload.append('domain', domain);           // state variable
-                  // formPayload.append('rigor', rigor);             // state variable
-                  // formPayload.append('startDate', <start date input value>);
-                  // formPayload.append('endDate', <end date input value>);
-                  // formPayload.append('cashPrize', cashPrize);     // state variable
-                  // formPayload.append('expertCertificate', expertCertificate); // 'Yes'/'No'
-                  // formPayload.append('internshipOffer', internshipOffer);     // 'Yes'/'No'
-                  // formPayload.append('projectType', projectType);           // 'Solo'/'Team'
-                  // formPayload.append('maxTeamSize', projectType === 'Team' ? teamSize : 1);
-                  // formPayload.append('thumbnail', <file from thumbnail input ref>);  // File
-                  // formPayload.append('syllabus', <file from syllabus input ref>);    // File
-                  //
-                  // const res = await fetch('http://YOUR_BACKEND_URL/api/v1/admin/contests/create', {
-                  //   method: 'POST',
-                  //   headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                  //   body: formPayload  // DO NOT set Content-Type manually for FormData
-                  // });
-                  //
-                  // if (res.ok) {
-                  //   toast.success('Contest Created Successfully!');
-                  //   navigate('/admin/contests');
-                  // } else {
-                  //   const err = await res.json();
-                  //   toast.error(err.message || 'Failed to create contest');
-                  // }
-                  // =========================================================================
-
-                  // MOCK — DELETE when API is ready:
-                  toast.success("Contest Created Successfully!");
-                }}
+                text={loading ? "Creating Scholastic Project..." : "Finalize & Create Contest"}
+                onClick={handleSubmit}
+                disabled={loading}
+                className="!py-3 sm:!py-[14px] !text-[13px] sm:!text-[15px] !rounded-xl"
               />
             </div>
           </div>
