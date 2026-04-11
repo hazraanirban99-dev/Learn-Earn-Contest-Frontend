@@ -206,7 +206,7 @@ const ContestDetails = () => {
                             </div>
                             <div>
                                 <h3 className="text-xl font-black text-slate-800 mb-1 font-sans">Project Syllabus</h3>
-                                <p className="text-sm font-bold text-gray-500">Comprehensive guidelines, dataset specs, and submission API documentation.</p>
+                                <p className="text-sm font-bold text-gray-500">Comprehensive guidelines, dataset specs, and submission documentation.</p>
                             </div>
                         </div>
                         <button
@@ -229,37 +229,46 @@ const ContestDetails = () => {
                             <FiAward className="absolute -bottom-8 -right-8 text-white/[0.04]" size={250} strokeWidth={1} />
                             <h3 className="text-xl font-black text-white relative z-10 mb-6">Grand Prizes</h3>
                             <div className="space-y-6 relative z-10">
-                                <div className="flex items-start gap-4">
+                                {/* Cash Prize - Always Visible */}
+                                <div className={`flex items-start gap-4 ${contest.cashPrize > 0 ? 'opacity-100' : 'opacity-50'}`}>
                                     <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
                                         <FiDollarSign size={18} />
                                     </div>
                                     <div>
-                                        <h4 className="font-black text-[15px] mb-1">₹{contest.cashPrize || 0} Cash Prize</h4>
-                                        <p className="text-xs text-white/70 font-medium">Awarded to top performers</p>
+                                        <h4 className="font-black text-[15px] mb-1">
+                                            {contest.cashPrize > 0 ? `₹${contest.cashPrize} Cash Prize` : 'No Cash Prize'}
+                                        </h4>
+                                        <p className="text-xs text-white/70 font-medium">
+                                            {contest.cashPrize > 0 ? 'Awarded to top performers' : 'Certificate only contest'}
+                                        </p>
                                     </div>
                                 </div>
-                                {contest.expertCertificate === 'Yes' && (
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
-                                            <FiCheckCircle size={18} />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-black text-[15px] mb-1">Expert Certification</h4>
-                                            <p className="text-xs text-white/70 font-medium">Verified professional accreditation</p>
-                                        </div>
+
+                                {/* Expert Certification - Always Visible */}
+                                <div className={`flex items-start gap-4 ${contest.expertCertificate === 'Yes' ? 'opacity-100' : 'opacity-50'}`}>
+                                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
+                                        <FiCheckCircle size={18} />
                                     </div>
-                                )}
-                                {contest.internshipOffer === 'Yes' && (
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
-                                            <FiBriefcase size={18} />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-black text-[15px] mb-1">Internship Offer</h4>
-                                            <p className="text-xs text-white/70 font-medium">Priority screening with industry partners</p>
-                                        </div>
+                                    <div>
+                                        <h4 className="font-black text-[15px] mb-1">
+                                            Expert Certification: <span className={contest.expertCertificate === 'Yes' ? 'text-white' : 'text-white/60'}>{contest.expertCertificate === 'Yes' ? 'Included' : 'No'}</span>
+                                        </h4>
+                                        <p className="text-xs text-white/70 font-medium">Professional accreditation</p>
                                     </div>
-                                )}
+                                </div>
+
+                                {/* Internship Offer - Always Visible */}
+                                <div className={`flex items-start gap-4 ${contest.internshipOffer === 'Yes' ? 'opacity-100' : 'opacity-50'}`}>
+                                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
+                                        <FiBriefcase size={18} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-black text-[15px] mb-1">
+                                            Internship Offer: <span className={contest.internshipOffer === 'Yes' ? 'text-white' : 'text-white/60'}>{contest.internshipOffer === 'Yes' ? 'Included' : 'No'}</span>
+                                        </h4>
+                                        <p className="text-xs text-white/70 font-medium">Industry partner placement</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -326,7 +335,7 @@ const ContestDetails = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {[
                                     "Submissions must be original and written specifically for this contest cycle.",
-                                    "Teams of up to 3 members are allowed. No cross-team collaboration is permitted.",
+                                    "Team members are allowed. No cross-team collaboration is permitted.",
                                     "Use of standard libraries is permitted; third-party frameworks are restricted unless specified.",
                                     "All code will be subjected to automated plagiarism detection and expert review."
                                 ].map((rule, idx) => (

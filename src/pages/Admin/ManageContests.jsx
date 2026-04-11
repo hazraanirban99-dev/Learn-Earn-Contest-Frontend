@@ -199,7 +199,10 @@ const ManageContests = () => {
                     <h5 className="text-[#fbc111] font-black text-[10px] uppercase tracking-widest mb-3">{contest.domain}</h5>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">{contest.title}</h2>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-500 bg-gray-50 px-4 py-2 rounded-xl h-fit"><FiCalendar size={14} /><span className="text-[12px] font-bold">Ends: {formatDateDDMMYYYY(contest.endDate)}</span></div>
+                  <div className="flex items-center gap-2 text-[#a68945] bg-[#fcf3d9]/50 border border-[#fbc111]/20 px-4 py-2 rounded-2xl h-fit shadow-sm backdrop-blur-sm">
+                    <FiCalendar size={14} className="text-[#fbc111]" />
+                    <span className="text-[11px] font-black uppercase tracking-wider">Deadline: {formatDateDDMMYYYY(contest.endDate)}</span>
+                  </div>
                 </div>
 
                 {/* Awards Highlight Section */}
@@ -224,10 +227,24 @@ const ManageContests = () => {
                   )}
                 </div>
 
-                <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
-                  <button onClick={() => { const newParams = new URLSearchParams(searchParams); newParams.set('edit', contest._id); setSearchParams(newParams); }} className="w-11 h-11 rounded-xl bg-gray-50 hover:bg-[#f1f8e8] text-gray-400 hover:text-[#8cc63f] flex items-center justify-center transition-colors"><FiEdit2 size={18} /></button>
-                  <button onClick={() => handleDelete(contest._id)} className="w-11 h-11 rounded-xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-colors"><FiTrash2 size={18} /></button>
-                  <button onClick={() => { setViewParticipantsContest(contest); setViewParticipantsOpen(true); }} className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#8cc63f] hover:bg-[#7eb533] text-white text-[12px] font-black uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-md"><FiUsers size={16} /> View Participants</button>
+                <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button 
+                      onClick={() => { const newParams = new URLSearchParams(searchParams); newParams.set('edit', contest._id); setSearchParams(newParams); }} 
+                      className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 hover:bg-[#f1f8e8] text-gray-400 hover:text-[#8cc63f] flex items-center justify-center transition-all border border-transparent hover:border-[#8cc63f]/20 gap-2 sm:gap-0"
+                    >
+                      <FiEdit2 size={18} />
+                      <span className="sm:hidden text-[10px] font-black uppercase">Edit</span>
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(contest._id)} 
+                      className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all border border-transparent hover:border-red-500/20 gap-2 sm:gap-0"
+                    >
+                      <FiTrash2 size={18} />
+                      <span className="sm:hidden text-[10px] font-black uppercase">Delete</span>
+                    </button>
+                  </div>
+                  <button onClick={() => { setViewParticipantsContest(contest); setViewParticipantsOpen(true); }} className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-[#8cc63f] hover:bg-[#7eb533] text-white text-[12px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-3 shadow-lg shadow-[#8cc63f]/20 hover:shadow-xl active:scale-[0.98]"><FiUsers size={16} /> View Participants</button>
                 </div>
               </div>
             </div>

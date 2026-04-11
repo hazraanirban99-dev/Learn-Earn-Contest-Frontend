@@ -24,8 +24,9 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
 
   return (
     <section className="w-full">
-      <div className="relative w-full h-[380px] xs:h-[350px] sm:h-[400px] lg:h-[500px] overflow-hidden shadow-2xl group text-left">
-        <style dangerouslySetInnerHTML={{ __html: `
+      <div className="relative w-full h-[320px] sm:h-[380px] lg:h-[420px] overflow-hidden shadow-2xl group text-left">
+        <style dangerouslySetInnerHTML={{
+          __html: `
           @keyframes blink-float {
             0%, 100% { opacity: 1; transform: translateY(0) scale(1); }
             50% { opacity: 0.5; transform: translateY(-4px) scale(0.85); }
@@ -59,11 +60,10 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
               const isJoinNow = contest.buttonText?.toLowerCase().includes('join');
 
               return (
-                <div 
+                <div
                   key={contest.id || idx}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    idx === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                  }`}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                    }`}
                 >
                   {/* Thumbnail from Backend */}
                   {contest.thumbnailUrl ? (
@@ -71,39 +71,38 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#4a7010] to-[#2e4a07]"></div>
                   )}
-                  
+
                   {/* Dark Gradient Overlay for Text Readability */}
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-transparent"></div>
-                  
+
                   {/* Content inside Carousel */}
                   <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 md:px-20 max-w-3xl">
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                       {contest.tag && (
-                        <div className={`px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-lg ${
-                          isLive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-[#fbc111] text-slate-900 shadow-[#fbc111]/20'
-                        }`}>
-                            <div className="flex items-center gap-2">
-                              {isLive && (
-                                <div className="relative flex items-center justify-center">
-                                  <span className="absolute w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ripple" />
-                                  <span className="relative w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                                </div>
-                              )}
-                              {contest.tag}
-                            </div>
+                        <div className={`px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-lg ${isLive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-[#fbc111] text-slate-900 shadow-[#fbc111]/20'
+                          }`}>
+                          <div className="flex items-center gap-2">
+                            {isLive && (
+                              <div className="relative flex items-center justify-center">
+                                <span className="absolute w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ripple" />
+                                <span className="relative w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                              </div>
+                            )}
+                            {contest.tag}
+                          </div>
                         </div>
                       )}
 
                       {contest.domain && (
                         <div className="bg-[#fbc111]/10 text-[#fbc111] border border-[#fbc111]/20 px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-lg flex items-center">
-                           <span className="animate-fade-status">{contest.domain}</span>
+                          <span className="animate-fade-status">{contest.domain}</span>
                         </div>
                       )}
                     </div>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight mb-4 sm:mb-6 animate-in slide-in-from-bottom-4 duration-700">
                       {contest.title}
                     </h1>
-                    
+
                     {contest.subtitle && (
                       <p className="text-gray-300 font-bold text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-xl animate-in slide-in-from-bottom-6 duration-700 delay-100 line-clamp-3 sm:line-clamp-none">
                         {contest.subtitle}
@@ -112,13 +111,12 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
 
                     {/* Optional Button */}
                     {contest.buttonText && (
-                      <Link 
+                      <Link
                         to={isJoinNow ? "/login" : `/student/contests/${contest.id}`}
-                        className={`${
-                          isJoinNow 
-                            ? 'bg-[#fbc111] hover:bg-[#e0ad0c] text-slate-900 shadow-[#fbc111]/30' 
+                        className={`${isJoinNow
+                            ? 'bg-[#8cc63f]/20 hover:bg-[#8cc63f]/30 text-[#8cc63f] border border-[#8cc63f]/40 backdrop-blur-sm shadow-emerald-500/10'
                             : 'bg-[#8cc63f] hover:bg-[#7ab332] text-white shadow-[#8cc63f]/30'
-                        } px-8 sm:px-10 py-3.5 sm:py-4 rounded-[20px] font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl`}
+                          } px-8 sm:px-10 py-3.5 sm:py-4 rounded-[20px] font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl`}
                       >
                         {contest.buttonText} <FiArrowRight size={14} sm:size={16} />
                       </Link>
@@ -132,12 +130,11 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
             {contests.length > 1 && (
               <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-2">
                 {contests.map((_, idx) => (
-                  <button 
+                  <button
                     key={idx}
                     onClick={() => setHeroIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-500 shadow-sm ${
-                      idx === heroIndex ? 'w-10 bg-[#fbc111] shadow-[0_0_15px_rgba(251,193,17,0.4)]' : 'w-2 bg-[#8cc63f]/60 hover:bg-[#8cc63f]'
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-500 shadow-sm ${idx === heroIndex ? 'w-10 bg-[#fbc111] shadow-[0_0_15px_rgba(251,193,17,0.4)]' : 'w-2 bg-[#8cc63f]/60 hover:bg-[#8cc63f]'
+                      }`}
                   />
                 ))}
               </div>

@@ -117,8 +117,8 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
             
             <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto max-h-[90vh]">
                 
-                 {/* Left Sidebar */}
-                 <div className="hidden md:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
+                 {/* Left Sidebar (Desktop Only) */}
+                 <div className="hidden lg:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
                     <div className="relative z-10 text-left">
                         <h2 className="text-white text-sm font-black tracking-widest uppercase mb-12">Desun Academy</h2>
                         <h1 className="text-3xl lg:text-4xl font-black text-white leading-tight tracking-tight mt-12 mb-2">
@@ -164,14 +164,32 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar">
                         <div className="space-y-8">
                             
-                            {/* Divider line */}
-                            <div className="h-[2px] w-full bg-gradient-to-r from-[#8cc63f]/20 to-transparent rounded-full" />
+                            {/* Mobile/Tab Rules (Visible until Large screens) */}
+                            <div className="lg:hidden bg-[#f8faf2] p-4 rounded-2xl border border-[#8cc63f]/20 mb-2">
+                                <h4 className="text-[9px] font-black text-[#6b8f36] uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <FiFileText size={12} /> Submission Rules
+                                </h4>
+                                <ul className="space-y-1.5">
+                                    <li className="text-[10px] text-slate-600 font-bold">
+                                        • <span className="text-[#8cc63f]">MERN:</span> GitHub / Live link
+                                    </li>
+                                    <li className="text-[10px] text-slate-600 font-bold">
+                                        • <span className="text-[#8cc63f]">UI-UX:</span> Image / Figma / Project File
+                                    </li>
+                                    <li className="text-[10px] text-slate-600 font-bold">
+                                        • <span className="text-[#8cc63f]">MARKETING:</span> Image / Drive link
+                                    </li>
+                                </ul>
+                            </div>
+
+                            {/* Divider line (desktop only) */}
+                            <div className="hidden lg:block h-[2px] w-full bg-gradient-to-r from-[#8cc63f]/20 to-transparent rounded-full" />
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
                                 <div className="space-y-3">
                                     <DropZone
                                         id="project-pic-upload"
-                                        label="Project Image (Thumbnail)"
+                                        label="Project Image"
                                         accept="image/png, image/jpeg"
                                         icon={FiImage}
                                         hint="Drop Logo/SS here"
@@ -200,6 +218,12 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                         }}
                                         accentColor="#fbc111"
                                     />
+                                </div>
+                                <div className="col-span-1 md:col-span-2 flex items-center gap-2 bg-[#fcf3d9]/50 border border-[#fbc111]/30 px-3 py-2.5 rounded-xl">
+                                    <span className="text-[13px] leading-none mb-[2px]">📌</span>
+                                    <p className="text-[10px] text-gray-600 font-medium leading-tight">
+                                        <span className="font-bold text-[#a68945]">Note:</span> Rename your file as <span className="font-mono font-bold text-[#4a7010]">YOUR_NAME_SOLO</span> or <span className="font-mono font-bold text-[#4a7010]">YOUR_TEAM_NAME_YOUR_NAME</span> for team only.
+                                    </p>
                                 </div>
                             </div>
 
@@ -231,11 +255,17 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                     icon={FiLink2}
                                     borderColor="border-[#8cc63f]/50 focus-within:border-[#8cc63f]"
                                 />
+                                <div className="flex items-center gap-2 bg-[#fcf3d9]/50 border border-[#fbc111]/30 px-3 py-2.5 rounded-xl !mt-3">
+                                    <span className="text-[13px] leading-none mb-[2px]">📌</span>
+                                    <p className="text-[10px] text-gray-600 font-medium leading-tight">
+                                        <span className="font-bold text-[#a68945]">Note:</span> Make sure link is accessible or public.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="px-6 md:px-8 py-5 border-t border-gray-100 bg-[#f8faf2] shrink-0">
+                    <div className="px-6 md:px-8 py-3 sm:py-5 border-t border-gray-100 bg-[#f8faf2] shrink-0 flex justify-center">
                         <Button
                             variant="portalSubmit"
                             text="Final Submit"
@@ -243,7 +273,7 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                             isLoading={isSubmitting}
                             loadingText="Submitting..."
                             onClick={handleSubmit}
-                            className="w-full"
+                            className="w-auto px-6 sm:px-14 py-1.5 sm:py-3.5 text-[10px] sm:text-[13px]"
                         />
                     </div>
                 </div>

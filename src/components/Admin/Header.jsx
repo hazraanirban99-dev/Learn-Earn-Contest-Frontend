@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2, FiRefreshCw, FiCheck, FiXCircle } from 'react-icons/fi';
+import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2, FiRefreshCw, FiCheck, FiXCircle, FiChevronLeft } from 'react-icons/fi';
 import { Logo } from '../index';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
@@ -23,6 +23,7 @@ const Header = ({ onMenuClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [showMobileNotifs, setShowMobileNotifs] = useState(false);
   const [notifications, setNotifications] = useState([]);
   
   const dropdownRef = useRef(null);
@@ -94,6 +95,7 @@ const Header = ({ onMenuClick }) => {
       const isOutsideToggle = toggleRef.current && !toggleRef.current.contains(event.target);
       if (isOutsideDropdown && isOutsideToggle) {
         setIsMenuOpen(false);
+        setShowMobileNotifs(false);
       }
 
       const isOutsideProfile = profileDropdownRef.current && !profileDropdownRef.current.contains(event.target);
@@ -173,7 +175,14 @@ const Header = ({ onMenuClick }) => {
             <FiRefreshCw size={20} className="group-hover:text-[#8cc63f] group-active:rotate-180 transition-all duration-500" />
           </button>
           
-          {/* Admin Notifications Bell */}
+          <button 
+            onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors group"
+          >
+            <FiSettings size={20} className="group-hover:translate-x-0.5 transition-all" />
+          </button>
+          
+          {/* Admin Notifications Bell - Desktop Only */}
           <div className="relative" ref={notifRef}>
             <button 
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
@@ -192,7 +201,15 @@ const Header = ({ onMenuClick }) => {
                 <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
                     <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Admin Alerts</h3>
-                        {notifications.length > 0 && <span className="text-[10px] font-bold text-red-500">{notifications.length} Requests</span>}
+                        <div className="flex items-center gap-3">
+                           {notifications.length > 0 && <span className="text-[10px] font-bold text-red-500">{notifications.length} Requests</span>}
+                           <button 
+                              onClick={() => setIsNotifOpen(false)}
+                              className="text-gray-400 hover:text-red-500 transition-colors"
+                           >
+                              <FiXCircle size={18} />
+                           </button>
+                        </div>
                     </div>
                     <div className="max-h-96 overflow-y-auto custom-scrollbar">
                         {notifications.length === 0 ? (
@@ -241,13 +258,6 @@ const Header = ({ onMenuClick }) => {
                 </div>
             )}
           </div>
-
-          <button 
-            onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors group"
-          >
-            <FiSettings size={20} className="group-hover:translate-x-0.5 transition-all" />
-          </button>
         </div>
         
         {/* 3-Dot Mobile More Menu Toggle */}
@@ -261,103 +271,148 @@ const Header = ({ onMenuClick }) => {
 
           <div 
             ref={dropdownRef} 
-            className={`absolute top-full right-0 mt-3 w-64 bg-white rounded-[24px] shadow-2xl border border-gray-100 p-6 flex flex-col gap-6 lg:hidden z-[100] max-h-[80vh] overflow-y-auto scrollbar-hide origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`absolute top-full right-0 mt-3 w-72 bg-white rounded-[24px] shadow-2xl border border-gray-100 p-6 flex flex-col gap-6 lg:hidden z-[100] max-h-[80vh] overflow-y-auto scrollbar-hide origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               isMenuOpen 
                 ? 'opacity-100 scale-y-100 translate-y-0 visible' 
                 : 'opacity-0 scale-y-95 -translate-y-4 invisible pointer-events-none'
             }`}
           >
-            {/* User Profile Section in Dropdown */}
-            <div className="flex items-center gap-4 bg-[#8cc63f]/5 p-3 rounded-2xl border border-[#8cc63f]/10">
-              <div className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[2px]">
-                <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold font-black">
-                  <FiUser size={20} />
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm font-black text-slate-900 uppercase tracking-tighter leading-tight">Admin User</p>
-                <p className="text-[10px] font-bold text-gray-400 truncate">admin@academy.com</p>
-              </div>
-            </div>
+            {showMobileNotifs ? (
+               <div className="flex flex-col h-full animate-in slide-in-from-right duration-300">
+                  <div className="flex items-center justify-between mb-6 border-b border-gray-50 pb-4">
+                     <button 
+                        onClick={() => setShowMobileNotifs(false)}
+                        className="flex items-center gap-1 text-[#8cc63f] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform"
+                     >
+                        <FiChevronLeft size={16} /> Back
+                     </button>
+                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-800">Admin Alerts</p>
+                  </div>
+                  
+                  <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                     {notifications.length === 0 ? (
+                        <div className="py-10 text-center">
+                           <FiBell className="mx-auto text-gray-200 mb-4" size={32} />
+                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">No Pending Requests</p>
+                        </div>
+                     ) : (
+                        notifications.map(notif => (
+                           <div key={notif._id} className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                              <div className="flex items-center gap-3">
+                                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0 text-amber-600 font-bold text-[10px]">
+                                    {notif.sender?.name?.charAt(0)}
+                                 </div>
+                                 <p className="text-[10px] font-medium text-slate-700 leading-tight">
+                                    <span className="font-black">{notif.sender?.name}</span> for <span className="font-black">"{notif.contest?.title}"</span>
+                                 </p>
+                              </div>
+                              <div className="bg-white p-2 rounded-lg border border-amber-50 italic text-[10px] font-bold text-amber-700">
+                                 "{notif.reason}"
+                              </div>
+                              <div className="flex gap-2">
+                                 <button onClick={() => handleNotificationAction(notif._id, 'ALLOW')} className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase">Allow</button>
+                                 <button onClick={() => handleNotificationAction(notif._id, 'DENY')} className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase">Deny</button>
+                              </div>
+                           </div>
+                        ))
+                     )}
+                  </div>
+               </div>
+            ) : (
+               <>
+                  {/* User Profile Section in Dropdown */}
+                  <div className="flex items-center gap-4 bg-[#8cc63f]/5 p-3 rounded-2xl border border-[#8cc63f]/10">
+                    <div className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[2px]">
+                      <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold font-black">
+                        <FiUser size={20} />
+                      </div>
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <p className="text-sm font-black text-slate-900 uppercase tracking-tighter leading-tight">System Admin</p>
+                      <p className="text-[10px] font-bold text-gray-400 truncate">{currentUser?.email || 'admin@academy.com'}</p>
+                    </div>
+                  </div>
 
-            <div className="flex flex-col gap-4">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
-              {tabs.map((tab) => (
-                tab.path === '#' ? (
-                  <button
-                    key={tab.name}
-                    onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-                    className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                      activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
-                    }`}
-                  >
-                    {tab.name}
-                  </button>
-                ) : (
-                  <Link
-                    key={tab.name}
-                    to={tab.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                      activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
-                    }`}
-                  >
-                    {tab.name}
-                  </Link>
-                )
-              ))}
-            </div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
+                    {tabs.map((tab) => (
+                      tab.path === '#' ? (
+                        <button
+                          key={tab.name}
+                          onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                          className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
+                            activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                          }`}
+                        >
+                          {tab.name}
+                        </button>
+                      ) : (
+                        <Link
+                          key={tab.name}
+                          to={tab.path}
+                          onClick={() => setIsMenuOpen(false)}
+                          className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
+                            activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                          }`}
+                        >
+                          {tab.name}
+                        </Link>
+                      )
+                    ))}
+                  </div>
 
-            <div className="flex flex-col gap-4">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Quick Actions</p>
-              <button 
-                onClick={handleRefresh}
-                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
-              >
-                <FiRefreshCw size={18} />
-                <span>Refresh System</span>
-              </button>
-              <button 
-                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
-              >
-                <FiBell size={18} />
-                <span>Notifications</span>
-                <span className="ml-auto w-2 h-2 bg-red-500 rounded-full" />
-              </button>
-              <button 
-                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
-              >
-                <FiSettings size={18} />
-                <span>Settings</span>
-              </button>
-            </div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Quick Actions</p>
+                    <button 
+                      onClick={handleRefresh}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+                    >
+                      <FiRefreshCw size={18} />
+                      <span>Refresh System</span>
+                    </button>
+                    <button 
+                      onClick={() => setShowMobileNotifs(true)}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+                    >
+                      <FiBell size={18} />
+                      <span>Notifications</span>
+                      {notifications.length > 0 && <span className="ml-auto w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
+                    </button>
+                    <button 
+                      onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+                    >
+                      <FiSettings size={18} />
+                      <span>Settings</span>
+                    </button>
+                  </div>
 
-            <div className="flex flex-col gap-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Account</p>
-              <button 
-                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
-              >
-                <FiEdit size={18} />
-                <span>Edit Profile</span>
-              </button>
-              <button 
-                onClick={() => { setIsMenuOpen(false); logout(); navigate('/login', { replace: true }); }}
-                className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all"
-              >
-                <FiLogOut size={18} />
-                <span>Logout</span>
-              </button>
-              <button 
-                onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-red-500 !bg-[#fff5f5] font-black text-[10px] tracking-tight uppercase" })}
-                className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 transition-all"
-              >
-                <FiTrash2 size={18} />
-                <span>Delete Account</span>
-              </button>
-            </div>
+                  <div className="flex flex-col gap-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Account</p>
+                    <button 
+                      onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+                    >
+                      <FiEdit size={18} />
+                      <span>Edit Profile</span>
+                    </button>
+                    <button 
+                      onClick={() => { setIsMenuOpen(false); logout(); navigate('/login', { replace: true }); }}
+                      className="flex items-center gap-3 text-sm font-bold text-[#fbc111] hover:text-[#e0ad0c] transition-all"
+                    >
+                      <FiLogOut size={18} />
+                      <span>Logout</span>
+                    </button>
+                    <button 
+                      onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-red-500 !bg-[#fff5f5] font-black text-[10px] tracking-tight uppercase" })}
+                      className="flex items-center gap-3 text-sm font-bold text-red-400 hover:text-red-600 transition-all"
+                    >
+                      <FiTrash2 size={18} />
+                      <span>Delete Account</span>
+                    </button>
+                  </div>
+               </>
+            )}
           </div>
 
         {/* User Profile Avatar - Desktop Only (with dropdown) */}

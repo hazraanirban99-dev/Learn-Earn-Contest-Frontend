@@ -21,7 +21,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
     const fetchParticipants = async () => {
       setLoading(true);
       try {
-        const { data } = await api.get(`/admin/submissions/contest/${contestId}`);
+        const { data } = await api.get(`/admin/contests/${contestId}/participants`);
         if (data.success) {
            setParticipants(data.data);
         }
@@ -141,15 +141,16 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
             {/* Pagination Mock */}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 text-center sm:text-left">
               <span className="text-[12px] font-bold text-gray-400">
-                Showing <span className="text-slate-700">1 to 4</span> of 248 participants
+                Showing <span className="text-slate-700">{participants.length > 0 ? `1 to ${participants.length}` : '0'}</span> of {participants.length} participants
               </span>
               <div className="flex items-center gap-2">
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
                   <FiChevronLeft size={20} />
                 </button>
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#8cc63f] text-white font-black text-sm shadow-md shadow-[#8cc63f]/20">1</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-slate-600 font-black text-sm hover:bg-white transition-all border border-gray-100/50">2</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-slate-600 font-black text-sm hover:bg-white transition-all border border-gray-100/50">3</button>
+                <div className="flex items-center gap-1">
+                   {/* Handle theoretical multiple pages if implemented later */}
+                </div>
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
                   <FiChevronRight size={20} />
                 </button>

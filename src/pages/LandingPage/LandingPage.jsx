@@ -62,7 +62,7 @@ const TypewriterHeader = () => {
    const [loopNum, setLoopNum] = useState(0);
    const [typingSpeed, setTypingSpeed] = useState(150);
 
-   const fullText = "Welcome to the CONTEST world";
+   const fullText = "Welcome to the CONTEST WORLD";
 
    useEffect(() => {
       let handleType = setTimeout(() => {
@@ -233,7 +233,7 @@ const LandingPage = () => {
          <section className="relative overflow-hidden pt-12 pb-12 md:pt-16 md:pb-20 px-6 sm:px-12 lg:px-24">
             <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                <div className="space-y-6 animate-in slide-in-from-left duration-1000">
-                  <span className="inline-block bg-[#fbc111]/10 text-[#d4a017] px-4 py-1 rounded-xl text-[10px] font-black tracking-widest uppercase">Est. 2024</span>
+                  <span className="inline-block bg-[#fbc111]/10 text-[#d4a017] px-4 py-1 rounded-xl text-[10px] font-black tracking-widest uppercase">Est. 2019</span>
                   <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1] tracking-tight">
                      The Future of <br />
                      <span className="text-[#8cc63f]">Scholastic <br /> Excellence.</span>
@@ -258,7 +258,7 @@ const LandingPage = () => {
                   <div className="absolute -inset-4 bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 rounded-[48px] blur-3xl opacity-50"></div>
                   <div className="relative bg-white p-3 rounded-[40px] shadow-2xl border border-white/50 overflow-hidden group">
                      {/* The Sliding Images Container */}
-                     <div className="relative w-full h-[280px] md:h-[400px] overflow-hidden rounded-[32px]">
+                     <div className="relative w-full h-[250px] md:h-[350px] overflow-hidden rounded-[32px]">
                         {heroImages.map((img, idx) => (
                            <img
                               key={idx}
@@ -319,8 +319,8 @@ const LandingPage = () => {
                               alt="Dr. Artis Thorne" 
                            />
                            <div>
-                              <h4 className="font-black text-slate-900 text-lg">Dr. Artis Thorne</h4>
-                              <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest leading-none mt-1">Chief Academic Officer</p>
+                              <h4 className="font-black text-slate-900 text-lg">ARGHYA DUTTA</h4>
+                              <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest leading-none mt-1">Chief Executive Officer (CEO) </p>
                            </div>
                         </div>
                         <p className="text-slate-700 italic font-bold text-lg leading-relaxed opacity-80">
@@ -336,9 +336,14 @@ const LandingPage = () => {
                      <p className="text-white/80 font-bold text-sm leading-relaxed mb-8 relative z-10">
                         To become the global standard for interdisciplinary excellence, fostering a community of logic and creativity.
                      </p>
-                     <button className="flex items-center gap-2 text-white font-black text-xs uppercase tracking-widest group relative z-10">
+                     <a 
+                        href="https://www.desunacademy.in/about-us?_gl=1*aysjd*_up*MQ..*_gs*MQ..&gclid=CjwKCAjw4ufOBhBkEiwAfuC7-engF8Lml228IhCROms_ppLFnslJEpHZRFs3V1yJdlkF5PHXJcyLbRoCuDYQAvD_BwE&gbraid=0AAAAAqQrhGxEHvs_bW4QgZ8Klr0F8pCto" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-white font-black text-xs uppercase tracking-widest group relative z-10 w-max"
+                     >
                         Learn More <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
-                     </button>
+                     </a>
                      <div className="absolute bottom-4 right-8 text-7xl font-black text-white/5 pointer-events-none uppercase italic">Vision</div>
                   </div>
                </div>
@@ -384,7 +389,9 @@ const LandingPage = () => {
                         'Industry-Leading Mentorship',
                         'Lifetime Portfolio Access',
                         'Global Alumni Network',
-                        'Accredited Career Pathways'
+                        'Accredited Career Pathways',
+                        '100% Placement Assistance',
+                        'Flexible Learning Modules'
                      ].map((benefit, i) => (
                         <div key={i} className="flex items-center gap-4 group">
                            <div className="w-6 h-6 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white transition-colors">
