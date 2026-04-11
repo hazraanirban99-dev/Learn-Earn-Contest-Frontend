@@ -5,11 +5,13 @@
 // Focus states e glow effect build kora ache premium look er jonno.
 // ============================================================
 
-import React from 'react';
-import { FiChevronDown } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiChevronDown, FiEye, FiEyeOff } from 'react-icons/fi';
 
-const InputField = React.memo(React.forwardRef(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight, onLabelRightClick }, ref) => {
+const InputField = React.memo(React.forwardRef(({ label, type, name, value, onChange, placeholder, icon: Icon, required, options, labelRight, onLabelRightClick, ...props }, ref) => {
   const isTextArea = type === 'textarea';
+  const isPassword = type === 'password';
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex flex-col gap-1.5 w-full mb-4">
@@ -56,16 +58,28 @@ const InputField = React.memo(React.forwardRef(({ label, type, name, value, onCh
             className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5 pt-1`}
           />
         ) : (
-          <input
-            ref={ref}
-            type={type}
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={required}
-            className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400`}
-          />
+          <div className="flex-1 flex items-center pr-4 relative">
+            <input
+              ref={ref}
+              type={isPassword ? (showPassword ? 'text' : 'password') : type}
+              name={name}
+              value={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              required={required}
+              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400`}
+              {...props}
+            />
+            {isPassword && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-[#8cc63f] transition-colors focus:outline-none cursor-pointer"
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

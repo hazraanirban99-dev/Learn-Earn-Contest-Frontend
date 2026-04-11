@@ -35,7 +35,7 @@ const Button = ({ text, onClick, variant = 'primary', disabled, type = 'button',
       
       {isLoading ? (
         <>
-          <div className={`w-5 h-5 border-3 rounded-full animate-spin ${variant === 'portalSubmit' ? 'border-white/30 border-t-white' : 'border-gray-300 border-t-gray-500'}`} />
+          <div className="w-5 h-5 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full animate-spin" />
           {loadingText}
         </>
       ) : (

@@ -33,11 +33,11 @@ const AdminDashboard = () => {
               Executive Overview
             </h1>
             <p className="text-gray-400 font-bold text-sm lg:text-base opacity-80 uppercase tracking-tighter">
-              Academic performance and operational metrics for Q3.
+              Academic performance and operational metrics.....
             </p>
           </div>
           <div className="bg-gray-100/80 backdrop-blur-sm p-1.5 rounded-2xl flex gap-1 shadow-inner self-stretch sm:self-auto">
-            {['Monthly', 'Weekly'].map((mode) => (
+            {['Monthly', 'Yearly'].map((mode) => (
               <button
                 key={mode}
                 onClick={() => setActiveToggle(mode)}

@@ -59,7 +59,7 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
 
       {loading ? (
         <div className="h-[240px] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#8cc63f]" />
+          <div className="animate-spin rounded-full h-8 w-8 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111]" />
         </div>
       ) : (
         <>

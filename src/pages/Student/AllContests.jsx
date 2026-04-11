@@ -12,11 +12,12 @@ import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import ContestCard from '../../components/Cards/ContestCard';
-import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe } from 'react-icons/fi';
-import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import PageTransition from '../../components/Common/PageTransition';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe, FiCheckCircle, FiPlusCircle } from 'react-icons/fi';
 
 const AllContests = () => {
    const [loading, setLoading] = useState(true);
@@ -27,16 +28,21 @@ const AllContests = () => {
    const [searchQuery, setSearchQuery] = useState('');
    const [selectedDomains, setSelectedDomains] = useState([]);
    const [selectedStatuses, setSelectedStatuses] = useState([]);
+   const [selectedEnrollment, setSelectedEnrollment] = useState([]);
    const [visibleCount, setVisibleCount] = useState(6);
 
    // Mobile Dropdown states
    const [isDomainOpen, setIsDomainOpen] = useState(false);
    const [isStatusOpen, setIsStatusOpen] = useState(false);
+   const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false);
    const domainRef = React.useRef(null);
    const statusRef = React.useRef(null);
+   const enrollmentRef = React.useRef(null);
+   
+   const { user } = useAuth();
 
    // Logic: Only enable infinite scroll when filters are active
-   const isFilterActive = searchQuery.trim() !== '' || selectedDomains.length > 0 || selectedStatuses.length > 0;
+   const isFilterActive = searchQuery.trim() !== '' || selectedDomains.length > 0 || selectedStatuses.length > 0 || selectedEnrollment.length > 0;
 
    // Infinite Scroll Listener
    useEffect(() => {
@@ -60,6 +66,7 @@ const AllContests = () => {
       const handleClickOutside = (event) => {
          if (domainRef.current && !domainRef.current.contains(event.target)) setIsDomainOpen(false);
          if (statusRef.current && !statusRef.current.contains(event.target)) setIsStatusOpen(false);
+         if (enrollmentRef.current && !enrollmentRef.current.contains(event.target)) setIsEnrollmentOpen(false);
       };
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -109,7 +116,10 @@ const AllContests = () => {
                   dateValue: formatDateDDMMYYYY(c.endDate),
                   thumbnail: c.thumbnail?.url || null,
                   winnerName: c.isWinnerDeclared ? (c.winner?.name || "TBA") : null,
-                  participantsCount: c.participantsCount || 0
+                  participantsCount: c.participantsCount || 0,
+                  projectType: c.projectType,
+                  minTeamSize: c.minTeamSize,
+                  maxTeamSize: c.maxTeamSize
                }));
                setAllContests(mappedContests);
             }
@@ -126,12 +136,15 @@ const AllContests = () => {
 
    const domains = ['MERN', 'UI/UX', 'Digital Marketing'];
    const statuses = ['Ongoing', 'Upcoming', 'Completed'];
+   const enrollmentOptions = ['Applied', 'Not Applied'];
 
    const toggleFilter = React.useCallback((type, value) => {
       if (type === 'domain') {
          setSelectedDomains(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
-      } else {
+      } else if (type === 'status') {
          setSelectedStatuses(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
+      } else {
+         setSelectedEnrollment(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
       }
    }, []);
 
@@ -145,9 +158,20 @@ const AllContests = () => {
          const displayStatus = contest.status.charAt(0) + contest.status.slice(1).toLowerCase();
          const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(displayStatus);
          
-         return matchesSearch && domainMatch && statusMatch;
+         // Participation Check
+         const isEnrolled = user?.enrolledContests?.some(enId => enId.toString() === contest.id.toString());
+         const enrollmentMatch = selectedEnrollment.length === 0 || 
+            (selectedEnrollment.includes('Applied') && isEnrolled) ||
+            (selectedEnrollment.includes('Not Applied') && !isEnrolled);
+         
+         return matchesSearch && domainMatch && statusMatch && enrollmentMatch;
       });
-   }, [allContests, searchQuery, selectedDomains, selectedStatuses]);
+   }, [allContests, searchQuery, selectedDomains, selectedStatuses, selectedEnrollment, user]);
+
+   // Reset Scroll to Top when filters change to prevent "jump to footer"
+   useEffect(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+   }, [selectedDomains, selectedStatuses, selectedEnrollment]);
 
    const visibleContests = React.useMemo(() => {
       return filteredContests.slice(0, visibleCount);
@@ -218,14 +242,15 @@ const AllContests = () => {
             </div>
 
             {/* MOBILE VIEW FILTER BAR (Visible only on mobile/tablet) */}
-            <div className="lg:hidden max-w-[1440px] mx-auto px-6 mt-6 flex flex-wrap gap-3 pb-2 relative z-50">
+            <div className="lg:hidden max-w-[1440px] mx-auto px-4 mt-6 grid grid-cols-3 gap-2 pb-2 relative z-50">
                {/* Domain Dropdown */}
-               <div className="relative shrink-0" ref={domainRef}>
+               <div className="relative" ref={domainRef}>
                   <button 
                      onClick={() => setIsDomainOpen(!isDomainOpen)}
-                     className={`flex items-center gap-2 px-6 py-3 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${selectedDomains.length > 0 ? 'bg-[#8cc63f] border-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                     className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedDomains.length > 0 ? 'bg-[#8cc63f] border-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' : 'bg-white border-gray-100 text-slate-800'}`}
                   >
-                     <FiFilter size={14} /> Domain {selectedDomains.length > 0 && `(${selectedDomains.length})`}
+                     <FiFilter size={14} className="shrink-0" />
+                     <span className="truncate">Domain {selectedDomains.length > 0 && `(${selectedDomains.length})`}</span>
                   </button>
                   {isDomainOpen && (
                      <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
@@ -235,16 +260,33 @@ const AllContests = () => {
                </div>
 
                {/* Status Dropdown */}
-               <div className="relative shrink-0" ref={statusRef}>
+               <div className="relative" ref={statusRef}>
                   <button 
                       onClick={() => setIsStatusOpen(!isStatusOpen)}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${selectedStatuses.length > 0 ? 'bg-[#fbc111] border-[#fbc111] text-slate-900 shadow-lg shadow-[#fbc111]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedStatuses.length > 0 ? 'bg-[#fbc111] border-[#fbc111] text-slate-900 shadow-lg shadow-[#fbc111]/20' : 'bg-white border-gray-100 text-slate-800'}`}
                   >
-                     <FiTrendingUp size={14} /> Status {selectedStatuses.length > 0 && `(${selectedStatuses.length})`}
+                     <FiTrendingUp size={14} className="shrink-0" />
+                     <span className="truncate">Status {selectedStatuses.length > 0 && `(${selectedStatuses.length})`}</span>
                   </button>
                   {isStatusOpen && (
-                     <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
                         <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
+                     </div>
+                  )}
+               </div>
+
+               {/* Participation Dropdown */}
+               <div className="relative" ref={enrollmentRef}>
+                  <button 
+                      onClick={() => setIsEnrollmentOpen(!isEnrollmentOpen)}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedEnrollment.length > 0 ? 'bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                  >
+                     <FiCheckCircle size={14} className="shrink-0" />
+                     <span className="truncate">My Status {selectedEnrollment.length > 0 && `(${selectedEnrollment.length})`}</span>
+                  </button>
+                  {isEnrollmentOpen && (
+                     <div className="absolute top-full right-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                        <FilterSection type="participation" data={enrollmentOptions} selected={selectedEnrollment} toggle={toggleFilter} />
                      </div>
                   )}
                </div>
@@ -265,6 +307,13 @@ const AllContests = () => {
                         <FiTrendingUp className="text-[#fbc111]" size={18} /> Status
                      </h3>
                      <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
+
+                     <div className="my-8 border-t border-gray-50"></div>
+
+                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <FiCheckCircle className="text-indigo-500" size={18} /> Participation
+                     </h3>
+                     <FilterSection type="participation" data={enrollmentOptions} selected={selectedEnrollment} toggle={toggleFilter} />
                   </div>
                </aside>
                <div className="flex-1 space-y-16">

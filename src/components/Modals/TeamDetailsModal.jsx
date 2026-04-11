@@ -87,10 +87,10 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                     </button>
                 </div>
 
-                <div className="p-8">
+                <div className="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     {loading ? (
                         <div className="py-12 text-center">
-                            <div className="animate-spin w-8 h-8 border-4 border-[#8cc63f] border-t-transparent rounded-full mx-auto mb-4" />
+                            <div className="animate-spin w-8 h-8 border-4 border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full mx-auto mb-4" />
                             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Team Intel...</p>
                         </div>
                     ) : team ? (
@@ -109,7 +109,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                 <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white relative">
-                                            {team.leader?.name[0]}
+                                            {team.leader?.name?.[0] || '?'}
                                             <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#fbc111] rounded-full flex items-center justify-center border-2 border-white shadow-sm" title="Leader">
                                                 <FiShield size={8} className="text-white" />
                                             </div>
@@ -127,7 +127,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                     <div key={idx} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm animate-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
                                         <div className="flex items-center gap-3">
                                             <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500">
-                                                {m.user?.name[0]}
+                                                {m.user?.name?.[0] || '?'}
                                             </div>
                                             <div>
                                                 <p className="text-xs font-black text-slate-800">{m.user?.name}</p>

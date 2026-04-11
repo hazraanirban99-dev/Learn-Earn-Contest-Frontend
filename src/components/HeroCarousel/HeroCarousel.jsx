@@ -99,7 +99,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                         </div>
                       )}
                     </div>
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight mb-4 sm:mb-6 animate-in slide-in-from-bottom-4 duration-700">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight mb-4 sm:mb-6 animate-in slide-in-from-bottom-4 duration-700">
                       {contest.title}
                     </h1>
 

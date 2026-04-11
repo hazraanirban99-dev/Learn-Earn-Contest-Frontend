@@ -181,7 +181,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
         <div className="px-6 md:px-10 py-8 overflow-y-auto space-y-8 flex-1 custom-scrollbar">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8cc63f]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111]"></div>
             </div>
           ) : (
             <>
@@ -443,7 +443,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
             >
               {isSaving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full animate-spin" />
                   Updating...
                 </>
               ) : 'Save Configuration'}

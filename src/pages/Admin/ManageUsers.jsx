@@ -15,20 +15,37 @@ import EditUserModal from '../../components/Admin/EditUserModal';
 import AdminLayout from '../../layouts/AdminLayout';
 import { FiSearch, FiDownload, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiShield } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
 import { exportToCSV } from '../../utils/exportUtils';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 
 const ManageUsers = () => {
   const { users, updateUser, deleteUser } = useUsers();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState(null); // { type: 'user' | 'contest', value: string }
+  const [selectedFilter, setSelectedFilter] = useState(null); // { type: 'user', value: string }
+  const [selectedContest, setSelectedContest] = useState('All Contests');
+  const [selectedDomain, setSelectedDomain] = useState('All Domains');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Mock Contest Data for Demo (linking users to contests)
-  const contests = ['Eco-Urban Design 2024', 'Visual Brand Identity', 'Fintech UI Redesign', 'Sustainable Energy Hackathon'];
+  // Dynamic Contest Data logic (Filter only COMPLETED)
+  const [contests, setContests] = useState([]);
+  React.useEffect(() => {
+    const fetchCompletedContests = async () => {
+      try {
+        const { data } = await api.get('/admin/contests/admin');
+        if (data && data.success) {
+           setContests(data.data.filter(c => c.status === 'COMPLETED').map(c => c.title));
+        }
+      } catch (err) {
+        console.error("Failed to fetch contests in manage users", err);
+      }
+    };
+    fetchCompletedContests();
+  }, []);
+
   const userContests = React.useMemo(() => ({
     1: ['Eco-Urban Design 2024'],
     2: ['Visual Brand Identity', 'Eco-Urban Design 2024'],
@@ -52,22 +69,40 @@ const ManageUsers = () => {
   }, [searchTerm, users, selectedFilter]);
 
   const filteredUsers = React.useMemo(() => {
-    if (selectedFilter) {
-      if (selectedFilter.type === 'user') {
-        return users.filter(u => u.id === selectedFilter.id);
-      }
-      if (selectedFilter.type === 'contest') {
-        return users.filter(u => userContests[u.id]?.includes(selectedFilter.value));
-      }
+    let result = users;
+
+    if (selectedDomain && selectedDomain !== 'All Domains') {
+      const sanitizedSelected = selectedDomain.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      result = result.filter(u => u.domain && u.domain.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().includes(sanitizedSelected));
     }
 
-    if (!searchTerm) return users;
+    // Filter by Contest
+    if (selectedContest && selectedContest !== 'All Contests') {
+      result = result.filter(u => {
+        // If users actually have a contests array from backend
+        if (u.contests && Array.isArray(u.contests)) {
+          return u.contests.some(c => typeof c === 'string' ? c === selectedContest : c.title === selectedContest);
+        }
+        // Fallback to mock dictionary for UI demo if no real array exists
+        return userContests[u.id]?.includes(selectedContest);
+      });
+    }
 
-    return users.filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [users, searchTerm, selectedFilter, userContests]);
+    // Direct Search / Suggestion selection
+    if (selectedFilter && selectedFilter.type === 'user') {
+      return result.filter(u => u.id === selectedFilter.id);
+    }
+    
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(user => 
+        user.name.toLowerCase().includes(term) || 
+        user.email.toLowerCase().includes(term)
+      );
+    }
+
+    return result;
+  }, [users, searchTerm, selectedFilter, selectedDomain, selectedContest, userContests]);
 
   const totalPages = React.useMemo(() => {
     return Math.ceil(filteredUsers.length / itemsPerPage);
@@ -97,6 +132,8 @@ const ManageUsers = () => {
   const clearFilter = () => {
     setSelectedFilter(null);
     setSearchTerm('');
+    setSelectedContest('All Contests');
+    setSelectedDomain('All Domains');
     setCurrentPage(1);
   };
 
@@ -173,7 +210,7 @@ const ManageUsers = () => {
                 <div className="flex flex-col">
                   <span className="text-sm font-black text-slate-800 tracking-tight">{s.label}</span>
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest transition-colors group-hover:text-[#5c8a14]">
-                    {s.type === 'contest' ? `View All Users In Contest` : `View Scholar Details`}
+                    {s.type === 'contest' ? `Filter by Contest` : `View Scholar Details`}
                   </span>
                 </div>
                 <div className={`p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${s.type === 'contest' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'bg-[#fbc111]/10 text-[#fbc111]'}`}>
@@ -210,21 +247,41 @@ const ManageUsers = () => {
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
-           <span className="text-xs font-black tracking-widest text-slate-500 uppercase ml-2 sm:ml-0">Filter By Contest:</span>
-           <div className="relative w-full sm:flex-1 mb-2 sm:mb-0 max-w-xl">
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+           {/* Contest Filter */}
+           <div className="relative w-full sm:flex-1 max-w-xl">
              <select 
-               value={selectedFilter?.type === 'contest' ? selectedFilter.value : ''}
+               value={selectedContest}
                onChange={(e) => {
-                  if (e.target.value === 'All Contests') clearFilter();
-                  else handleSuggestionClick({ type: 'contest', label: `Contest: ${e.target.value}`, value: e.target.value });
+                  setSelectedContest(e.target.value);
+                  setCurrentPage(1);
                }}
-               className="appearance-none bg-white border border-gray-100 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] w-full shadow-sm cursor-pointer pr-10"
+               className="appearance-none bg-white border border-[#8cc63f]/30 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#8cc63f]/60 transition-all"
              >
-                <option>All Contests</option>
-                {contests.map(c => <option key={c}>{c}</option>)}
+                <option value="All Contests">All Contests</option>
+                {contests.map(c => <option key={c} value={c}>{c}</option>)}
              </select>
-             <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-gray-400">
+             <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#8cc63f]">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+             </div>
+           </div>
+
+           {/* Domain Filter */}
+           <div className="relative w-full sm:w-64 shrink-0">
+             <select 
+               value={selectedDomain}
+               onChange={(e) => {
+                  setSelectedDomain(e.target.value);
+                  setCurrentPage(1);
+               }}
+               className="appearance-none bg-white border border-[#fbc111]/40 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#fbc111]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#fbc111]/80 transition-all"
+             >
+                <option value="All Domains">All Domains</option>
+                <option value="MERN">MERN</option>
+                <option value="UIUX">UI/UX</option>
+                <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
+             </select>
+             <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#fbc111]">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
              </div>
            </div>
@@ -263,9 +320,9 @@ const ManageUsers = () => {
                     </td>
                     <td className="py-5 px-6">
                       <span className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest border uppercase inline-block shadow-sm 
-                        ${user.domain.includes('UI/UX') ? 'bg-[#f4f8ec] text-[#8cc63f] border-[#8cc63f]/20' : 
-                          user.domain.includes('Development') ? 'bg-purple-50 text-purple-500 border-purple-200' : 
-                          user.domain.includes('Marketing') ? 'bg-amber-50 text-amber-500 border-amber-200' :
+                        ${(user.domain || '').toUpperCase().includes('UI/UX') ? 'bg-[#f4f8ec] text-[#8cc63f] border-[#8cc63f]/20' : 
+                          (user.domain || '').toUpperCase().includes('MERN') ? 'bg-purple-50 text-purple-500 border-purple-200' : 
+                          (user.domain || '').toUpperCase().includes('DIGITAL MARKETING') ? 'bg-amber-50 text-amber-500 border-amber-200' :
                           'bg-blue-50 text-blue-500 border-blue-200'
                         }`}
                       >

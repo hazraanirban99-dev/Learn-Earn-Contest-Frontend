@@ -36,6 +36,21 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
     fetchParticipants();
   }, [isOpen, contestId]);
 
+  const handleApprove = async (participantId) => {
+    try {
+      const { data } = await api.put(`/admin/participants/approve/${participantId}`);
+      if (data.success) {
+        toast.success("Team approved successfully! 🚀");
+        // Update local state
+        setParticipants(prev => prev.map(p => 
+          p._id === participantId ? { ...p, status: 'REGISTERED' } : p
+        ));
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to approve team");
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -128,8 +143,25 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                              <span className="text-[10px] text-gray-400">{user.studentId?.contactNumber || 'N/A'}</span>
                           </div>
                         </td>
-                        <td className="py-5 px-8 text-slate-600 font-bold text-[14px] rounded-r-[32px]">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${user.status === 'GRADED' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'bg-[#fbc111]/10 text-[#dca51a]'}`}>{user.status}</span>
+                         <td className="py-5 px-8 text-slate-600 font-bold text-[14px] rounded-r-[32px]">
+                          <div className="flex items-center gap-4">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                                user.status === 'REGISTERED' || user.status === 'GRADED' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 
+                                user.status === 'AWAITING_ADMIN' ? 'bg-purple-100 text-purple-600' :
+                                'bg-[#fbc111]/10 text-[#dca51a]'
+                            }`}>
+                                {user.status === 'AWAITING_ADMIN' ? 'Awaiting Approval' : user.status}
+                            </span>
+                            
+                            {user.status === 'AWAITING_ADMIN' && (
+                                <button 
+                                    onClick={() => handleApprove(user._id)}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-purple-600/20 active:scale-95"
+                                >
+                                    Approve Team
+                                </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))

@@ -40,6 +40,26 @@ const ManageContests = () => {
     completed: 0
   });
 
+  const [domainFilter, setDomainFilter] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [domainFilter, statusFilter]);
+
+  const filteredContests = React.useMemo(() => {
+    return contests.filter(c => {
+      if (domainFilter !== 'ALL' && c.domain !== domainFilter) return false;
+      if (statusFilter !== 'ALL' && c.status !== statusFilter) return false;
+      return true;
+    });
+  }, [contests, domainFilter, statusFilter]);
+
+  const totalPages = Math.ceil(filteredContests.length / itemsPerPage);
+  const currentContests = filteredContests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   // Backend theke contests ebong stats fetch kora hocche
   const fetchData = async () => {
     if (authLoading) return;
@@ -185,23 +205,53 @@ const ManageContests = () => {
           />
         </div>
 
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 mb-2">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <select 
+              value={domainFilter} 
+              onChange={(e) => setDomainFilter(e.target.value)}
+              className="bg-white border-2 border-[#fbc111] focus:border-[#fbc111] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#8cc63f] outline-none w-1/2 sm:w-48 shadow-sm cursor-pointer appearance-none transition-all"
+            >
+              <option value="ALL">All Domains</option>
+              <option value="MERN">MERN</option>
+              <option value="UIUX">UI/UX</option>
+              <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
+            </select>
+            <select 
+              value={statusFilter} 
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-white border-2 border-[#8cc63f] focus:border-[#8cc63f] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#fbc111] outline-none w-1/2 sm:w-40 shadow-sm cursor-pointer appearance-none transition-all"
+            >
+              <option value="ALL">All Status</option>
+              <option value="ONGOING">Ongoing</option>
+              <option value="UPCOMING">Upcoming</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
+        </div>
+
         <div className="space-y-6 mt-4">
-          {contests.map((contest) => (
+          {currentContests.length === 0 ? (
+            <div className="bg-white rounded-[40px] p-10 text-center text-gray-400 font-bold uppercase tracking-widest text-sm shadow-sm border border-gray-100">
+              No contests match your selected filters.
+            </div>
+          ) : (
+            currentContests.map((contest) => (
             <div key={contest._id} className="bg-white p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all flex flex-col lg:flex-row gap-8 group">
               <div className="relative w-full lg:w-[360px] h-[220px] rounded-[24px] overflow-hidden shrink-0">
                 <img src={contest.thumbnail.url} alt={contest.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute top-4 left-4"><span className={`${getStatusColor(contest.status)} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md`}>{contest.status}</span></div>
               </div>
 
-              <div className="flex-1 flex flex-col justify-center py-2 relative">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h5 className="text-[#fbc111] font-black text-[10px] uppercase tracking-widest mb-3">{contest.domain}</h5>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">{contest.title}</h2>
+              <div className="flex-1 flex flex-col justify-center py-2 relative w-full">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-4">
+                  <div className="flex-1">
+                    <h5 className="text-[#fbc111] font-black text-[10px] uppercase tracking-widest mb-2 sm:mb-3">{contest.domain}</h5>
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight break-words">{contest.title}</h2>
                   </div>
-                  <div className="flex items-center gap-2 text-[#a68945] bg-[#fcf3d9]/50 border border-[#fbc111]/20 px-4 py-2 rounded-2xl h-fit shadow-sm backdrop-blur-sm">
-                    <FiCalendar size={14} className="text-[#fbc111]" />
-                    <span className="text-[11px] font-black uppercase tracking-wider">Deadline: {formatDateDDMMYYYY(contest.endDate)}</span>
+                  <div className="inline-flex items-center shrink-0 gap-2 text-[#a68945] bg-[#fcf3d9]/50 border border-[#fbc111]/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl w-fit shadow-sm backdrop-blur-sm self-start">
+                    <FiCalendar size={14} className="text-[#fbc111] shrink-0" />
+                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider whitespace-nowrap">Deadline: {formatDateDDMMYYYY(contest.endDate)}</span>
                   </div>
                 </div>
 
@@ -248,8 +298,44 @@ const ManageContests = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 sm:gap-4 mt-8">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-2 sm:p-3 bg-white border-2 border-gray-100 rounded-xl text-gray-400 hover:text-[#fbc111] hover:border-[#fbc111] disabled:opacity-50 transition-all shadow-sm"
+            >
+              <FiChevronLeft size={20} />
+            </button>
+            
+            <div className="flex items-center gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-xl font-black text-sm transition-all shadow-sm flex items-center justify-center ${
+                    currentPage === page 
+                      ? 'bg-[#8cc63f] text-white border-2 border-[#8cc63f] scale-[1.15]' 
+                      : 'bg-white text-gray-500 border-2 border-gray-100 hover:border-[#8cc63f]/50 hover:text-[#8cc63f]'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 sm:p-3 bg-white border-2 border-gray-100 rounded-xl text-gray-400 hover:text-[#fbc111] hover:border-[#fbc111] disabled:opacity-50 transition-all shadow-sm"
+            >
+              <FiChevronRight size={20} />
+            </button>
+          </div>
+        )}
       </div>
     </AdminLayout>
     </>

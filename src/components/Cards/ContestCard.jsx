@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ApplyContestModal from '../Modals/ApplyContestModal';
 import TeamDetailsModal from '../Modals/TeamDetailsModal';
 // ============================================================
@@ -12,12 +12,13 @@ import TeamDetailsModal from '../Modals/TeamDetailsModal';
 // ============================================================
 
 import { toast } from 'react-toastify';
-import { FiCheckCircle, FiAward, FiUsers } from 'react-icons/fi';
+import { FiUsers, FiClock, FiCheckCircle } from 'react-icons/fi';
 import { FaRupeeSign, FaGift } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
 const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onAction }) => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
     const [isTeamOpen, setIsTeamOpen] = useState(false);
     const hasApplied = user?.enrolledContests?.some(id => id.toString() === contest.id?.toString()) || false;
@@ -46,6 +47,17 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
             position: "top-right",
             theme: "colored"
         });
+    };
+
+    const handleViewResult = () => {
+        if (contest.isWinnerDeclared) {
+            navigate(`/student/leaderboard/${contest.id}`);
+        } else {
+            toast.info("🔔 Result not declared yet! Please check back later.", {
+                position: "top-right",
+                autoClose: 3000
+            });
+        }
     };
 
     return (
@@ -117,13 +129,20 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                 {variant === 'dashboard' ? (
                     <div className="flex items-end justify-between">
                         <div>
-                            <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-1">{contest.dateInfo}</p>
+                            <p className="text-[10px] font-black text-[#fbc111] tracking-widest uppercase mb-1">{contest.dateInfo}</p>
                             <p className="text-sm font-black text-slate-800">{contest.dateValue}</p>
                             
                             {contest.participantsCount !== undefined && (
                                 <div className="mt-4">
                                     <p className="text-[10px] font-black text-[#5c8a14] tracking-widest uppercase mb-1">Enrolled Participants</p>
                                     <p className="text-sm font-black text-[#8cc63f]">{contest.participantsCount}</p>
+                                </div>
+                            )}
+
+                            {contest.teamName && (
+                                <div className="mt-4">
+                                    <p className="text-[10px] font-black text-purple-500 tracking-widest uppercase mb-1">Squad Team</p>
+                                    <p className="text-sm font-black text-purple-600 uppercase tracking-tight">{contest.teamName}</p>
                                 </div>
                             )}
                         </div>
@@ -136,22 +155,38 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                     </div>
                 ) : variant === 'submission' ? (
                     <div className="flex flex-wrap gap-4 mt-auto">
-                        <button 
-                            onClick={() => onAction && onAction(contest)}
-                            className="flex-1 bg-[#fbc111] hover:bg-[#ebaa00] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center"
-                        >
-                            Submit Your Response
-                        </button>
+                        {contest.enrollmentStatus === 'PENDING' ? (
+                            <button 
+                                disabled
+                                className="flex-1 bg-[#fbc111]/10 text-[#ebaa00] py-3.5 rounded-xl font-black text-xs uppercase tracking-widest border border-[#fbc111]/30 flex items-center justify-center gap-2 cursor-not-allowed"
+                            >
+                                <FiClock size={16} className="animate-pulse" /> Locked: Pending Squad
+                            </button>
+                        ) : contest.enrollmentStatus === 'AWAITING_ADMIN' ? (
+                            <button 
+                                disabled
+                                className="flex-1 bg-purple-50 text-purple-600 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest border border-purple-100 flex items-center justify-center gap-2 cursor-not-allowed shadow-sm"
+                            >
+                                <FiCheckCircle size={16} className="text-purple-400" /> Locked: Waiting for Admin Approval
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => onAction && onAction(contest)}
+                                className="flex-1 bg-[#fbc111] hover:bg-[#ebaa00] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-[#fbc111]/20 active:scale-95 text-center"
+                            >
+                                Submit Your Response
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="flex flex-wrap gap-4 mt-auto">
                         {isCompleted ? (
-                            <div className="flex-1 bg-[#fbc111] py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-[#fbc111]/20 border border-[#fbc111] group">
-                                <FiAward className="text-slate-900 group-hover:scale-125 transition-transform duration-300" size={16} />
-                                <span className="text-slate-900 font-black text-[11px] uppercase tracking-wider text-center">
-                                    Winner: {contest.winnerName || 'Announcing Soon'}
-                                </span>
-                            </div>
+                            <button 
+                                onClick={handleViewResult}
+                                className="flex-1 bg-blue-100 hover:bg-blue-200 text-black py-3.5 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all active:scale-95 text-center flex items-center justify-center font-bold"
+                            >
+                                View Result
+                            </button>
                         ) : hasApplied ? (
                             <div className="flex flex-col gap-2 flex-1">
                                 {hasSubmitted && (
@@ -192,7 +227,7 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                                     }
                                     setIsApplyModalOpen(true);
                                 }}
-                                className={`flex-1 ${isUpcoming ? 'bg-amber-400 hover:bg-amber-500' : 'bg-[#8cc63f] hover:bg-[#7ab332]'} cursor-pointer text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg active:scale-95 text-center`}
+                                className={`flex-1 ${isUpcoming ? 'bg-[#8cc63f]/20 hover:bg-[#8cc63f]/30 text-[#5c8a14] border border-[#8cc63f]/30' : 'bg-[#8cc63f] hover:bg-[#7ab332] text-white shadow-lg'} cursor-pointer py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all active:scale-95 text-center`}
                             >
                                 Apply Now
                             </button>
@@ -215,7 +250,6 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                 contest={contest}
                 onSuccess={() => {
                     setIsApplyModalOpen(false);
-                    setHasApplied(true);
                 }}
             />
 

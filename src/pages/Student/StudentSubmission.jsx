@@ -51,6 +51,7 @@ const StudentSubmission = () => {
                 domain: domainMap[sub.contestId?.domain] || sub.contestId?.domain || 'General',
                 status: sub.status === 'REVIEWED' ? 'Evaluated' : 'Under Review',
                 score: sub.score,
+                teamName: sub.participantId?.teamId?.name || null,
                 icon: sub.status === 'REVIEWED' ? <FiCheckCircle /> : <FiMoreHorizontal />
             }));
             setPastSubmissions(mappedSubmissions);
@@ -70,6 +71,8 @@ const StudentSubmission = () => {
                     desc: c.description,
                     domain: domainMap[c.domain] || c.domain || 'General',
                     status: c.status,
+                    enrollmentStatus: c.enrollmentStatus,
+                    teamName: c.teamName || null,
                     dateInfo: c.status === 'ONGOING' ? "ENDS SOON" : "STARTS",
                     dateValue: formatDateDDMMYYYY(c.endDate),
                     thumbnail: c.thumbnail?.url || null,
@@ -181,10 +184,16 @@ const StudentSubmission = () => {
                                                 {sub.icon}
                                             </div>
                                             <div>
-                                                <h3 className="text-lg font-black text-slate-900 mb-1">{sub.name}</h3>
-                                                <p className="text-sm font-medium text-gray-500">
-                                                    Submitted on {sub.date} • {sub.domain}
-                                                </p>
+                                                <h3 className="text-sm font-black text-slate-800 mb-0.5">{sub.name}</h3>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{sub.date}</span>
+                                                    {sub.teamName && (
+                                                        <>
+                                                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                            <span className="text-[10px] text-purple-600 font-black uppercase tracking-wider">TEAM: {sub.teamName}</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 

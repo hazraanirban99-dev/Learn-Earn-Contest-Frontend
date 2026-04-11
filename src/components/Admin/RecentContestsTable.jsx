@@ -16,19 +16,25 @@ const DOMAIN_STYLES = {
   'DIGITAL MARKETING':  'text-amber-600 bg-amber-50 border-amber-100',
   'default':            'text-gray-500 bg-gray-50 border-gray-100',
 };
-
 const RecentContestsTable = () => {
   const { contests, loading } = useAdminDashboard();
 
+  const displayContests = React.useMemo(() => {
+    return contests
+      .filter(c => c.status === 'ONGOING')
+      .sort((a, b) => parseInt(b.participants || 0) - parseInt(a.participants || 0))
+      .slice(0, 3);
+  }, [contests]);
+
   return (
-    <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 w-full group transition-all duration-300 hover:shadow-xl overflow-hidden">
+    <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-[#fbc111] flex flex-col gap-8 w-full group transition-all duration-300 hover:shadow-xl overflow-hidden">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-1">
           <h3 className="text-[18px] lg:text-[22px] font-black text-slate-800 tracking-tight uppercase leading-none">
-            Recent Contest Details
+            Top Active Contests
           </h3>
           <p className="text-gray-400 text-xs lg:text-sm font-black opacity-80 uppercase tracking-tighter">
-            Most recent active & upcoming contests
+            Highest enrolled ongoing chapters
           </p>
         </div>
       </div>
@@ -38,8 +44,7 @@ const RecentContestsTable = () => {
           <thead>
             <tr className="border-b-2 border-gray-50 uppercase text-[10px] lg:text-[11px] font-black tracking-widest text-[#8cc63f]/60 h-10">
               <th className="pb-4 font-black">Contest Name</th>
-              <th className="pb-4 font-black">Domain</th>
-              <th className="pb-4 font-black text-center">Status</th>
+              <th className="pb-4 font-black min-w-[160px]">Domain</th>
               <th className="pb-4 font-black text-center">Participants</th>
             </tr>
           </thead>
@@ -47,30 +52,25 @@ const RecentContestsTable = () => {
             {loading ? (
               [1, 2, 3].map(i => (
                 <tr key={i}>
-                  <td colSpan={4} className="py-5">
+                  <td colSpan={3} className="py-5">
                     <div className="h-4 bg-gray-100 rounded-full animate-pulse w-full" />
                   </td>
                 </tr>
               ))
-            ) : contests.length === 0 ? (
+            ) : displayContests.length === 0 ? (
               <tr>
-                <td colSpan={4} className="py-10 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">
-                  No active or upcoming contests
+                <td colSpan={3} className="py-10 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">
+                  No active contests running
                 </td>
               </tr>
-            ) : contests.map((contest, idx) => (
+            ) : displayContests.map((contest, idx) => (
               <tr key={idx} className="group/row hover:bg-gray-50/70 transition-all duration-300 cursor-pointer">
-                <td className="py-6 font-black text-[14px] lg:text-[15px] text-slate-900 tracking-tight capitalize group-hover/row:translate-x-1 transition-transform max-w-[200px] sm:max-w-none break-words">
+                <td className="py-6 font-black text-[14px] lg:text-[15px] text-slate-900 tracking-tight capitalize group-hover/row:translate-x-1 transition-transform max-w-[200px] sm:max-w-none break-words pr-4">
                   {contest.name}
                 </td>
-                <td className="py-6">
-                  <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black tracking-widest border uppercase inline-block ${DOMAIN_STYLES[contest.domain] || DOMAIN_STYLES.default}`}>
+                <td className="py-6 pr-4">
+                  <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black tracking-widest border uppercase inline-block whitespace-nowrap ${DOMAIN_STYLES[contest.domain] || DOMAIN_STYLES.default}`}>
                     {contest.domain}
-                  </span>
-                </td>
-                <td className="py-6 text-center">
-                  <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black tracking-widest border shadow-sm ${contest.color} uppercase inline-block`}>
-                    {contest.status}
                   </span>
                 </td>
                 <td className="py-6 font-black text-slate-900 text-[14px] lg:text-[16px] text-center">

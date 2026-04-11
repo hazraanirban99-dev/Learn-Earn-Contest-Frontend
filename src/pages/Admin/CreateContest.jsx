@@ -103,6 +103,14 @@ const CreateContest = () => {
 
   return (
     <AdminLayout>
+      {loading && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm transition-all duration-300">
+           <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-3xl shadow-2xl border border-[#8cc63f]/20">
+              <div className="w-14 h-14 border-[5px] border-transparent border-t-[#8cc63f] border-r-[#8cc63f] border-b-[#fbc111] border-l-[#fbc111] rounded-full animate-spin shadow-lg"></div>
+              <p className="text-[#8cc63f] font-black text-[11px] uppercase tracking-widest animate-pulse">Forging Contest...</p>
+           </div>
+        </div>
+      )}
       <div className="flex flex-col gap-8 max-w-6xl mx-auto pb-20 px-4 sm:px-6 lg:px-8">
         {/* --- Header Section --- */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-6">
@@ -260,26 +268,26 @@ const CreateContest = () => {
                 </div>
 
                 <div className={`transition-all duration-500 overflow-hidden ${projectType === 'Team' ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white border-2 border-[#8cc63f]/10 rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
-                    <div className="flex flex-col px-6">
-                       <span className="text-[9px] font-black text-[#8cc63f] uppercase tracking-widest block mb-1">Max Team Capacity</span>
-                       <span className="text-2xl font-black text-slate-800 tabular-nums">{teamSize} Members</span>
+                  <div className="bg-white border-2 border-[#8cc63f]/10 rounded-[20px] sm:rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                    <div className="flex flex-col px-3 sm:px-6">
+                       <span className="text-[8px] sm:text-[9px] font-black text-[#8cc63f] uppercase tracking-widest block mb-1">Max Team Capacity</span>
+                       <span className="text-xl sm:text-2xl font-black text-slate-800 tabular-nums">{teamSize} Members</span>
                     </div>
                     
-                    <div className="flex items-center gap-2 mr-1">
+                    <div className="flex items-center gap-1 sm:gap-2 mr-1 shrink-0">
                       <button 
                         type="button"
                         onClick={() => setTeamSize(Math.max(2, teamSize - 1))}
-                        className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90"
+                        className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90 shrink-0"
                       >
-                         <FiMinus size={20} strokeWidth={3} />
+                         <FiMinus size={18} strokeWidth={3} className="sm:w-5 sm:h-5" />
                       </button>
                       <button 
                         type="button"
                         onClick={() => setTeamSize(Math.min(10, teamSize + 1))}
-                        className="w-12 h-12 bg-[#8cc63f]/10 rounded-2xl flex items-center justify-center text-[#8cc63f] hover:bg-[#8cc63f] hover:text-white transition-all shadow-sm active:scale-90 shadow-[#8cc63f]/20"
+                        className="w-10 h-10 sm:w-12 sm:h-12 bg-[#8cc63f]/10 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#8cc63f] hover:bg-[#8cc63f] hover:text-white transition-all shadow-sm active:scale-90 shadow-[#8cc63f]/20 shrink-0"
                       >
-                         <FiPlus size={20} strokeWidth={3} />
+                         <FiPlus size={18} strokeWidth={3} className="sm:w-5 sm:h-5" />
                       </button>
                     </div>
                   </div>
@@ -447,9 +455,10 @@ const CreateContest = () => {
             {/* CTA Button */}
             <div className="pt-6">
               <Button 
-                text={loading ? "Creating Scholastic Project..." : "Finalize & Create Contest"}
+                text="Finalize & Create Contest"
+                isLoading={loading}
+                loadingText="Creating..."
                 onClick={handleSubmit}
-                disabled={loading}
                 className="!py-3 sm:!py-[14px] !text-[13px] sm:!text-[15px] !rounded-xl"
               />
             </div>

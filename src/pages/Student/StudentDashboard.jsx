@@ -62,7 +62,10 @@ const StudentDashboard = () => {
               dateInfo: "End Date",
               dateValue: formatDateDDMMYYYY(c.endDate),
               thumbnail: c.thumbnail?.url || null,
-              participantsCount: c.participantsCount || 0
+              participantsCount: c.participantsCount || 0,
+              projectType: c.projectType,
+              minTeamSize: c.minTeamSize,
+              maxTeamSize: c.maxTeamSize
            }));
            setPopularContests(mappedPop);
         }

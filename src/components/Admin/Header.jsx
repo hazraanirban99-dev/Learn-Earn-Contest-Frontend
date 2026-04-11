@@ -37,7 +37,7 @@ const Header = ({ onMenuClick }) => {
       const res = await api.get('/admin/notifications');
       if (res.data.success) {
         // Filter for Admin specific notifications if needed
-        setNotifications(res.data.data.filter(n => n.type === 'TEAM_CHANGE_REQUEST'));
+        setNotifications(res.data.data.filter(n => n.type === 'TEAM_CHANGE_REQUEST' && n.status !== 'ACTIONED'));
       }
     } catch (err) {
       console.error("Notif fetch error:", err);
@@ -56,9 +56,13 @@ const Header = ({ onMenuClick }) => {
     try {
       const res = await api.post('/admin/team/handle-change', { notificationId: notifId, action });
       if (res.data.success) {
+        // Optimistically remove from UI
+        setNotifications(prev => prev.filter(n => n._id !== notifId));
+        
         toast.success(`Team Change Request ${action === 'ALLOW' ? 'Allowed! ✅' : 'Denied.'}`, {
             theme: "colored"
         });
+        // Background sync
         fetchNotifications();
       }
     } catch (err) {

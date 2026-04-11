@@ -19,11 +19,16 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
   
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState('ALL');
   const [selectedContest, setSelectedContest] = useState('');
   const [selectedParticipant, setSelectedParticipant] = useState('');
   
   const [availableContests, setAvailableContests] = useState([]);
   const [availableSubmissions, setAvailableSubmissions] = useState([]);
+
+  const filteredContests = availableContests
+    .filter(c => c.status !== 'UPCOMING')
+    .filter(c => selectedDomain === 'ALL' || c.domain === selectedDomain);
 
   // 1. Initial Load: Fetch Years and Months that have contests
   useEffect(() => {
@@ -55,12 +60,6 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
         const { data } = await api.get(`/contests?year=${selectedYear}&month=${selectedMonth}`);
         if (data.success) {
           setAvailableContests(data.data);
-          if (data.data.length > 0) {
-            setSelectedContest(data.data[0].title);
-          } else {
-            setSelectedContest('');
-            setAvailableSubmissions([]);
-          }
         }
       } catch (error) {
         console.error("Contest fetch error:", error);
@@ -68,6 +67,21 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
     };
     fetchContests();
   }, [selectedYear, selectedMonth]);
+
+  // Sync contest dropdown when Domain changes or array loads
+  useEffect(() => {
+    const currentFiltered = availableContests
+      .filter(c => c.status !== 'UPCOMING')
+      .filter(c => selectedDomain === 'ALL' || c.domain === selectedDomain);
+    if (currentFiltered.length > 0) {
+      if (!currentFiltered.find(c => c.title === selectedContest)) {
+        setSelectedContest(currentFiltered[0].title);
+      }
+    } else {
+      setSelectedContest('');
+      setAvailableSubmissions([]);
+    }
+  }, [availableContests, selectedDomain, selectedContest]);
 
   // 3. Contest change hole Submissions/Participants load kora hoche (if Admin needs it)
   useEffect(() => {
@@ -128,12 +142,12 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
         }
       });
     }
-  }, [selectedYear, selectedMonth, selectedContest, selectedParticipant, availableSubmissions, availableContests, onSelectionChange]);
+  }, [selectedYear, selectedMonth, selectedDomain, selectedContest, selectedParticipant, availableSubmissions, availableContests, onSelectionChange]);
 
   return (
     <div className="w-full lg:w-auto flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
-        <div className="space-y-2 flex-1 sm:w-48">
+      <div className="flex flex-col md:flex-row gap-4 w-full">
+        <div className="space-y-2 flex-1 md:w-40">
           <label className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f]">Select Year</label>
           <div className="relative group">
             <select 
@@ -146,7 +160,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
           </div>
         </div>
-        <div className="space-y-2 flex-1 sm:w-48">
+        <div className="space-y-2 flex-1 md:w-40">
           <label className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f]">Select Month</label>
           <div className="relative group">
             <select 
@@ -157,6 +171,22 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               {months.map(m => <option key={m}>{m}</option>)}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
+          </div>
+        </div>
+        <div className="space-y-2 flex-1 md:w-40">
+          <label className="text-[10px] font-black uppercase tracking-widest text-[#fbc111]">Select Domain</label>
+          <div className="relative group">
+            <select 
+              value={selectedDomain}
+              onChange={(e) => setSelectedDomain(e.target.value)}
+              className="w-full bg-[#fcf3d9]/50 border-2 border-transparent hover:border-[#fbc111]/30 focus:border-[#fbc111]/50 focus:bg-[#fcf3d9]/80 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm"
+            >
+              <option value="ALL">All Domains</option>
+              <option value="MERN">MERN</option>
+              <option value="UIUX">UI/UX</option>
+              <option value="DIGITAL MARKETING">Digital Marketing</option>
+            </select>
+            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#fbc111] transition-colors" />
           </div>
         </div>
       </div>
@@ -171,9 +201,9 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               className="w-full bg-white border-2 border-gray-100 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
             >
               <option value="" disabled>
-                {availableContests.length === 0 ? 'No contests found in this period' : 'Select a contest'}
+                {filteredContests.length === 0 ? 'No contests match this selection' : 'Select a contest'}
               </option>
-              {availableContests.map(c => (
+              {filteredContests.map(c => (
                 <option key={c._id} value={c.title}>{c.title}</option>
               ))}
             </select>

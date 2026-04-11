@@ -17,7 +17,7 @@ import Footer from '../../components/Footer/Footer';
 import ApplyContestModal from '../../components/Modals/ApplyContestModal';
 import { Logo } from '../../components/index';
 import ContestCard from '../../components/Cards/ContestCard';
-import { FiBookOpen, FiDownload, FiCheckCircle, FiCalendar, FiDollarSign, FiAward, FiBriefcase, FiCode, FiLayout, FiTrendingUp, FiGlobe } from 'react-icons/fi';
+import { FiBookOpen, FiDownload, FiCheckCircle, FiClock, FiCalendar, FiDollarSign, FiAward, FiBriefcase, FiCode, FiLayout, FiTrendingUp, FiGlobe } from 'react-icons/fi';
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
@@ -41,6 +41,8 @@ const ContestDetails = () => {
     const [loading, setLoading] = React.useState(true);
     const [timeLeft, setTimeLeft] = React.useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const [isApplyModalOpen, setIsApplyModalOpen] = React.useState(false);
+    const [withdrawLoading, setWithdrawLoading] = React.useState(false);
+    const [enrollmentStatus, setEnrollmentStatus] = React.useState('REGISTERED'); // PENDING | REGISTERED
     
     // Derived states for real-time sync with AuthContext
     const hasApplied = user?.enrolledContests?.some(cid => cid.toString() === id?.toString()) || false;
@@ -87,7 +89,31 @@ const ContestDetails = () => {
         };
 
         fetchContestData();
-    }, [id]);
+
+        // 3. Fetch enrollment status if applied
+        let statusInterval;
+        const fetchStatus = async () => {
+            if (hasApplied) {
+                try {
+                    const res = await api.get(`/student/team/${id}`);
+                    if (res.data.success && res.data.data) {
+                        setEnrollmentStatus(res.data.data.enrollmentStatus);
+                    }
+                } catch (err) {
+                    console.error("Error fetching enrollment status:", err);
+                }
+            }
+        };
+
+        fetchStatus();
+        if (hasApplied) {
+            statusInterval = setInterval(fetchStatus, 10000); // Poll every 10s
+        }
+
+        return () => {
+            if (statusInterval) clearInterval(statusInterval);
+        };
+    }, [id, hasApplied]);
 
     const handleDownload = () => {
         if (contest?.syllabus?.url) {
@@ -97,16 +123,83 @@ const ContestDetails = () => {
         }
     };
 
+    const handleAppliedClick = () => {
+        toast.info("✅ You have already applied for this contest!", {
+            position: "top-right",
+            theme: "colored"
+        });
+    };
+
+    const handleWithdrawAction = async (toastId) => {
+        toast.dismiss(toastId);
+        setWithdrawLoading(true);
+        try {
+            const res = await api.post('/student/contests/withdraw', { contestId: id });
+            if (res.data.success) {
+                // Refetch user profile to sync across global context
+                const userRes = await api.get('/users/me');
+                if (userRes.data.success) {
+                    updateUser(userRes.data.data);
+                }
+                toast.success("Withdrawn from contest successfully.");
+                
+                // Update local contest data to show updated participantsCount
+                setContest(prev => ({
+                    ...prev,
+                    participantsCount: Math.max(0, (prev.participantsCount || 1) - 1)
+                }));
+            }
+        } catch (error) {
+            console.error("Withdrawal error:", error);
+            toast.error(error.response?.data?.message || "Failed to withdraw from contest.");
+        } finally {
+            setWithdrawLoading(false);
+        }
+    };
+
+    const handleWithdraw = () => {
+        const confirmToast = toast.info(
+            <div className="p-1">
+                <p className="text-xs font-black uppercase tracking-wider mb-3 text-slate-800">Withdraw from this contest?</p>
+                <div className="flex gap-2">
+                    <button 
+                        onClick={() => handleWithdrawAction(confirmToast)}
+                        className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors cursor-pointer"
+                    >
+                        Confirm
+                    </button>
+                    <button 
+                        onClick={() => toast.dismiss(confirmToast)}
+                        className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>,
+            {
+                position: "top-right",
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+                icon: false
+            }
+        );
+    };
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
 
     useEffect(() => {
-        if (!contest?.endDate) return;
+        if (!contest) return;
 
         const calculateTimeLeft = () => {
-            const difference = +new Date(contest.endDate) - +new Date();
-            let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+            const targetDate = contest.status === 'UPCOMING' ? contest.startDate : contest.endDate;
+            if (!targetDate) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+
+            const difference = +new Date(targetDate) - +new Date();
+            let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
 
             if (difference > 0) {
                 timeLeft = {
@@ -114,13 +207,23 @@ const ContestDetails = () => {
                     hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
                     minutes: Math.floor((difference / 1000 / 60) % 60),
                     seconds: Math.floor((difference / 1000) % 60),
+                    expired: false
                 };
+            } else {
+                timeLeft.expired = true;
             }
             return timeLeft;
         };
 
         const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft());
+            const newTime = calculateTimeLeft();
+            
+            // Auto-switch status if countdown ends for UPCOMING
+            if (newTime.expired && contest.status === 'UPCOMING') {
+                setContest(prev => ({ ...prev, status: 'ONGOING' }));
+            } else {
+                setTimeLeft(newTime);
+            }
         }, 1000);
 
         return () => clearInterval(timer);
@@ -130,7 +233,7 @@ const ContestDetails = () => {
         return (
             <div className="min-h-screen bg-[#f8faf2] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-[#8cc63f]/20 border-t-[#8cc63f] rounded-full animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full animate-spin"></div>
                     <p className="text-slate-500 font-black text-xs uppercase tracking-widest">Loading Contest Atelier...</p>
                 </div>
             </div>
@@ -225,10 +328,10 @@ const ContestDetails = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-stretch mb-16">
 
                         {/* Grand Prizes Widget */}
-                        <div className="bg-gradient-to-br from-[#4a7010] to-[#2e4a07] p-8 lg:p-10 rounded-[40px] text-white overflow-hidden relative shadow-2xl shadow-[#4a7010]/20 min-h-[300px] flex flex-col justify-between">
+                        <div className="bg-gradient-to-br from-[#4a7010] to-[#2e4a07] p-8 lg:p-10 rounded-[40px] text-white overflow-hidden relative shadow-2xl shadow-[#4a7010]/20 min-h-[300px] flex flex-col justify-center">
                             <FiAward className="absolute -bottom-8 -right-8 text-white/[0.04]" size={250} strokeWidth={1} />
-                            <h3 className="text-xl font-black text-white relative z-10 mb-6">Grand Prizes</h3>
-                            <div className="space-y-6 relative z-10">
+                            <h3 className="text-xl font-black text-white relative z-10 mb-8 border-b border-white/10 pb-4">Grand Prizes</h3>
+                            <div className="space-y-8 relative z-10">
                                 {/* Cash Prize - Always Visible */}
                                 <div className={`flex items-start gap-4 ${contest.cashPrize > 0 ? 'opacity-100' : 'opacity-50'}`}>
                                     <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white shrink-0">
@@ -296,7 +399,9 @@ const ContestDetails = () => {
 
                         {/* Registration Timer Widget (Apply Now) */}
                         <div className="bg-white p-8 lg:p-10 rounded-[40px] text-center border-[3px] border-[#fbc111]/90 shadow-2xl shadow-[#fbc111]/10 flex flex-col justify-center">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Registration Closes In</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
+                                {contest.status === 'UPCOMING' ? 'Registration Starts In' : 'Registration Closes In'}
+                            </p>
                             <div className="flex items-center justify-center gap-2 sm:gap-3 text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 font-mono tracking-tighter mb-4">
                                 <span>{String(timeLeft.days || 0).padStart(2, '0')}</span>
                                 <span className="text-[#fbc111] -mt-1">:</span>
@@ -316,10 +421,68 @@ const ContestDetails = () => {
                                             * Response Submitted
                                         </p>
                                     )}
-                                    <button disabled className="bg-gray-200 text-gray-500 border border-gray-300 px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest w-full mb-6 cursor-not-allowed">✅ Applied</button>
+                                    {enrollmentStatus === 'PENDING' ? (
+                                        <div className="space-y-3">
+                                            <button 
+                                                className="w-full bg-[#fbc111]/10 text-[#ebaa00] py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-[#fbc111]/30 flex items-center justify-center gap-2 cursor-wait"
+                                                title="Team Incomplete"
+                                            >
+                                                <FiClock size={16} className="animate-pulse" /> Pending Squad
+                                            </button>
+                                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider text-center">
+                                                Waiting for teammates to join...
+                                            </p>
+                                        </div>
+                                    ) : enrollmentStatus === 'AWAITING_ADMIN' ? (
+                                        <div className="space-y-3">
+                                            <button 
+                                                className="w-full bg-purple-50 text-purple-600 py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-purple-100 flex items-center justify-center gap-2 cursor-wait shadow-sm"
+                                                title="Awaiting Admin Review"
+                                            >
+                                                <FiClock size={16} className="animate-pulse" /> Awaiting Admin Approval
+                                            </button>
+                                            <p className="text-[9px] text-purple-400 font-bold uppercase tracking-wider text-center">
+                                                Squad ready! Admin is reviewing your team.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <button 
+                                            onClick={handleAppliedClick}
+                                            className="w-full bg-[#8cc63f]/20 text-[#5c8a14] py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-[#8cc63f]/30 transition-all hover:bg-[#8cc63f]/30 cursor-pointer mb-6"
+                                        >
+                                            ✅ Applied
+                                        </button>
+                                    )}
+                                    
+                                    {/* Unsubscribe Option (Only if not submitted) */}
+                                    {!hasSubmitted && (
+                                        <button 
+                                            onClick={handleWithdraw}
+                                            disabled={withdrawLoading}
+                                            className="w-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 font-black text-[10px] uppercase tracking-[0.2em] transition-all py-3.5 px-4 rounded-xl border border-slate-100 hover:border-red-100 flex items-center justify-center gap-2 group shadow-sm active:scale-95 mt-4"
+                                        >
+                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-red-400 transition-colors" />
+                                            {withdrawLoading ? 'Withdrawing...' : 'Unsubscribe'}
+                                        </button>
+                                    )}
                                 </div>
                             ) : (
-                                <button onClick={() => setIsApplyModalOpen(true)} className="bg-[#fbc111] hover:bg-[#ebaa00] cursor-pointer text-white px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all shadow-xl shadow-[#fbc111]/30 active:scale-95 w-full mb-6 uppercase">Apply for this Contest</button>
+                                <button 
+                                    onClick={() => {
+                                        if (contest?.status === 'UPCOMING') {
+                                            toast.warning("🔔 It's an upcoming contest. Please wait and apply when it gets active!", {
+                                                position: "top-right",
+                                                autoClose: 4000,
+                                                theme: "light",
+                                            });
+                                            return;
+                                        }
+                                        setIsApplyModalOpen(true);
+                                    }} 
+                                    className="bg-[#fbc111] hover:bg-[#8cc63f] cursor-pointer text-white px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all shadow-xl shadow-[#fbc111]/30 hover:shadow-[#8cc63f]/30 active:scale-95 w-full mb-6"
+                                >
+                                    Apply for this Contest
+                                </button>
                             )}
                             <p className="text-[10px] text-gray-400 font-medium max-w-[250px] mx-auto leading-relaxed">By applying, you agree to the official Desun Academy participation limits.</p>
                         </div>

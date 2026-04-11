@@ -91,6 +91,18 @@ const AuthForm = ({ type }) => {
     }
 
     if (isRegister) {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+      if (!passwordRegex.test(formData.password)) {
+        toast.error("Password must match all security criteria.");
+        return;
+      }
+
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(formData.contactNumber)) {
+        toast.error("Contact number must be exactly 10 digits.");
+        return;
+      }
+
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match!");
         return;
@@ -106,16 +118,8 @@ const AuthForm = ({ type }) => {
         const { data } = await api.post('/users/register', formData);
         
         if (data.success) {
-          toast.success("Account created! Logging in...");
-          
-          // Registration er por automatic login korar cesta
-          const loginRes = await api.post('/users/login', {
-            email: formData.email,
-            password: formData.password
-          });
-          
-          login(loginRes.data.data.user);
-          navigate(loginRes.data.data.user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+          toast.success("Account created successfully! Please log in.");
+          navigate('/login');
         }
       } catch (error) {
         toast.error(error.message || "Registration failed!");
@@ -186,6 +190,7 @@ const AuthForm = ({ type }) => {
             <InputField
               label="Contact Number" type="tel" name="contactNumber" value={formData.contactNumber}
               onChange={handleChange} placeholder="+91 9876543210" icon={FiPhone} required
+              maxLength={10}
             />
           </>
         )}
@@ -239,18 +244,25 @@ const AuthForm = ({ type }) => {
 
         {!isForgotPassword && (
           <div className={isRegister ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-6"}>
-            <InputField
-              label="Password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              icon={isRegister ? FiLock : null}
-              labelRight={!isRegister ? "Forgot Password?" : null}
-              onLabelRightClick={() => setIsForgotPassword(true)}
-              required
-            />
+            <div className="flex flex-col">
+              <InputField
+                label="Password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                icon={isRegister ? FiLock : null}
+                labelRight={!isRegister ? "Forgot Password?" : null}
+                onLabelRightClick={() => setIsForgotPassword(true)}
+                required
+              />
+              {isRegister && (
+                <p className="text-[9.5px] sm:whitespace-nowrap text-black font-semibold mt-2 leading-tight">
+                  <span className="text-[#fbc111] font-black mr-1">Note:</span> Min 8 chars, 1 uppercase, 1 number, 1 special char (@$!%*?&#).
+                </p>
+              )}
+            </div>
             {isRegister && (
               <InputField
                 label="Confirm" type="password" name="confirmPassword" value={formData.confirmPassword}

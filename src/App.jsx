@@ -8,7 +8,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
-import { Navbar, Footer } from './components';
+import { Navbar, Footer, ScrollToTop } from './components';
 
 // React.lazy diye pages load kora hocche — prottekta page alada alada chunk e thakbe.
 // Eite initial load fast hoy karon sob page ekbar e download hoy na.
@@ -33,6 +33,7 @@ const StudentDashboard = React.lazy(() => import('./pages/Student').then(module 
 const AllContests = React.lazy(() => import('./pages/Student').then(module => ({ default: module.AllContests })));
 const ContestDetails = React.lazy(() => import('./pages/Student').then(module => ({ default: module.ContestDetails })));
 const StudentSubmission = React.lazy(() => import('./pages/Student').then(module => ({ default: module.StudentSubmission })));
+const Leaderboard = React.lazy(() => import('./pages/Student').then(module => ({ default: module.Leaderboard })));
 
 // Page load hote time lagle ei FallbackLoader spinner show korbe - Suspense er jonno dorkar
 const FallbackLoader = () => (
@@ -45,6 +46,7 @@ const FallbackLoader = () => (
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <UserProvider>
         <Suspense fallback={<FallbackLoader />}>
           <Routes>
@@ -74,6 +76,7 @@ function App() {
               <Route path="/student/contests" element={<AllContests />} />
               <Route path="/student/contests/:id" element={<ContestDetails />} />
               <Route path="/student/submissions" element={<StudentSubmission />} />
+              <Route path="/student/leaderboard/:id" element={<Leaderboard />} />
             </Route>
           </Routes>
         </Suspense>

@@ -44,6 +44,8 @@ export const UserProvider = ({ children }) => {
             email: u.email,
             phone: u.contactNumber || 'N/A',
             domain: u.domain || 'Not Assigned',
+            gender: u.gender || 'Not Specified',
+            address: u.address || 'No Address Provided',
             registrationDate: formatDateDDMMYYYY(u.registrationDate), // DD/MM/YYYY format e
             avatar: u.avatar?.url || `https://ui-avatars.com/api/?name=${u.name}&background=random` // Avatar na thakle UI Avatar use hobe
           }));

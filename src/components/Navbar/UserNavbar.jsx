@@ -50,17 +50,19 @@ const UserNavbar = () => {
     try {
       const res = await api.post('/student/notifications/respond', { notificationId: notifId, status });
       if (res.data.success) {
-        toast.success(`Team Invite ${status === 'ACCEPTED' ? 'Accepted! 🎉' : 'Declined.'}`, {
-            theme: "colored",
-            position: "top-right"
-        });
-        if (status === 'ACCEPTED') {
-            toast.info("Congratulation both party! Team created successfully.", { position: "top-right" });
+        if (status !== 'OK') {
+            toast.success(`Team Invite ${status === 'ACCEPTED' ? 'Accepted! 🎉' : 'Declined.'}`, {
+                theme: "colored",
+                position: "top-right"
+            });
+            if (status === 'ACCEPTED') {
+                toast.info("Congratulation both party! Team created successfully.", { position: "top-right" });
+            }
         }
         fetchNotifications();
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to respond to invite.");
+      toast.error(err.response?.data?.message || "Failed to respond to notification.");
     }
   };
 
@@ -177,7 +179,7 @@ const UserNavbar = () => {
         </div>
 
         {/* 3. USER ACTIONS (Right) */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-4">
           <button 
             onClick={() => window.location.reload()}
             className="hidden sm:flex p-2.5 text-slate-500 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
@@ -202,7 +204,7 @@ const UserNavbar = () => {
              </button>
 
              {isNotifOpen && (
-                <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed sm:absolute top-20 sm:top-full left-4 sm:left-auto right-4 sm:right-0 mt-3 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
                     <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Notifications</h3>
                         {notifications.length > 0 && <span className="text-[10px] font-bold text-[#8cc63f]">{notifications.length} Pending</span>}
@@ -218,26 +220,43 @@ const UserNavbar = () => {
                                 {notifications.map(notif => (
                                     <div key={notif._id} className="p-4 hover:bg-gray-50/50 transition-colors">
                                         <div className="flex gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#fbc111]/20 flex items-center justify-center shrink-0">
-                                                <FiUser className="text-[#ebaa00]" size={14} />
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'TEAM_INVITE' ? 'bg-[#fbc111]/20' : 'bg-[#8cc63f]/20'}`}>
+                                                {notif.type === 'TEAM_INVITE' ? <FiUser className="text-[#ebaa00]" size={14} /> : <FiCheck className="text-[#8cc63f]" size={14} />}
                                             </div>
                                             <div className="flex-1">
                                                 <p className="text-[11px] font-medium text-slate-700 leading-tight">
-                                                    <span className="font-black">{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span>
+                                                    {notif.type === 'TEAM_INVITE' ? (
+                                                        <>
+                                                            <span className="font-black">{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="font-bold">{notif.message}</span>
+                                                    )}
                                                 </p>
                                                 <div className="flex gap-2 mt-3">
-                                                    <button 
-                                                        onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')}
-                                                        className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332] transition-colors flex items-center justify-center gap-1"
-                                                    >
-                                                        <FiCheck size={12} /> Accept
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleNotificationAction(notif._id, 'DECLINED')}
-                                                        className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-1"
-                                                    >
-                                                        <FiXCircle size={12} /> Deny
-                                                    </button>
+                                                    {notif.type === 'TEAM_INVITE' ? (
+                                                        <>
+                                                            <button 
+                                                                onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')}
+                                                                className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332] transition-colors flex items-center justify-center gap-1"
+                                                            >
+                                                                <FiCheck size={12} /> Accept
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleNotificationAction(notif._id, 'DECLINED')}
+                                                                className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-1"
+                                                            >
+                                                                <FiXCircle size={12} /> Deny
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <button 
+                                                            onClick={() => handleNotificationAction(notif._id, 'OK')}
+                                                            className="w-full bg-slate-800 text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-colors flex items-center justify-center gap-1 shadow-lg shadow-slate-800/10"
+                                                        >
+                                                            OK, Understood
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

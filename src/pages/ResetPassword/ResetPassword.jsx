@@ -23,6 +23,12 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            toast.error("Password must match all security criteria.");
+            return;
+        }
+
         if (password !== confirmPassword) {
             toast.error("Passwords do not match!");
             return;
@@ -88,15 +94,20 @@ const ResetPassword = () => {
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <InputField
-                                    label="New Password"
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    icon={FiLock}
-                                    required
-                                />
+                                <div className="flex flex-col">
+                                    <InputField
+                                        label="New Password"
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        icon={FiLock}
+                                        required
+                                    />
+                                    <p className="text-[9.5px] sm:whitespace-nowrap text-black font-semibold mt-2 leading-tight px-1">
+                                        <span className="text-[#8cc63f] font-black mr-1">Note:</span> Min 8 chars, 1 uppercase, 1 number, 1 special char (@$!%*?&#).
+                                    </p>
+                                </div>
                                 <InputField
                                     label="Confirm Password"
                                     type="password"
@@ -107,14 +118,23 @@ const ResetPassword = () => {
                                     required
                                 />
 
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    text={loading ? "Updating..." : "Reset Password"}
-                                    icon={FiArrowRight}
-                                    variant="primary"
-                                    className="mt-2 py-4 shadow-xl shadow-[#8cc63f]/25 text-[16px] tracking-wider"
-                                />
+                                <div className="flex gap-4 mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate('/login')}
+                                        className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all tracking-wider text-[16px]"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <Button
+                                        type="submit"
+                                        disabled={loading}
+                                        text={loading ? "Saving..." : "Save"}
+                                        icon={FiArrowRight}
+                                        variant="primary"
+                                        className="flex-1 py-4 shadow-xl shadow-[#8cc63f]/25 text-[16px] tracking-wider"
+                                    />
+                                </div>
                             </form>
                         </div>
                     </div>

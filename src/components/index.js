@@ -10,6 +10,7 @@ import AuthForm from './Forms/AuthForm';
 import Footer from './Footer/Footer';
 import Navbar from './Navbar/Navbar';
 import Logo from './Common/Logo';
+import ScrollToTop from './Common/ScrollToTop';
 
 export {
   InputField,
@@ -18,5 +19,6 @@ export {
   AuthForm,
   Footer,
   Navbar,
-  Logo
+  Logo,
+  ScrollToTop
 };
