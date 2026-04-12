@@ -43,6 +43,17 @@ Welcome to the **Learn & Earn** frontend repository. This is a premium, high-per
 - **Aesthetic Excellence**: We avoided standard browser defaults. Instead, we used a custom color palette (Green/Gold/Slate), custom Typography, and Glassmorphism effects for a premium "Apple-like" feel.
 - **Micro-interactions**: Every button and card features hover scaling and active states for a "living" interface.
 
+## 🧩 Architecture Deep Dive
+
+### Hierarchical Filtering System
+The Admin panel (`ReviewSubmissions`, `DeclareWinners`) utilizes a custom-built hierarchical filter:
+- **Year > Month > Contest > Data Mapping**: This reduces cognitive load and allows admins to navigate thousands of entries with three clicks.
+- **Data Lifecycle**: The filter fetches metadata for dropdowns first, then eager-loads participant data as soon as a contest is picked.
+
+### Real-time Notification Engine
+- **Polling Utility**: The `UserNavbar` implements a custom polling mechanism that checks for backend state changes (Team Invites, Score Updates) every 30 seconds.
+- **State Reconciliation**: Notifications are automatically reconciled with the `AuthContext` to ensure the UI instantly reflects accepted team memberships.
+
 ## 🛠️ Getting Started
 
 1. **Install Dependencies**:

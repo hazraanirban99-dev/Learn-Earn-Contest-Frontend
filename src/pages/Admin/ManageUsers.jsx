@@ -1,14 +1,3 @@
-// ============================================================
-// ManageUsers.jsx — Admin e sob student/user manage korar page
-// UserContext theke users[] list fetch kora hoy.
-// Name diye search korle suggestions dropdown theke click kora jay.
-// Contest filter diye shudhu oi contest er participant dekhano jay (mock data).
-// Edit icon click korle EditUserModal open hoy.
-// Trash icon click korle confirmation toast e delete confirm korte hoy.
-// Name er niche "PARTICIPANT MEMBER" label dekhano hoy (yellow text).
-// CSV export button ache sob user download korar jonno.
-// ============================================================
-
 import React, { useState } from 'react';
 import { useUsers } from '../../context/UserContext';
 import EditUserModal from '../../components/Admin/EditUserModal';
@@ -22,7 +11,7 @@ import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 const ManageUsers = () => {
   const { users, updateUser, deleteUser } = useUsers();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState(null); // { type: 'user', value: string }
+  const [selectedFilter, setSelectedFilter] = useState(null);
   const [selectedContest, setSelectedContest] = useState('All Contests');
   const [selectedDomain, setSelectedDomain] = useState('All Domains');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -30,7 +19,6 @@ const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Dynamic Contest Data logic (Filter only COMPLETED)
   const [contests, setContests] = useState([]);
   React.useEffect(() => {
     const fetchCompletedContests = async () => {
@@ -76,19 +64,15 @@ const ManageUsers = () => {
       result = result.filter(u => u.domain && u.domain.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().includes(sanitizedSelected));
     }
 
-    // Filter by Contest
     if (selectedContest && selectedContest !== 'All Contests') {
       result = result.filter(u => {
-        // If users actually have a contests array from backend
         if (u.contests && Array.isArray(u.contests)) {
           return u.contests.some(c => typeof c === 'string' ? c === selectedContest : c.title === selectedContest);
         }
-        // Fallback to mock dictionary for UI demo if no real array exists
         return userContests[u.id]?.includes(selectedContest);
       });
     }
 
-    // Direct Search / Suggestion selection
     if (selectedFilter && selectedFilter.type === 'user') {
       return result.filter(u => u.id === selectedFilter.id);
     }
@@ -138,14 +122,12 @@ const ManageUsers = () => {
   };
 
   const handleDeleteUser = React.useCallback((id) => {
-    // Custom Toast for Confirmation
     const ConfirmToast = ({ closeToast }) => (
       <div className="p-1">
         <p className="text-sm font-black text-slate-800 mb-3 uppercase tracking-tight">Delete this participant?</p>
         <div className="flex gap-2">
           <button 
             onClick={() => {
-              // Mock Delete: call context function
               deleteUser(id);
               toast.success("Participant removed from registry.");
               closeToast();
@@ -176,7 +158,6 @@ const ManageUsers = () => {
   return (
     <AdminLayout>
       <div className="animate-in fade-in duration-500 max-w-[1440px] mx-auto space-y-6 sm:space-y-8 px-2 sm:px-0">
-      {/* Top Advanced Search Bar */}
       <div className="mt-8 relative max-w-4xl mx-auto">
         <div className="flex items-center bg-gradient-to-r from-green-300/30 to-yellow-300/30 rounded-full px-6 py-4 shadow-sm border border-[#8cc63f]/20 transition-all hover:shadow-md focus-within:shadow-md focus-within:border-[#8cc63f]/40 group">
           <FiSearch className="text-[#8cc63f] mr-3 group-focus-within:scale-110 transition-transform" size={20} />
@@ -186,7 +167,7 @@ const ManageUsers = () => {
             className="bg-transparent border-none outline-none w-full text-[15px] text-slate-700 font-bold placeholder:text-gray-400"
             value={searchTerm}
             onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 200) /* Slight delay to allow clicks */}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setSelectedFilter(null);
@@ -195,7 +176,6 @@ const ManageUsers = () => {
           />
         </div>
 
-        {/* Suggestions Dropdown (Refined) */}
         {showSuggestions && suggestions.length > 0 && (
           <div className="absolute top-full left-0 w-full bg-white border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50">
@@ -222,7 +202,6 @@ const ManageUsers = () => {
         )}
       </div>
 
-      {/* Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mt-10">
         <div className="space-y-4 max-w-2xl">
           <span className="bg-[#fcf3d9] text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
@@ -245,10 +224,8 @@ const ManageUsers = () => {
         </button>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-           {/* Contest Filter */}
            <div className="relative w-full sm:flex-1 max-w-xl">
              <select 
                value={selectedContest}
@@ -266,7 +243,6 @@ const ManageUsers = () => {
              </div>
            </div>
 
-           {/* Domain Filter */}
            <div className="relative w-full sm:w-64 shrink-0">
              <select 
                value={selectedDomain}
@@ -288,7 +264,6 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      {/* Users Table */}
       <div className="bg-[#fcfdf8] rounded-[24px] border border-[#e8efe0] overflow-hidden shadow-sm">
         <div className="overflow-x-auto w-full scrollbar-hide">
           <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-full">

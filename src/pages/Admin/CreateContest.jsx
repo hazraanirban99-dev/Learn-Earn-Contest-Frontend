@@ -1,13 +1,3 @@
-// ============================================================
-// CreateContest.jsx — Admin er notun contest create korar page
-// Ekhane Admin contest er Title, Description, Thumbnail, Syllabus upload kore.
-// Domain (MERN/UIUX/Marketing), Rigor (Easy/Medium/Hard) select kora jay.
-// StartDate r EndDate set kora hoy jate automatic status calculate hoy.
-// Solo vs Team option ache — Team hole Max Team Size configure kora jay.
-// Cash Prize, Certificate, Internship offer er options ache.
-// Submit hole multipart/form-data diye API call hoy.
-// ============================================================
-
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiBold, FiItalic, FiList, FiLink, FiCalendar, FiUploadCloud, FiAward, FiChevronDown, FiPlus, FiMinus, FiUser, FiUsers } from 'react-icons/fi';
@@ -76,10 +66,12 @@ const CreateContest = () => {
     try {
       const data = new FormData();
       Object.keys(formData).forEach(key => data.append(key, formData[key]));
+      
       const allowedDomains = ['MERN', 'UIUX', 'DIGITAL MARKETING'];
       data.append('domain', allowedDomains.includes(domain) ? domain : 'MERN');
       data.append('rigor', rigor);
       data.append('projectType', projectType);
+      // Solo hole team size default 1, Team hole user selected value
       data.append('maxTeamSize', projectType === 'Team' ? teamSize : 1);
       
       if (files.thumbnail) data.append('thumbnail', files.thumbnail);

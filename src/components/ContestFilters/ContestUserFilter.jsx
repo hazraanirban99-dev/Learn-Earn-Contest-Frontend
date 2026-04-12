@@ -129,15 +129,18 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             ...selectedContestObj,
             participants: availableSubmissions.map(s => ({
                 id: s._id,
-                studentId: s.studentId, // Pass full object if we need more context down the line
+                studentId: s.studentId,
                 name: s.studentId?.name,
-                email: s.studentId?.email, // Exposed email
+                email: s.studentId?.email,
                 avatar: s.studentId?.avatar || 'https://i.pravatar.cc/150',
                 score: s.score,
                 status: s.status,
                 projectUrl: s.projectUrl,
-                projectThumbnail: s.projectThumbnail?.url,
-                projectPdf: s.projectPdf?.url
+                githubLink: s.githubLink,
+                liveLink: s.liveLink,
+                driveLink: s.driveLink,
+                projectThumbnail: s.projectThumbnail?.url || null,
+                projectPdf: s.projectFile?.url || null
             }))
         }
       });

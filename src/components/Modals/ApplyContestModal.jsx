@@ -18,7 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 
 const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) => {
-    const { user: activeUser } = useAuth();
+    const { user: activeUser, updateUser } = useAuth();
 
     const isTeamContest = contest?.projectType === 'Team';
     const [teamData, setTeamData] = useState(null);
@@ -29,16 +29,55 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [pendingInvites, setPendingInvites] = useState([]); // Array of member IDs being requested
+    const [pendingInvites, setPendingInvites] = useState([]);
 
     const [agreed, setAgreed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const getInitials = (name) => {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name[0].toUpperCase();
+    };
+
+    const renderSearchResults = () => {
+        if (!searchResults.length) return null;
+        return (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto mt-2">
+                {searchResults.map(m => (
+                    <div key={m._id} className="p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#8cc63f] to-[#7ab332] text-white flex items-center justify-center font-black text-[10px] md:text-xs overflow-hidden shadow-inner shrink-0">
+                                {m.avatar?.url ? (
+                                    <img src={m.avatar.url} className="w-full h-full object-cover" alt="" />
+                                ) : (
+                                    getInitials(m.name)
+                                )}
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs md:text-sm font-black text-slate-800 truncate">{m.name}</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-gray-400 font-mono truncate">{m.email}</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => handleSendInvite(m)}
+                            disabled={pendingInvites.includes(m._id)}
+                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${pendingInvites.includes(m._id) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#8cc63f] text-white hover:bg-[#7ab332] shadow-lg shadow-[#8cc63f]/20'}`}
+                        >
+                            {pendingInvites.includes(m._id) ? 'Requesting...' : 'Request for Add'}
+                        </button>
+                    </div>
+                ))}
+            </div>
+        );
+    };
 
     // Initial check for team status if it's a team contest
     const checkStatus = async () => {
         setCheckingTeam(true);
         try {
-            const res = await api.get(`/student/team/status/${contestId}`);
+            const res = await api.get(`/student/team-status/${contestId}`);
             if (res.data.success && res.data.data) {
                 setTeamData(res.data.data);
                 setTeamName(res.data.data.name);
@@ -91,10 +130,19 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
             });
             if (res.data.success) {
                 toast.success(`Request for a team sent to ${member.name}`, { theme: "colored" });
-                // We don't need to do much here, the status will update on next "check" or poll
-                // But let's refresh local team data if we just created it
-                if (!teamData) {
-                    setTeamData(res.data.data);
+                // Always sync the latest team state from backend (includes new member)
+                setTeamData(res.data.data);
+                setSearchQuery(''); // Clear search after invite
+                setSearchResults([]);
+
+                // Sync profile so "View Team Status" button appears on parent page
+                try {
+                    const profRes = await api.get('/users/me');
+                    if (profRes.data.success) {
+                        updateUser(profRes.data.data);
+                    }
+                } catch (profErr) {
+                    console.error("Profile sync error after team creation:", profErr);
                 }
             }
         } catch (err) {
@@ -114,7 +162,12 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                 toast.error("Please create your team and invite members first!");
                 return;
             }
-            // Logic handled by backend PENDING status now
+            
+            const filledSlots = 1 + (teamData.members?.length || 0);
+            if (filledSlots < contest.maxTeamSize) {
+                toast.warning(`Wait! Your team needs ${contest.maxTeamSize} members. Current: ${filledSlots}/${contest.maxTeamSize}. Add more scholars first.`);
+                return;
+            }
         }
 
         setIsSubmitting(true);
@@ -125,6 +178,16 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                 teamId: teamData?._id
             });
             if (response.data.success) {
+                // Refetch user profile to sync across global context
+                try {
+                    const userRes = await api.get('/users/me');
+                    if (userRes.data.success) {
+                        updateUser(userRes.data.data);
+                    }
+                } catch (profErr) {
+                    console.error("Error updating user profile after apply:", profErr);
+                }
+
                 toast.success(isTeamContest ? "Team Application Transmitted! Awaiting Squad Completion... 🕒" : "Successfully applied for the contest! 🚀");
                 setIsSubmitting(false);
                 onSuccess();
@@ -147,7 +210,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
             ></div>
 
             {/* Modal Container */}
-            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto md:h-[min(700px,90vh)]">
+            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto md:h-[min(700px,95vh)]">
 
                 {/* Left Sidebar (Dark Green Design) */}
                 <div className="hidden md:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
@@ -177,22 +240,23 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                 <div className="w-full md:w-3/5 relative flex flex-col h-full bg-white">
 
                     {/* Fixed Header */}
-                    <div className="p-8 lg:p-12 pb-4 shrink-0 relative">
+                    <div className="p-6 md:p-8 lg:p-12 pb-4 shrink-0 relative">
                         <button
                             onClick={onClose}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-slate-800 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
+                            className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-slate-800 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
                         >
-                            <FiX size={24} />
+                            <FiX size={20} className="md:hidden" />
+                            <FiX size={24} className="hidden md:block" />
                         </button>
 
                         <div className="pr-8">
-                            <h2 className="text-2xl font-black text-slate-800 mb-2">Apply for Contest</h2>
-                            <p className="text-gray-500 font-medium text-sm">Fill in the details to register your participation.</p>
+                            <h2 className="text-xl md:text-2xl font-black text-slate-800 mb-1 md:mb-2">Apply for Contest</h2>
+                            <p className="text-gray-500 font-medium text-[11px] md:text-sm">Fill in the details to register your participation.</p>
                         </div>
                     </div>
 
                     {/* Scrollable Body */}
-                    <div className="flex-1 overflow-y-auto px-8 lg:px-12 custom-scrollbar pb-8">
+                    <div className="flex-1 overflow-y-auto px-6 md:px-8 lg:px-12 custom-scrollbar pb-8">
 
                         {!isTeamContest ? (
                             <div className="mb-10 animate-in fade-in duration-500">
@@ -240,101 +304,116 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                     </div>
 
                                                     <div className="space-y-3">
-                                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Members Registry</p>
+                                                        <div className="flex justify-between items-center ml-1 mb-3">
+                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Members Registry</p>
+                                                            <span className="text-[10px] font-black text-[#8cc63f] uppercase tracking-widest bg-[#8cc63f]/10 px-2.5 py-1 rounded-full border border-[#8cc63f]/20 shrink-0">
+                                                                {1 + (teamData.members?.length || 0)} / {contest?.maxTeamSize || 1} Slots
+                                                            </span>
+                                                        </div>
+                                                        
                                                         {/* Leader */}
-                                                        <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-50">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white uppercase">
-                                                                    {teamData.leader?.name?.[0] || '?'}
+                                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white rounded-xl border border-gray-50 gap-3">
+                                                            <div className="flex items-center gap-3 w-full">
+                                                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white uppercase overflow-hidden shadow-inner shrink-0">
+                                                                    {teamData.leader?.avatar?.url ? (
+                                                                        <img src={teamData.leader.avatar.url} className="w-full h-full object-cover" alt="" />
+                                                                    ) : (
+                                                                        getInitials(teamData.leader?.name)
+                                                                    )}
                                                                 </div>
-                                                                <div>
-                                                                    <p className="text-xs font-black text-slate-800">{teamData.leader?.name}</p>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <p className="text-xs font-black text-slate-800 truncate">{teamData.leader?.name}</p>
                                                                     <p className="text-[10px] font-bold text-[#8cc63f] uppercase tracking-tighter">Leader</p>
                                                                 </div>
+                                                                <span className="sm:hidden text-[9px] font-black text-[#8cc63f] uppercase tracking-widest bg-[#8cc63f]/10 px-2 py-1 rounded">Creator</span>
                                                             </div>
-                                                            <span className="text-[9px] font-black text-[#8cc63f] uppercase tracking-widest bg-[#8cc63f]/10 px-2 py-1 rounded">Accepted</span>
+                                                            <span className="hidden sm:block text-[9px] font-black text-[#8cc63f] uppercase tracking-widest bg-[#8cc63f]/10 px-2 py-1 rounded">Creator</span>
                                                         </div>
-                                                        {/* Other Members */}
-                                                        {teamData.members?.map((m, idx) => (
-                                                            <div key={m.user?._id || idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-50">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase">
-                                                                        {m.user?.name?.[0] || '?'}
+
+                                                        {/* Multi Members */}
+                                                        {teamData.members && teamData.members.map((m, idx) => (
+                                                            <div key={m.user?._id || idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white rounded-xl border border-gray-50 gap-3">
+                                                                <div className="flex items-center gap-3 w-full">
+                                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase overflow-hidden shadow-inner border border-gray-100 shrink-0">
+                                                                        {m.user?.avatar?.url ? (
+                                                                            <img src={m.user.avatar.url} className="w-full h-full object-cover" alt="" />
+                                                                        ) : (
+                                                                            getInitials(m.user?.name)
+                                                                        )}
                                                                     </div>
-                                                                    <div>
-                                                                        <p className="text-xs font-black text-slate-800">{m.user?.name}</p>
-                                                                        <p className="text-[10px] font-bold text-gray-400 font-mono italic">{m.user?.email}</p>
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <p className="text-xs font-black text-slate-800 truncate">{m.user?.name}</p>
+                                                                        <p className="text-[10px] font-bold text-gray-400 font-mono italic truncate">{m.user?.email}</p>
                                                                     </div>
+                                                                    <span className={`sm:hidden text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : 'text-amber-500 bg-amber-50'}`}>
+                                                                        {m.status}
+                                                                    </span>
                                                                 </div>
-                                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : m.status === 'PENDING' ? 'text-amber-500 bg-amber-50' : 'text-red-500 bg-red-50'}`}>
+                                                                <span className={`hidden sm:block text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : 'text-amber-500 bg-amber-50'}`}>
                                                                     {m.status}
                                                                 </span>
                                                             </div>
                                                         ))}
                                                     </div>
                                                 </div>
+
+                                                {/* Invite More Section (If team exists but not full) */}
+                                                {(teamData.members?.length || 0) + 1 < (contest?.maxTeamSize || 0) && (
+                                                    <div className="pt-6 border-t border-dashed border-gray-100 mt-6">
+                                                        <div className="flex items-center gap-2 mb-4 ml-1">
+                                                            <div className="w-1.5 h-4 bg-[#fbc111] rounded-full" />
+                                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Invite More Teammates</label>
+                                                        </div>
+                                                        <div className="relative">
+                                                            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                                            <input
+                                                                type="text"
+                                                                placeholder={`Find more scholars for your squad...`}
+                                                                value={searchQuery}
+                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                className="w-full bg-[#f8faf2] rounded-xl pl-12 pr-4 py-4 border-none outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
+                                                            />
+                                                        </div>
+                                                        {renderSearchResults()}
+                                                    </div>
+                                                )}
                                             </div>
                                         ) : (
-                                            <div className="space-y-8 animate-in fade-in duration-500">
-                                                <div className="text-center pb-4">
-                                                    <span className="bg-red-500 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20">NO, Create your team</span>
+                                            <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500">
+                                                <div className="text-center pb-2">
+                                                    <span className="bg-red-500 text-white px-3 md:px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20">NO, Create your team</span>
                                                 </div>
 
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-2 ml-1">
-                                                        <div className="w-1.5 h-4 bg-[#8cc63f] rounded-full" />
-                                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Team Name</label>
+                                                        <div className="w-1 h-3 md:w-1.5 md:h-4 bg-[#8cc63f] rounded-full" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Team Name</label>
                                                     </div>
                                                     <input
                                                         type="text"
                                                         placeholder="E.g. Full Stack Wizards"
                                                         value={teamName}
                                                         onChange={(e) => setTeamName(e.target.value)}
-                                                        className="w-full bg-[#f8faf2] rounded-xl px-4 py-4 border-none outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all font-mono"
+                                                        className="w-full bg-[#f8faf2] rounded-xl px-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all font-mono"
                                                     />
                                                 </div>
 
                                                 <div className="space-y-4">
                                                     <div className="flex items-center gap-2 mb-2 ml-1">
-                                                        <div className="w-1.5 h-4 bg-[#fbc111] rounded-full" />
-                                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Add Teammates</label>
+                                                        <div className="w-1 h-3 md:w-1.5 md:h-4 bg-[#fbc111] rounded-full" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Add Teammates</label>
                                                     </div>
                                                     <div className="relative">
-                                                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
                                                         <input
                                                             type="text"
-                                                            placeholder={`Search for ${contest?.domain || 'Development'} scholars...`}
+                                                            placeholder={`Search for scholars...`}
                                                             value={searchQuery}
                                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                                            className="w-full bg-[#f8faf2] rounded-xl pl-12 pr-4 py-4 border-none outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all"
+                                                            className="w-full bg-[#f8faf2] rounded-xl pl-10 md:pl-12 pr-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
                                                         />
                                                     </div>
-
-                                                    {/* Search Results */}
-                                                    {searchResults.length > 0 && (
-                                                        <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto">
-                                                            {searchResults.map(m => (
-                                                                <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div className="w-10 h-10 rounded-full bg-[#8cc63f] text-white flex items-center justify-center font-black text-xs overflow-hidden">
-                                                                            {m.avatar?.url ? <img src={m.avatar.url} className="w-full h-full object-cover" /> : m.name[0]}
-                                                                        </div>
-                                                                        <div>
-                                                                            <p className="text-sm font-black text-slate-800">{m.name}</p>
-                                                                            <p className="text-[10px] font-bold text-gray-400 font-mono">{m.email}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button
-                                                                        onClick={() => handleSendInvite(m)}
-                                                                        disabled={pendingInvites.includes(m._id)}
-                                                                        className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${pendingInvites.includes(m._id) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#8cc63f] text-white hover:bg-[#7ab332] shadow-lg shadow-[#8cc63f]/20'}`}
-                                                                    >
-                                                                        {pendingInvites.includes(m._id) ? 'Requesting...' : 'Request for Add'}
-                                                                    </button>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                    {renderSearchResults()}
                                                 </div>
                                             </div>
                                         )}
@@ -345,16 +424,16 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="px-8 lg:px-12 py-6 border-t border-gray-100 bg-white shrink-0">
+                    <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 bg-white shrink-0">
                         {!isTeamContest && (
-                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] rounded-2xl cursor-pointer hover:bg-[#ecf0e6] transition-colors mb-6">
+                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] rounded-2xl cursor-pointer hover:bg-[#ecf0e6] transition-colors mb-4 md:mb-6">
                                 <input
                                     type="checkbox"
                                     checked={agreed}
                                     onChange={(e) => setAgreed(e.target.checked)}
                                     className="mt-1 w-4 h-4 text-[#8cc63f] bg-white border-gray-300 rounded focus:ring-[#8cc63f] shrink-0"
                                 />
-                                <span className="text-xs font-medium text-gray-600 leading-relaxed text-left">
+                                <span className="text-[10px] md:text-xs font-medium text-gray-600 leading-relaxed text-left">
                                     I agree to the <span className="font-bold text-[#8cc63f] underline">Contest Rules</span> and confirm that all members are currently enrolled in Desun Academy.
                                 </span>
                             </label>
@@ -362,13 +441,16 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
 
                         <button
                             onClick={handleSubmit}
-                            disabled={isSubmitting || (isTeamContest && !hasChecked)}
-                            className={`w-full py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all flex justify-center items-center gap-3 shadow-xl ${(isSubmitting || (isTeamContest && !hasChecked))
+                            disabled={isSubmitting || (isTeamContest && (!hasChecked || (teamData && (1 + (teamData.members?.length || 0)) < contest?.maxTeamSize)))}
+                            className={`w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-black text-[11px] md:text-[13px] uppercase tracking-widest transition-all flex justify-center items-center gap-2 md:gap-3 shadow-xl ${(isSubmitting || (isTeamContest && (!hasChecked || (teamData && (1 + (teamData.members?.length || 0)) < contest?.maxTeamSize))))
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                                     : 'bg-gradient-to-r from-[#8cc63f] to-[#fbc111] hover:brightness-105 text-slate-900 shadow-[#8cc63f]/30 active:scale-95 cursor-pointer'
                                 }`}
                         >
-                            {isSubmitting ? 'Processing...' : 'Apply Now'} {!isSubmitting && <FiArrowRight size={16} />}
+                            <span className="truncate">
+                                {isSubmitting ? 'Processing...' : (isTeamContest && teamData && (1 + (teamData.members?.length || 0)) < contest?.maxTeamSize) ? 'Waiting for Full Squad' : 'Apply Now'}
+                            </span>
+                            {!isSubmitting && <FiArrowRight size={16} className="shrink-0" />}
                         </button>
                     </div>
 

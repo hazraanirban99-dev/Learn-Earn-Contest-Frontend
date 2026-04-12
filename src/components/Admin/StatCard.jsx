@@ -9,8 +9,11 @@
 // ============================================================
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTrend = true }) => {
+const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTrend = true, link }) => {
+  const navigate = useNavigate();
+  
   const accentBgMap = {
     'text-green-600': 'bg-green-600',
     'text-amber-500': 'bg-amber-500',
@@ -27,7 +30,10 @@ const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTre
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100/50 hover:shadow-xl hover:border-[#8cc63f]/30 transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[160px] sm:h-[180px] group cursor-pointer active:scale-95 active:shadow-inner touch-manipulation">
+    <div 
+      onClick={() => link && navigate(link)}
+      className={`bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100/50 hover:shadow-xl hover:border-[#8cc63f]/30 transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[160px] sm:h-[180px] group active:scale-95 active:shadow-inner touch-manipulation ${link ? 'cursor-pointer' : ''}`}
+    >
       {/* Top Header Section */}
       <div className="flex justify-between items-start mb-2">
         <div className={`p-3 rounded-xl ${color} shadow-sm border border-white/50 group-hover:scale-110 transition-transform`}>

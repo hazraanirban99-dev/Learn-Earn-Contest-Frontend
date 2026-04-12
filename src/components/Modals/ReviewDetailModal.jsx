@@ -9,18 +9,9 @@
 // ============================================================
 
 import React, { useState } from 'react';
-import { FiX, FiTrendingUp, FiList, FiSend, FiExternalLink, FiCode, FiHardDrive, FiDownload } from 'react-icons/fi';
+import { FiX, FiTrendingUp, FiList, FiSend, FiExternalLink, FiCode, FiHardDrive, FiDownload, FiEye } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
-
-// Mock submission links — replace with actual participant data from API
-const MOCK_SUBMISSION = {
-  githubLink: 'https://github.com/marcus-aurelius/eco-urban-design',
-  liveUrl: 'https://eco-urban-nexus.netlify.app',
-  googleDriveLink: 'https://drive.google.com/drive/folders/shared-assets-link',
-  pdfUrl: '/samples/project-detailed-plan.pdf',
-  projectImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-};
 
 const METRIC_LABELS = {
   innovation: 'Innovation',
@@ -54,6 +45,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
   const [isLoading, setIsLoading] = useState(false);
   const [scoreMode, setScoreMode] = useState('performance');
   const [customScore, setCustomScore] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(null);
   const [metrics, setMetrics] = useState({
     innovation: 0,
@@ -110,7 +102,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
       console.error("Review submission error:", error);
       toast.error(error.response?.data?.message || "Failed to submit review");
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
 
@@ -124,20 +116,55 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
           {/* Modal Header */}
           <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-[32px] sm:rounded-t-[40px]">
             <div className="flex items-center gap-3">
-              <img
-                src={participant.avatar || 'https://i.pravatar.cc/150?img=11'}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0"
-                alt="avatar"
-              />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0 bg-slate-100 flex items-center justify-center text-[13px] font-black text-slate-500 overflow-hidden">
+                {participant.avatar?.url || (typeof participant.avatar === 'string' && participant.avatar) ? (
+                  <img
+                    src={participant.avatar?.url || participant.avatar}
+                    className="w-full h-full object-cover"
+                    alt="avatar"
+                  />
+                ) : (
+                  participant.name ? participant.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??'
+                )}
+              </div>
               <div className="min-w-0">
                 <h2 className="text-base sm:text-xl font-black text-slate-900 truncate">{participant.name}</h2>
-                <p className="text-[10px] sm:text-xs font-bold text-gray-400">Participant Entry</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] sm:text-xs font-bold text-gray-400">Participant Entry</p>
+                  {participant.teamData && (
+                    <span className="text-[9px] font-black text-[#8cc63f] border border-[#8cc63f]/20 bg-[#8cc63f]/5 px-2 py-0.5 rounded-full uppercase tracking-widest">TEAM</span>
+                  )}
+                </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 hover:bg-gray-100 rounded-2xl text-gray-400 transition-colors flex-shrink-0 ml-4">
+            <button onClick={() => { onClose(); setIsFullscreen(false); }} className="p-2.5 hover:bg-gray-100 rounded-2xl text-gray-400 transition-colors flex-shrink-0 ml-4">
               <FiX size={20} />
             </button>
           </div>
+
+          {/* Team Members List (If Team) */}
+          {participant.teamData && (
+            <div className="px-5 sm:px-8 py-3 bg-[#fcf3d9]/30 border-b border-[#fcf3d9]/50 flex flex-wrap gap-4 items-center">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Squad Registry:</span>
+              
+              {/* Leader */}
+              <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+                <span className="text-xs">👑</span>
+                <span className="text-xs font-bold text-slate-700">{participant.teamData.leader?.name} (Leader)</span>
+              </div>
+
+              {/* Teammates */}
+              {participant.teamData.members?.map((m, idx) => (
+                <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+                  <span className="text-xs">🤝</span>
+                  <span className="text-xs font-bold text-slate-600">{m.name}</span>
+                  <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-sm ${m.status === 'ACCEPTED' ? 'text-green-500 bg-green-50' : 'text-amber-500 bg-amber-50'}`}>
+                    {m.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Modal Body */}
           <div className="p-4 sm:p-8 lg:p-10">
@@ -146,28 +173,67 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
               {/* Left Column — Project Details */}
               <div className="flex-1 min-w-0 flex flex-col gap-6">
 
-                {/* Project Image */}
-                <div className="relative aspect-video rounded-[24px] overflow-hidden shadow-lg bg-slate-100">
-                  <img
-                    src={participant.projectThumbnail || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
-                    className="w-full h-full object-cover"
-                    alt="Project"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                {/* Project Image or Placeholder */}
+                <div className="flex items-start">
+                  {participant.projectThumbnail ? (
+                    <div 
+                      onClick={() => setIsFullscreen(true)}
+                      className="relative w-48 sm:w-64 aspect-video rounded-[20px] overflow-hidden shadow-md bg-slate-100 cursor-pointer group"
+                    >
+                      <img
+                        src={participant.projectThumbnail}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        alt="Project Thumbnail"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                        <FiEye className="text-white opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300 drop-shadow-md" size={28} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative w-48 sm:w-64 aspect-video rounded-[20px] flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm border border-slate-200/50">
+                      <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center shadow-sm">
+                        <FiCode className="text-slate-400" size={24} />
+                      </div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">No preview</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Links Section */}
                 <div className="bg-gray-50 rounded-[24px] p-4 sm:p-6 space-y-3">
                   <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Project Assets & Links</h3>
 
-                  <LinkRow
-                    label="Project Submission Link"
-                    icon={FiCode}
-                    value={participant.projectUrl || 'Not provided'}
-                    copyKey="project"
-                    copiedLink={copiedLink}
-                    onCopy={copyToClipboard}
-                  />
+
+                  {participant.githubLink && (
+                    <LinkRow
+                      label="GitHub Repository"
+                      icon={FiCode}
+                      value={participant.githubLink}
+                      copyKey="github"
+                      copiedLink={copiedLink}
+                      onCopy={copyToClipboard}
+                    />
+                  )}
+                  {participant.liveLink && (
+                    <LinkRow
+                      label="Live Demo URL"
+                      icon={FiExternalLink}
+                      value={participant.liveLink}
+                      copyKey="live"
+                      copiedLink={copiedLink}
+                      onCopy={copyToClipboard}
+                    />
+                  )}
+                  {participant.driveLink && (
+                    <LinkRow
+                      label="Google Drive / Assets"
+                      icon={FiHardDrive}
+                      value={participant.driveLink}
+                      copyKey="drive"
+                      copiedLink={copiedLink}
+                      onCopy={copyToClipboard}
+                    />
+                  )}
                   <div className="p-3 bg-blue-50/50 rounded-2xl flex items-center gap-3 border border-blue-100/50">
                     <FiExternalLink className="text-blue-400" size={14} />
                     <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Primary Asset</span>
@@ -201,11 +267,11 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                 {/* Narrative Feedback */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
-                    <FiList className="text-[#8cc63f]" />
-                    <h3 className="font-black text-slate-800 text-[13px] uppercase tracking-widest">Narrative Evaluation</h3>
+                    <FiList className="text-[#fbc111]" />
+                    <h3 className="font-black text-[#fbc111] text-[13px] uppercase tracking-widest">Narrative Evaluation</h3>
                   </div>
                   <textarea
-                    className="w-full h-36 bg-gray-50 rounded-[20px] p-5 text-sm font-semibold text-slate-700 border-2 border-transparent focus:border-[#8cc63f]/20 outline-none resize-none placeholder:text-gray-300 transition-all"
+                    className="w-full h-36 bg-gray-50 rounded-[20px] p-5 text-sm font-semibold text-slate-700 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 transition-all"
                     placeholder="Type your detailed feedback here..."
                     value={reviewDraft}
                     onChange={(e) => setReviewDraft(e.target.value)}
@@ -285,6 +351,26 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Image Overlay */}
+      {isFullscreen && participant.projectThumbnail && (
+        <div 
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-10 cursor-pointer animate-in fade-in duration-300"
+          onClick={() => setIsFullscreen(false)}
+        >
+          <img 
+            src={participant.projectThumbnail} 
+            alt="Fullscreen Preview" 
+            className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain animate-in zoom-in-95 duration-300"
+          />
+          <button 
+            className="absolute top-6 right-6 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all border border-white/20 hover:scale-110"
+            onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
+          >
+            <FiX size={24} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

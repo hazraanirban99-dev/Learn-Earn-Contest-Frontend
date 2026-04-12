@@ -178,12 +178,24 @@ const AllContests = () => {
    }, [filteredContests, visibleCount]);
 
    const groupedContests = React.useMemo(() => {
-      return domains.reduce((acc, domain) => {
-         const contestsInDomain = visibleContests.filter(c => c.domain === domain);
-         if (contestsInDomain.length > 0) acc[domain] = contestsInDomain;
-         return acc;
-      }, {});
-   }, [visibleContests, domains]);
+      if (!isFilterActive) {
+         // DEFAULT VIEW: Show 4 contests each for every domain (Ongoing + Upcoming)
+         return domains.reduce((acc, domain) => {
+            const contestsInDomain = allContests
+               .filter(c => c.domain === domain && (c.status === 'ONGOING' || c.status === 'UPCOMING'))
+               .slice(0, 4);
+            if (contestsInDomain.length > 0) acc[domain] = contestsInDomain;
+            return acc;
+         }, {});
+      } else {
+         // FILTERED VIEW: Regular sequential grouping by domain headers
+         return domains.reduce((acc, domain) => {
+            const contestsInDomain = visibleContests.filter(c => c.domain === domain);
+            if (contestsInDomain.length > 0) acc[domain] = contestsInDomain;
+            return acc;
+         }, {});
+      }
+   }, [allContests, visibleContests, domains, isFilterActive]);
 
    const getDomainColor = React.useCallback((domain) => {
       switch (domain) {

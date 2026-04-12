@@ -36,8 +36,7 @@ const Header = ({ onMenuClick }) => {
     try {
       const res = await api.get('/admin/notifications');
       if (res.data.success) {
-        // Filter for Admin specific notifications if needed
-        setNotifications(res.data.data.filter(n => n.type === 'TEAM_CHANGE_REQUEST' && n.status !== 'ACTIONED'));
+        setNotifications(res.data.data.filter(n => (n.type === 'TEAM_CHANGE_REQUEST' || n.type === 'TEAM_CREATION_REQUEST') && n.status !== 'ACTIONED'));
       }
     } catch (err) {
       console.error("Notif fetch error:", err);
@@ -52,17 +51,15 @@ const Header = ({ onMenuClick }) => {
     }
   }, [currentUser]);
 
-  const handleNotificationAction = async (notifId, action) => {
+  const handleNotificationAction = async (notifId, action, type) => {
     try {
-      const res = await api.post('/admin/team/handle-change', { notificationId: notifId, action });
+      const endpoint = type === 'TEAM_CREATION_REQUEST' ? '/admin/team/handle-creation' : '/admin/team/handle-change';
+      const res = await api.post(endpoint, { notificationId: notifId, action });
       if (res.data.success) {
-        // Optimistically remove from UI
         setNotifications(prev => prev.filter(n => n._id !== notifId));
-        
-        toast.success(`Team Change Request ${action === 'ALLOW' ? 'Allowed! ✅' : 'Denied.'}`, {
+        toast.success(`Team Request ${action === 'ALLOW' ? 'Allowed! ✅' : 'Denied.'}`, {
             theme: "colored"
         });
-        // Background sync
         fetchNotifications();
       }
     } catch (err) {
@@ -232,22 +229,28 @@ const Header = ({ onMenuClick }) => {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-[11px] font-medium text-slate-700 leading-tight">
-                                                        <span className="font-black">{notif.sender?.name}</span> wants to change team for <span className="font-black">"{notif.contest?.title}"</span>
+                                                        {notif.type === 'TEAM_CREATION_REQUEST' ? (
+                                                            <><span className="font-black">{notif.sender?.name}</span> created a team for <span className="font-black">"{notif.contest?.title}"</span></>
+                                                        ) : (
+                                                            <><span className="font-black">{notif.sender?.name}</span> requested to change team for <span className="font-black">"{notif.contest?.title}"</span></>
+                                                        )}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="bg-amber-50 p-2 rounded-lg border border-amber-100">
-                                                <p className="text-[10px] font-bold text-amber-700 italic">" {notif.reason} "</p>
-                                            </div>
+                                            {notif.type === 'TEAM_CHANGE_REQUEST' && notif.reason && (
+                                              <div className="bg-amber-50 p-2 rounded-lg border border-amber-100">
+                                                  <p className="text-[10px] font-bold text-amber-700 italic">" {notif.reason} "</p>
+                                              </div>
+                                            )}
                                             <div className="flex gap-2 mt-1">
                                                 <button 
-                                                    onClick={() => handleNotificationAction(notif._id, 'ALLOW')}
+                                                    onClick={() => handleNotificationAction(notif._id, 'ALLOW', notif.type)}
                                                     className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332] transition-colors flex items-center justify-center gap-1 shadow-lg shadow-[#8cc63f]/20"
                                                 >
                                                     <FiCheck size={12} /> Allow
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleNotificationAction(notif._id, 'DENY')}
+                                                    onClick={() => handleNotificationAction(notif._id, 'DENY', notif.type)}
                                                     className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-1"
                                                 >
                                                     <FiXCircle size={12} /> Deny
@@ -307,15 +310,15 @@ const Header = ({ onMenuClick }) => {
                                     {notif.sender?.name?.charAt(0)}
                                  </div>
                                  <p className="text-[10px] font-medium text-slate-700 leading-tight">
-                                    <span className="font-black">{notif.sender?.name}</span> for <span className="font-black">"{notif.contest?.title}"</span>
+                                    <span className="font-black">{notif.sender?.name}</span> created team for <span className="font-black">"{notif.contest?.title}"</span>
                                  </p>
                               </div>
                               <div className="bg-white p-2 rounded-lg border border-amber-50 italic text-[10px] font-bold text-amber-700">
                                  "{notif.reason}"
                               </div>
                               <div className="flex gap-2">
-                                 <button onClick={() => handleNotificationAction(notif._id, 'ALLOW')} className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase">Allow</button>
-                                 <button onClick={() => handleNotificationAction(notif._id, 'DENY')} className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase">Deny</button>
+                                 <button onClick={() => handleNotificationAction(notif._id, 'ALLOW', notif.type)} className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase">Allow</button>
+                                 <button onClick={() => handleNotificationAction(notif._id, 'DENY', notif.type)} className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase">Deny</button>
                               </div>
                            </div>
                         ))

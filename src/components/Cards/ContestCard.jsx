@@ -155,14 +155,14 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                     </div>
                 ) : variant === 'submission' ? (
                     <div className="flex flex-wrap gap-4 mt-auto">
-                        {contest.enrollmentStatus === 'PENDING' ? (
+                        {contest.projectType === 'Team' && contest.teamStatus === 'pending_member' ? (
                             <button 
                                 disabled
                                 className="flex-1 bg-[#fbc111]/10 text-[#ebaa00] py-3.5 rounded-xl font-black text-xs uppercase tracking-widest border border-[#fbc111]/30 flex items-center justify-center gap-2 cursor-not-allowed"
                             >
                                 <FiClock size={16} className="animate-pulse" /> Locked: Pending Squad
                             </button>
-                        ) : contest.enrollmentStatus === 'AWAITING_ADMIN' ? (
+                        ) : contest.projectType === 'Team' && contest.teamStatus === 'pending_admin' ? (
                             <button 
                                 disabled
                                 className="flex-1 bg-purple-50 text-purple-600 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest border border-purple-100 flex items-center justify-center gap-2 cursor-not-allowed shadow-sm"
@@ -194,20 +194,13 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                                         * Response Submitted
                                     </p>
                                 )}
+                                
                                 <button 
-                                    onClick={handleAppliedClick}
-                                    className="w-full bg-[#8cc63f]/20 text-[#5c8a14] py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-widest border border-[#8cc63f]/30 transition-all hover:bg-[#8cc63f]/30 cursor-pointer mb-2"
+                                    onClick={() => setIsTeamOpen(true)}
+                                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3.5 px-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-purple-600/20 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                                 >
-                                    ✅ Applied
+                                    <FiUsers size={16} /> View Team Status
                                 </button>
-                                {isTeamContest && (
-                                    <button 
-                                        onClick={() => setIsTeamOpen(true)}
-                                        className="w-full bg-[#fbc111]/10 text-[#ebaa00] py-2.5 px-4 rounded-xl font-black text-[10px] uppercase tracking-widest border border-[#fbc111]/20 transition-all hover:bg-[#fbc111]/20 flex items-center justify-center gap-2 cursor-pointer"
-                                    >
-                                        <FiUsers size={14} /> View Team
-                                    </button>
-                                )}
                             </div>
                         ) : (
                             <button 

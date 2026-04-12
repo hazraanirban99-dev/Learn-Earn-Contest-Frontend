@@ -15,6 +15,8 @@ import { FaGraduationCap, FaNetworkWired, FaCertificate, FaRocket, FaTrophy, FaE
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Ratings from '../../components/Ratings/Ratings';
+import LiveStats from '../../components/LiveStats/LiveStats';
+import NewsletterCTA from '../../components/Newsletter/NewsletterCTA';
 import PageTransition from '../../components/Common/PageTransition';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import api from '../../utils/api';
@@ -65,6 +67,7 @@ const TypewriterHeader = () => {
    const fullText = "Welcome to the CONTEST WORLD";
 
    useEffect(() => {
+      // Typewriter effect ekti infinite loop-e cholbe
       let handleType = setTimeout(() => {
          const i = loopNum % fullText.length;
          const updatedText = isDeleting 
@@ -73,10 +76,12 @@ const TypewriterHeader = () => {
 
          setText(updatedText);
 
+         // Jodi puro text-ta typing hoye jay, tobe kichu khon wait kora hoche
          if (!isDeleting && updatedText === fullText) {
             setTypingSpeed(2000); // Wait at end
             setIsDeleting(true);
          } else if (isDeleting && updatedText === '') {
+            // Puro delete hoye gele abar typing start hobe
             setIsDeleting(false);
             setLoopNum(loopNum + 1);
             setTypingSpeed(500);
@@ -379,49 +384,49 @@ const LandingPage = () => {
          </section>
 
          {/* Benefits & Contact - COMPACT REFINED */}
-         <section id="benefits" className="py-8 bg-white/30 scroll-mt-28">
-            <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
-               <div className="bg-[#8cc63f] p-8 md:p-10 rounded-[48px] shadow-2xl space-y-8 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-                  <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">Student Benefits</h2>
-                  <div className="space-y-4">
+         <section id="benefits" className="py-2 bg-white/30 scroll-mt-28">
+            <div className="max-w-[1000px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="bg-[#8cc63f] p-4 sm:p-5 rounded-[24px] shadow-lg space-y-3 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                  <h2 className="text-lg md:text-xl font-black text-white leading-tight">Student Benefits</h2>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">
                      {[
-                        'Industry-Leading Mentorship',
-                        'Lifetime Portfolio Access',
-                        'Global Alumni Network',
-                        'Accredited Career Pathways',
-                        '100% Placement Assistance',
-                        'Flexible Learning Modules'
+                        'Industry Mentorship',
+                        'Portfolio Access',
+                        'Alumni Network',
+                        'Career Pathways',
+                        'Placement Assistance',
+                        'Learning Modules'
                      ].map((benefit, i) => (
-                        <div key={i} className="flex items-center gap-4 group">
-                           <div className="w-6 h-6 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white transition-colors">
-                              <FiCheck size={12} className="text-white group-hover:text-[#8cc63f] transition-colors" />
+                        <div key={i} className="flex items-center gap-2 group">
+                           <div className="w-4 h-4 bg-white/20 rounded flex items-center justify-center group-hover:bg-white transition-colors shrink-0">
+                              <FiCheck size={8} className="text-white group-hover:text-[#8cc63f] transition-colors" />
                            </div>
-                           <span className="text-white font-black text-xs uppercase tracking-wide opacity-90">{benefit}</span>
+                           <span className="text-white font-black text-[9px] uppercase tracking-wide opacity-90 truncate">{benefit}</span>
                         </div>
                      ))}
                   </div>
                </div>
 
-               <div id="contact" className="bg-[#fbc111] p-8 md:p-10 rounded-[48px] shadow-2xl space-y-8 scroll-mt-28">
-                  <h2 className="text-2xl md:text-3xl font-black text-slate-800 leading-tight">Contact Us</h2>
-                  <div className="space-y-6">
-                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
-                        <FiMail className="shrink-0 text-slate-900" size={24} />
-                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left break-all">contact@desunacademy.in</span>
+               <div id="contact" className="bg-[#fbc111] p-4 sm:p-5 rounded-[24px] shadow-lg space-y-3 scroll-mt-28">
+                  <h2 className="text-lg md:text-xl font-black text-slate-800 leading-tight">Contact Us</h2>
+                  <div className="space-y-2">
+                     <div className="flex items-center gap-2 text-slate-800">
+                        <FiMail className="shrink-0 text-slate-900" size={14} />
+                        <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide break-all">contact@desunacademy.in</span>
                      </div>
-                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
-                        <FiPhone className="shrink-0 text-slate-900" size={24} />
-                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left">+91 91470 61005</span>
+                     <div className="flex items-center gap-2 text-slate-800">
+                        <FiPhone className="shrink-0 text-slate-900" size={14} />
+                        <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide">+91 91470 61005</span>
                      </div>
-                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-5 text-slate-800">
-                        <FiMapPin className="shrink-0 text-slate-900" size={24} />
-                        <span className="font-black text-[10px] sm:text-sm uppercase tracking-wide text-center sm:text-left">Kolkata, West Bengal, India</span>
+                     <div className="flex items-center gap-2 text-slate-800">
+                        <FiMapPin className="shrink-0 text-slate-900" size={14} />
+                        <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide">Kolkata, WB</span>
                      </div>
                   </div>
                   <a
                      href="mailto:contact@desunacademy.in"
-                     className="block w-full bg-slate-900 hover:bg-[#8cc63f] text-white py-5 rounded-[20px] font-black text-xs uppercase tracking-widest text-center transition-all shadow-xl mt-4 active:scale-95"
+                     className="block w-full bg-slate-900 hover:bg-[#8cc63f] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-center transition-all shadow-lg mt-2 active:scale-95"
                   >
                      Send Message
                   </a>
@@ -573,26 +578,26 @@ const LandingPage = () => {
             ) : contests.length === 0 ? (
                <div className="text-center py-24 text-gray-400">No active contests found.</div>
             ) : (
-               <div className="relative h-[550px] max-w-[1440px] mx-auto flex items-center justify-center pt-8">
+               <div className="relative h-[420px] md:h-[480px] max-w-[1440px] mx-auto flex items-center justify-center pt-8">
                   {/* LEFT CARD */}
                   <div
                      className="absolute left-[5%] xl:left-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
                      style={{ transform: 'translateX(-50%)' }}
                   >
-                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                        <img loading="lazy" src={contests[getCardIndex(-1)]?.image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
+                        <img loading="lazy" src={contests[getCardIndex(-1)]?.image} className="w-full h-[180px] object-cover rounded-[36px] grayscale" alt="Contest" />
                         <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)]?.title}</h3></div>
                      </div>
                   </div>
 
                   {/* CENTER CARD (ACTIVE) */}
                   <div className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y">
-                     <div className="bg-white p-6 md:p-8 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
+                     <div className="bg-white p-5 md:p-6 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
                         {/* Mixed border effect */}
                         <div className="absolute -inset-[8px] rounded-[48px] bg-gradient-to-tr from-[#8cc63f] via-[#fbc111] to-[#8cc63f] -z-10 opacity-70"></div>
                         <div className="bg-white rounded-[40px] absolute inset-0 -z-10"></div>
                         
-                        <div className="w-full h-[250px] md:h-[280px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
+                        <div className="w-full h-[180px] md:h-[200px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
                            <img
                               loading="lazy"
                               src={contests[currentIndex]?.image}
@@ -601,18 +606,18 @@ const LandingPage = () => {
                            />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         </div>
-                        <div className="flex-1 space-y-4 text-center mt-6">
+                        <div className="flex-1 space-y-3 text-center mt-4">
                            <div className="flex items-center justify-center gap-3">
                               <span className="text-[9px] font-black text-[#5c8a14] uppercase tracking-widest py-1 px-3 bg-[#8cc63f]/10 rounded-lg">
                                  {contests[currentIndex]?.category}
                               </span>
-                              <FaTrophy className="text-[#fbc111] animate-bounce" size={18} />
+                              <FaTrophy className="text-[#fbc111] animate-bounce" size={16} />
                            </div>
-                           <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                           <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight px-2">
                               {contests[currentIndex]?.title}
                            </h3>
-                           <div className="flex items-center justify-center gap-3 py-3 border-t border-gray-50 mt-4">
-                              <FiMapPin className="text-[#8cc63f] size={14}" />
+                           <div className="flex items-center justify-center gap-2 py-2 border-t border-gray-50 mt-3">
+                              <FiMapPin className="text-[#8cc63f]" size={14} />
                               <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex]?.date}</span>
                            </div>
                         </div>
@@ -624,8 +629,8 @@ const LandingPage = () => {
                      className="absolute right-[5%] xl:right-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
                      style={{ transform: 'translateX(50%)' }}
                   >
-                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-6">
-                        <img loading="lazy" src={contests[getCardIndex(1)]?.image} className="w-full h-[250px] object-cover rounded-[36px] grayscale" alt="Contest" />
+                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
+                        <img loading="lazy" src={contests[getCardIndex(1)]?.image} className="w-full h-[180px] object-cover rounded-[36px] grayscale" alt="Contest" />
                         <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)]?.title}</h3></div>
                      </div>
                   </div>
@@ -634,6 +639,8 @@ const LandingPage = () => {
          </section>
 
          <Ratings />
+         <LiveStats />
+         <NewsletterCTA />
          </PageTransition>
 
          <Footer />

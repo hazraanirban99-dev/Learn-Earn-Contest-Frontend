@@ -67,21 +67,14 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
 
         <div className="px-8 md:px-12 pt-12 pb-8 overflow-y-auto w-full">
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-            <div className="space-y-2">
-              <span className="text-[#a68945] text-[11px] font-black uppercase tracking-[0.2em]">Community Hub</span>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-none">
-                Participant Registry
-              </h2>
-              <p className="text-gray-500 font-bold text-sm md:text-base max-w-xl leading-relaxed mt-4">
-                A comprehensive overview of our current scholars and creative practitioners enrolled for {contestTitle}.
-              </p>
-            </div>
-            
-            <button className="flex items-center gap-2 bg-[#e8efe0]/40 hover:bg-[#e8efe0]/80 text-slate-700 px-6 py-3 rounded-2xl text-sm font-black transition-all border border-gray-100/50 shadow-sm">
-              <FiDownload size={18} className="text-slate-500" />
-              <span>Export List</span>
-            </button>
+          <div className="flex flex-col gap-4 mb-12">
+            <span className="text-[#a68945] text-[11px] font-black uppercase tracking-[0.2em]">Community Hub</span>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-none">
+              Participant Registry
+            </h2>
+            <p className="text-gray-500 font-bold text-sm md:text-base max-w-xl leading-relaxed">
+              All enrolled scholars for <span className="font-black text-slate-700">{contestTitle}</span>.
+            </p>
           </div>
 
           {/* Table Container */}
@@ -118,18 +111,37 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                                     <div className="flex items-center gap-2">
                                        <span title="Leader" className="text-lg">👑</span>
                                        <span className="text-[12px] font-bold text-slate-700">{user.studentId.teamData?.leader?.name} (Leader)</span>
+                                       {user.studentId.teamData?.leader?.email && (
+                                           <span className="text-[10px] text-gray-400 font-mono">{user.studentId.teamData.leader.email}</span>
+                                       )}
                                     </div>
-                                    {user.studentId.teamData?.members?.map((m) => (
-                                        <div key={m.id} className="flex items-center gap-2 ml-7">
-                                           <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                           <span className="text-[11px] font-medium text-gray-500">{m.name}</span>
+                                    {user.studentId.teamData?.members && user.studentId.teamData.members.length > 0 ? (
+                                        user.studentId.teamData.members.map((m, mIdx) => (
+                                          <div key={mIdx} className="flex items-center gap-2 ml-7">
+                                             <span className="text-base">🤝</span>
+                                             <span className="text-[11px] font-bold text-slate-600">{m.name || "Unknown Member"}</span>
+                                             {m.email && (
+                                                 <span className="text-[10px] text-gray-400 font-mono italic">({m.email})</span>
+                                             )}
+                                          </div>
+                                        ))
+                                    ) : (
+                                        <div className="flex items-center gap-2 ml-7">
+                                           <span className="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+                                           <span className="text-[10px] font-bold text-amber-500 italic">Waiting for teammates...</span>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
                           ) : (
                             <div className="flex items-center gap-5">
-                              <img src={user.studentId?.avatar || 'https://i.pravatar.cc/150'} alt="Avatar" className="w-12 h-12 rounded-full object-cover shadow-sm bg-gray-50 border-2 border-white" />
+                              <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm bg-gradient-to-br from-slate-100 to-slate-200 border-2 border-white flex items-center justify-center text-[13px] font-black text-slate-500">
+                                {user.studentId?.avatar?.url ? (
+                                  <img src={user.studentId.avatar.url} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                  user.studentId?.name ? user.studentId.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??'
+                                )}
+                              </div>
                               <div>
                                 <div className="font-black text-slate-800 text-[14px]">{user.studentId?.name || "Unknown"}</div>
                                 <div className="text-[#fbc111] bg-[#fbc111]/10 px-2 py-0.5 rounded-md inline-block text-[9px] font-black tracking-wider mt-1 uppercase">SOLO</div>
@@ -190,16 +202,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
             </div>
           </div>
 
-          {/* Footer Section */}
-          <div className="flex flex-col sm:flex-row justify-between items-center py-6 border-t border-gray-100 gap-4">
-             <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-none">
-               The Scholastic Atelier © 2024
-             </span>
-             <div className="flex items-center gap-8">
-               <button className="text-[11px] font-black text-[#a68945] uppercase tracking-widest hover:text-[#8cc63f] transition-all">Privacy Policy</button>
-               <button className="text-[11px] font-black text-[#a68945] uppercase tracking-widest hover:text-[#8cc63f] transition-all">Terms of Study</button>
-             </div>
-          </div>
+
         </div>
       </div>
     </div>

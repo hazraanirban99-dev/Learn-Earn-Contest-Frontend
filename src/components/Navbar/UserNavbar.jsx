@@ -1,11 +1,3 @@
-// ============================================================
-// UserNavbar.jsx — Student dashboard er header/navigation
-// User profile data display kore (name, avatar, domain).
-// Logout functionality integrated context theke move kore.
-// Notifications badge show kore real-time updates er jonno.
-// Mobile menu toggle logic ache student specific routes navigate korar jonno.
-// ============================================================
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
@@ -41,7 +33,7 @@ const UserNavbar = () => {
   useEffect(() => {
     if (currentUser) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      const interval = setInterval(fetchNotifications, 30000); 
       return () => clearInterval(interval);
     }
   }, [currentUser]);
@@ -56,7 +48,8 @@ const UserNavbar = () => {
                 position: "top-right"
             });
             if (status === 'ACCEPTED') {
-                toast.info("Congratulation both party! Team created successfully.", { position: "top-right" });
+                toast.info("Squad accepted! Getting dashboard ready...", { position: "top-right" });
+                setTimeout(() => window.location.reload(), 1500);
             }
         }
         fetchNotifications();
@@ -102,7 +95,6 @@ const UserNavbar = () => {
       <div className="p-1">
         <p className="text-[12px] font-black text-slate-800 mb-3 uppercase tracking-tight leading-tight">
            Final Warning: Are you sure you want to delete your account? 
-           <span className="block text-[10px] text-red-500 mt-1 lowercase font-bold italic">* This action is irreversible.</span>
         </p>
         <div className="flex justify-end gap-2 px-2 pb-1">
           <button 
@@ -396,7 +388,6 @@ const UserNavbar = () => {
       )}
       </nav>
 
-      {/* --- MOUNT PROFILE MODAL --- */}
       <ProfileModal 
          isOpen={isProfileModalOpen} 
          onClose={() => setIsProfileModalOpen(false)} 

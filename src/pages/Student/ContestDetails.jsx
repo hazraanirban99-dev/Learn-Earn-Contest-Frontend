@@ -15,9 +15,10 @@ import { toast } from 'react-toastify';
 import UserNavbar from '../../components/Navbar/UserNavbar';
 import Footer from '../../components/Footer/Footer';
 import ApplyContestModal from '../../components/Modals/ApplyContestModal';
+import TeamDetailsModal from '../../components/Modals/TeamDetailsModal';
 import { Logo } from '../../components/index';
 import ContestCard from '../../components/Cards/ContestCard';
-import { FiBookOpen, FiDownload, FiCheckCircle, FiClock, FiCalendar, FiDollarSign, FiAward, FiBriefcase, FiCode, FiLayout, FiTrendingUp, FiGlobe } from 'react-icons/fi';
+import { FiBookOpen, FiDownload, FiCheckCircle, FiClock, FiCalendar, FiDollarSign, FiAward, FiBriefcase, FiCode, FiLayout, FiTrendingUp, FiGlobe, FiUsers } from 'react-icons/fi';
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
@@ -41,8 +42,10 @@ const ContestDetails = () => {
     const [loading, setLoading] = React.useState(true);
     const [timeLeft, setTimeLeft] = React.useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const [isApplyModalOpen, setIsApplyModalOpen] = React.useState(false);
+    const [isTeamModalOpen, setIsTeamModalOpen] = React.useState(false);
     const [withdrawLoading, setWithdrawLoading] = React.useState(false);
-    const [enrollmentStatus, setEnrollmentStatus] = React.useState('REGISTERED'); // PENDING | REGISTERED
+    const [teamData, setTeamData] = React.useState(null); // holds entire team object
+    const [enrollmentStatus, setEnrollmentStatus] = React.useState('REGISTERED'); // Solo participant status
     
     // Derived states for real-time sync with AuthContext
     const hasApplied = user?.enrolledContests?.some(cid => cid.toString() === id?.toString()) || false;
@@ -90,17 +93,18 @@ const ContestDetails = () => {
 
         fetchContestData();
 
-        // 3. Fetch enrollment status if applied
+        // 3. Fetch enrollment status if applied (Team status r individual registry check kora hoy)
         let statusInterval;
         const fetchStatus = async () => {
             if (hasApplied) {
                 try {
-                    const res = await api.get(`/student/team/${id}`);
+                    const res = await api.get(`/student/team-status/${id}`);
                     if (res.data.success && res.data.data) {
-                        setEnrollmentStatus(res.data.data.enrollmentStatus);
+                        setTeamData(res.data.data);
+                        setEnrollmentStatus(res.data.data.enrollmentStatus); // Individual status (REGISTERED / SUBMITTED etc)
                     }
-                } catch (err) {
-                    console.error("Error fetching enrollment status:", err);
+                } catch (error) {
+                    console.log("Not in a team or enrollment status fetch failed");
                 }
             }
         };
@@ -414,44 +418,31 @@ const ContestDetails = () => {
                             <div className="flex items-center justify-center gap-[18px] sm:gap-[24px] lg:gap-[30px] text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest pl-1 mb-10">
                                 <span>Days</span><span>Hrs</span><span>Min</span><span>Sec</span>
                             </div>
-                            {hasApplied ? (
+                            {hasApplied || teamData ? (
                                 <div className="space-y-4 w-full">
                                     {hasSubmitted && (
-                                        <p className="text-[#fbc111] text-xs font-black uppercase tracking-[0.2em] animate-pulse">
+                                        <p className="text-[#fbc111] text-xs font-black uppercase tracking-[0.2em] animate-pulse mb-4 text-center">
                                             * Response Submitted
                                         </p>
                                     )}
-                                    {enrollmentStatus === 'PENDING' ? (
-                                        <div className="space-y-3">
-                                            <button 
-                                                className="w-full bg-[#fbc111]/10 text-[#ebaa00] py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-[#fbc111]/30 flex items-center justify-center gap-2 cursor-wait"
-                                                title="Team Incomplete"
-                                            >
-                                                <FiClock size={16} className="animate-pulse" /> Pending Squad
-                                            </button>
-                                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider text-center">
-                                                Waiting for teammates to join...
-                                            </p>
-                                        </div>
-                                    ) : enrollmentStatus === 'AWAITING_ADMIN' ? (
-                                        <div className="space-y-3">
-                                            <button 
-                                                className="w-full bg-purple-50 text-purple-600 py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-purple-100 flex items-center justify-center gap-2 cursor-wait shadow-sm"
-                                                title="Awaiting Admin Review"
-                                            >
-                                                <FiClock size={16} className="animate-pulse" /> Awaiting Admin Approval
-                                            </button>
-                                            <p className="text-[9px] text-purple-400 font-bold uppercase tracking-wider text-center">
-                                                Squad ready! Admin is reviewing your team.
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <button 
-                                            onClick={handleAppliedClick}
-                                            className="w-full bg-[#8cc63f]/20 text-[#5c8a14] py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest border border-[#8cc63f]/30 transition-all hover:bg-[#8cc63f]/30 cursor-pointer mb-6"
-                                        >
-                                            ✅ Applied
-                                        </button>
+
+                                    <button 
+                                        onClick={() => setIsTeamModalOpen(true)}
+                                        className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-lg shadow-purple-600/20 active:scale-95 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                                    >
+                                        <FiUsers size={18} /> View Team Status
+                                    </button>
+
+                                    {contest.projectType === 'Team' && teamData?.status === 'pending_member' && (
+                                        <p className="text-[9px] text-[#ebaa00] font-black uppercase tracking-widest text-center animate-pulse mt-2">
+                                            * Pending Member Acceptance - Submission Locked
+                                        </p>
+                                    )}
+
+                                    {contest.projectType === 'Team' && teamData?.status === 'pending_admin' && (
+                                        <p className="text-[9px] text-purple-500 font-black uppercase tracking-widest text-center animate-pulse mt-2">
+                                            * Awaiting Admin Approval - Submission Locked
+                                        </p>
                                     )}
                                     
                                     {/* Unsubscribe Option (Only if not submitted) */}
@@ -555,7 +546,9 @@ const ContestDetails = () => {
 
             <ApplyContestModal
                 isOpen={isApplyModalOpen}
-                onClose={() => setIsApplyModalOpen(false)}
+                onClose={() => {
+                    setIsApplyModalOpen(false);
+                }}
                 contest={contest}
                 contestId={id}
                 onSuccess={async () => {
@@ -567,6 +560,12 @@ const ContestDetails = () => {
                     toast.success("Application Transmitted Successfully!");
                     setIsApplyModalOpen(false);
                 }}
+            />
+            <TeamDetailsModal 
+                isOpen={isTeamModalOpen}
+                onClose={() => setIsTeamModalOpen(false)}
+                contestId={id}
+                contestTitle={contest.title}
             />
         </div>
     );

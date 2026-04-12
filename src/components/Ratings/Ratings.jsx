@@ -1,9 +1,3 @@
-// ============================================================
-// Ratings.jsx — Social proof rating component
-// Student profile pictures showcase kore "Over 1.5k students" text er sathe.
-// Hover logic ache jate users profile details (placeholder) dekhte pare.
-// ============================================================
-
 import React from 'react';
 import { FaStar, FaRegStar, FaStarHalfAlt } from 'react-icons/fa';
 
@@ -25,21 +19,24 @@ const Ratings = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                {ratingsData.map((rating, idx) => (
-                  <div key={idx} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all text-center group">
-                     <div className="text-4xl font-black mb-2" style={{ color: rating.color }}>
-                        {rating.score}
-                        <span className="text-lg text-gray-300 ml-1">/ {rating.total}</span>
+                  <div key={idx} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all text-center group relative overflow-hidden">
+                     <div className="relative z-10">
+                        <div className="text-4xl font-black mb-2" style={{ color: rating.color }}>
+                           {rating.score}
+                           <span className="text-lg text-gray-300 ml-1">/ {rating.total}</span>
+                        </div>
+                        <div className="flex justify-center gap-1 mb-4">
+                           {[...Array(5)].map((_, i) => {
+                              const fullStars = Math.floor(parseFloat(rating.score));
+                              const hasHalfStar = parseFloat(rating.score) % 1 !== 0;
+
+                              if (i < fullStars) return <FaStar key={i} className="text-[#fbc111]" size={16} />;
+                              if (i === fullStars && hasHalfStar) return <FaStarHalfAlt key={i} className="text-[#fbc111]" size={16} />;
+                              return <FaRegStar key={i} className="text-gray-200" size={16} />;
+                           })}
+                        </div>
+                        <h4 className="text-sm font-black text-slate-700 uppercase tracking-widest">{rating.label}</h4>
                      </div>
-                     <div className="flex justify-center gap-1 mb-4">
-                        {[...Array(5)].map((_, i) => {
-                           const fullStars = Math.floor(parseFloat(rating.score));
-                           const hasHalfStar = parseFloat(rating.score) % 1 !== 0;
-                           if (i < fullStars) return <FaStar key={i} className="text-[#fbc111]" size={16} />;
-                           if (i === fullStars && hasHalfStar) return <FaStarHalfAlt key={i} className="text-[#fbc111]" size={16} />;
-                           return <FaRegStar key={i} className="text-gray-200" size={16} />;
-                        })}
-                     </div>
-                     <h4 className="text-sm font-black text-slate-700 uppercase tracking-widest">{rating.label}</h4>
                   </div>
                ))}
             </div>

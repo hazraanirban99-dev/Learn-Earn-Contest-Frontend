@@ -7,11 +7,13 @@
 // Team submission hole leader badge r member names show hoy.
 // ============================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FiUsers, FiSearch, FiEye, FiCheckCircle, FiClock } from 'react-icons/fi';
 import AdminLayout from '../../layouts/AdminLayout';
 import ContestUserFilter from '../../components/ContestFilters/ContestUserFilter';
 import ReviewDetailModal from '../../components/Modals/ReviewDetailModal';
+import api from '../../utils/api';
+import { toast } from 'react-toastify';
 
 export default function ReviewSubmissions() {
   const [selectedContest, setSelectedContest] = useState(null);
@@ -23,10 +25,12 @@ export default function ReviewSubmissions() {
   const [selectedContestId, setSelectedContestId] = useState(null);
 
   // Filter change hole backend theke map kora data receive kora hoche
+  // selection parameter e month, year, contest details thake
   const handleFilterChange = React.useCallback((selection) => {
     setSelectedContest(selection.contest);
     setSelectedContestId(selection.contestId);
     if (selection.contestData && selection.contestData.participants) {
+      // Participant list data ContestUserFilter component fetch kore direct pathaye dey
       setParticipants(selection.contestData.participants);
     } else {
       setParticipants([]);
@@ -37,34 +41,9 @@ export default function ReviewSubmissions() {
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleViewSubmission = async (participant) => {
-    setActiveParticipant(participant); // Optimistic UI update
-    
-    // Real time fetch if we have valid IDs
-    if (selectedContestId && participant.studentId?._id) {
-       try {
-           const { data } = await api.get(`/admin/submissions/review?contestId=${selectedContestId}&participantId=${participant.studentId._id}`);
-           if (data.success && data.data) {
-               // The backend returns a submission object with masked studentId (which contains name, score, etc.)
-               // Let's bind it just like the local data mapping so the modal works flawlessly
-               const fetchedSub = data.data;
-               setActiveParticipant({
-                   id: fetchedSub._id,
-                   studentId: fetchedSub.studentId,
-                   name: fetchedSub.studentId?.name || "Unknown",
-                   avatar: fetchedSub.studentId?.avatar?.url || 'https://i.pravatar.cc/150',
-                   score: fetchedSub.score,
-                   status: fetchedSub.status,
-                   projectUrl: fetchedSub.projectUrl,
-                   projectThumbnail: fetchedSub.projectThumbnail?.url,
-                   projectPdf: fetchedSub.projectPdf?.url
-               });
-           }
-       } catch (err) {
-           console.error("Failed to real-time fetch submission details", err);
-       }
-    }
-    
+  const handleViewSubmission = (participant) => {
+    // All data is already present from the ContestUserFilter fetch
+    setActiveParticipant(participant);
     setIsModalOpen(true);
   };
 
@@ -93,11 +72,11 @@ export default function ReviewSubmissions() {
           <div className="flex items-center gap-6 px-4">
             <div className="flex flex-col items-end px-4 border-r border-gray-100">
               <span className="text-[10px] font-black text-gray-400 uppercase">Total Entries</span>
-              <span className="text-sm font-black text-slate-800">{participants.length}</span>
+              <span className="text-base font-black text-[#fbc111]">{participants.length}</span>
             </div>
             <div className="flex flex-col items-end">
               <span className="text-[10px] font-black text-gray-400 uppercase">Active Contest</span>
-              <span className="text-sm font-black text-[#8cc63f] truncate max-w-[150px]">{selectedContest || 'Select Below'}</span>
+              <span className="text-base font-black text-[#8cc63f] truncate max-w-[150px]">{selectedContest || 'Select Below'}</span>
             </div>
           </div>
         </div>
@@ -124,18 +103,18 @@ export default function ReviewSubmissions() {
                         <div className="flex items-center gap-4">
                           <img src={p.avatar} className="w-10 h-10 rounded-xl object-cover shadow-sm" alt="avatar" />
                           <div className="flex-1">
-                            <p className="text-sm font-black text-slate-800 group-hover:text-[#8cc63f] transition-colors">{p.name}</p>
+                            <p className="text-sm font-black text-slate-800 group-hover:text-[#fbc111] transition-colors">{p.name}</p>
                             
                             {isTeam && teamData && (
                               <div className="mt-1 flex flex-wrap gap-1.5">
                                 <span className="inline-flex items-center gap-1 bg-[#fbc111]/10 text-[#fbc111] px-2 py-0.5 rounded-md text-[9px] font-black tracking-widest uppercase">
                                   👑 Leader: {teamData.leader.name}
                                 </span>
-                                {teamData.members.map(m => (
-                                  <span key={m.id} className="inline-block bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md text-[9px] font-bold">
-                                    {m.name}
+                                {teamData.member && (
+                                  <span className="inline-block bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md text-[9px] font-bold">
+                                    {teamData.member.name}
                                   </span>
-                                ))}
+                                )}
                               </div>
                             )}
 

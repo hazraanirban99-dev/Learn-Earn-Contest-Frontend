@@ -37,9 +37,9 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
 
   const getDomainStyle = (domain) => {
     const d = domain.toLowerCase();
-    if (d.includes('ui/ux')) return 'bg-blue-50 text-blue-500 border-blue-200';
-    if (d.includes('dev')) return 'bg-purple-50 text-purple-500 border-purple-200';
-    if (d.includes('marketing')) return 'bg-amber-50 text-amber-500 border-amber-200';
+    if (d.includes('mern') || d.includes('dev')) return 'bg-blue-50 text-blue-500 border-blue-200';
+    if (d.includes('ui') || d.includes('ux')) return 'bg-violet-50 text-violet-600 border-violet-200';
+    if (d.includes('marketing') || d.includes('digital')) return 'bg-orange-50 text-orange-500 border-orange-200';
     if (d.includes('analytics')) return 'bg-teal-50 text-teal-600 border-teal-200';
     return 'bg-gray-50 text-gray-500 border-gray-200';
   };

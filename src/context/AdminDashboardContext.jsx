@@ -46,10 +46,17 @@ export const AdminDashboardProvider = ({ children }) => {
       const { data: statsRes } = await api.get('/admin/stats');
       if (statsRes.success) {
         // Backend e icon string patha dekhay, ekhane actual React component e map kora hocche
-        const mappedStats = statsRes.data.stats.map(s => ({
-          ...s,
-          icon: ICON_MAP[s.icon] || FaTrophy, // ICON_MAP e na thakle default FaTrophy debo
-        }));
+        const mappedStats = statsRes.data.stats.map(s => {
+          let link = null;
+          if (s.title === 'Total Contests') link = '/admin/reports';
+          if (s.title === 'Total Participants') link = '/admin/participants';
+          
+          return {
+            ...s,
+            icon: ICON_MAP[s.icon] || FaTrophy,
+            link
+          };
+        });
         setStats(mappedStats);
         
         // Recent contests ke frontend er expected format e map kora hocche
@@ -58,7 +65,7 @@ export const AdminDashboardProvider = ({ children }) => {
           name: c.title,
           domain: c.domain,
           status: c.status,
-          participants: (c.participantsCount || 0).toString(),
+          participants: Math.max(0, c.participantsCount || 0).toString(),
           // Status dekhe color decide kora hocche
           color: c.status === 'ONGOING'
             ? 'text-green-600 bg-green-100/50'

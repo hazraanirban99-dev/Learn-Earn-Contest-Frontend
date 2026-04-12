@@ -22,17 +22,18 @@ export default function DeclareWinners() {
   const [stats, setStats] = useState({ totalEvaluated: 0 });
   const [visibleCount, setVisibleCount] = useState(5);
 
+  // Dense Ranking Logic: Somano score thakle rank repeat hobe (Tied ranks support kore)
   const rankedParticipants = useMemo(() => {
     if (!participants || participants.length === 0) return [];
     
-    // Sort by score descending
+    // Score er bhitti te descending (bhalo theke boka) order e sort kora hoche
     const sorted = [...participants].sort((a, b) => b.score - a.score);
     
-    // Assign ranks (Dense Ranking)
     let currentRank = 0;
     let lastScore = null;
     
     return sorted.map((p, index) => {
+      // Jodi score ager jon er soman hoy, tobe rank change hobe na
       if (p.score !== lastScore) {
         currentRank++;
         lastScore = p.score;
@@ -229,15 +230,12 @@ export default function DeclareWinners() {
                       return;
                     }
 
-                    // Create mailto link
+                    // 2. Mailto link create kora hoche (Client er default mail app open hobe)
                     const subject = encodeURIComponent(`Contest Results Announced: ${selectedContest || 'Scholastic Atelier'} 🏆`);
                     const body = encodeURIComponent(`Dear Participant,\n\nThe results for the contest have been declared! Please check your dashboard for your final rank and scores.\n\nBest Regards,\nAdmin Team\nDesun Academy`);
                     
-                    // We put all emails in the "BCC" field to preserve privacy, and put admin@desun.edu.in in the "To" field.
-                    // Or follow instruction: "to te participent er mail likhe", which means put participants in "To" field.
                     const mailtoLink = `mailto:${allEmails.join(',')}?subject=${subject}&body=${body}`;
                     
-                    // Open default mail client
                     window.location.href = mailtoLink;
                     
                     toast.success("Opening Mail Client with participants' emails!");

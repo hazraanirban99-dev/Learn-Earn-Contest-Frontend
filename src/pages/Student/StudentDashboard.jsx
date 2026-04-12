@@ -30,7 +30,7 @@ const StudentDashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // 1. Upcoming Contests (Hero)
+        // 1. Upcoming Contests (Hero Carousel er jonno)
         const contestsRes = await api.get('/contests');
         if (contestsRes.data.success) {
            const upcomingContests = contestsRes.data.data
@@ -44,10 +44,10 @@ const StudentDashboard = () => {
               tag: "Coming Soon",
               buttonText: "View Details"
            }));
-           setHeroContests(mappedHero.slice(0, 5)); // Limit to 5
+           setHeroContests(mappedHero.slice(0, 5)); // Hero page e max 5 ta coming soon contest dekhabo
         }
 
-        // 2. Popular Contests
+        // 2. Popular Contests (ONGOING contests jeguloy sobcheye beshi participant)
         if (contestsRes.data.success) {
            const activeContests = contestsRes.data.data.filter(c => c.status === 'ONGOING');
            const sortedPop = activeContests.sort((a,b) => (b.participantsCount || 0) - (a.participantsCount || 0));
