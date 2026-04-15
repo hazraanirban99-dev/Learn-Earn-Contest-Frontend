@@ -14,7 +14,7 @@ const DOMAIN_STYLES = {
   'MERN':               'text-green-600 bg-green-50 border-green-100',
   'UI/UX':              'text-blue-600 bg-blue-50 border-blue-100',
   'DIGITAL MARKETING':  'text-amber-600 bg-amber-50 border-amber-100',
-  'default':            'text-gray-500 bg-gray-50 border-gray-100',
+  'default':            'text-gray-500 bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700',
 };
 const RecentContestsTable = () => {
   const { contests, loading } = useAdminDashboard();
@@ -27,10 +27,10 @@ const RecentContestsTable = () => {
   }, [contests]);
 
   return (
-    <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-[#fbc111] flex flex-col gap-8 w-full group transition-all duration-300 hover:shadow-xl overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-[#fbc111] flex flex-col gap-8 w-full group transition-all duration-300 hover:shadow-xl overflow-hidden">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-1">
-          <h3 className="text-[18px] lg:text-[22px] font-black text-slate-800 tracking-tight uppercase leading-none">
+          <h3 className="text-[18px] lg:text-[22px] font-black text-slate-800 dark:text-gray-100 tracking-tight uppercase leading-none">
             Top Active Contests
           </h3>
           <p className="text-gray-400 text-xs lg:text-sm font-black opacity-80 uppercase tracking-tighter">
@@ -42,7 +42,7 @@ const RecentContestsTable = () => {
       <div className="overflow-x-auto w-full scrollbar-hide">
         <table className="w-full text-left min-w-[500px]">
           <thead>
-            <tr className="border-b-2 border-gray-50 uppercase text-[10px] lg:text-[11px] font-black tracking-widest text-[#8cc63f]/60 h-10">
+            <tr className="border-b-2 border-gray-50 dark:border-gray-700 uppercase text-[10px] lg:text-[11px] font-black tracking-widest text-[#8cc63f]/60 h-10">
               <th className="pb-4 font-black">Contest Name</th>
               <th className="pb-4 font-black min-w-[160px]">Domain</th>
               <th className="pb-4 font-black text-center">Participants</th>
@@ -64,8 +64,8 @@ const RecentContestsTable = () => {
                 </td>
               </tr>
             ) : displayContests.map((contest, idx) => (
-              <tr key={idx} className="group/row hover:bg-gray-50/70 transition-all duration-300 cursor-pointer">
-                <td className="py-6 font-black text-[14px] lg:text-[15px] text-slate-900 tracking-tight capitalize group-hover/row:translate-x-1 transition-transform max-w-[200px] sm:max-w-none break-words pr-4">
+              <tr key={idx} className="group/row hover:bg-gray-50/ dark:bg-gray-800/ transition-all duration-300 cursor-pointer">
+                <td className="py-6 font-black text-[14px] lg:text-[15px] text-slate-900 dark:text-gray-100 tracking-tight capitalize group-hover/row:translate-x-1 transition-transform max-w-[200px] sm:max-w-none break-words pr-4">
                   {contest.name}
                 </td>
                 <td className="py-6 pr-4">
@@ -73,7 +73,7 @@ const RecentContestsTable = () => {
                     {contest.domain}
                   </span>
                 </td>
-                <td className="py-6 font-black text-slate-900 text-[14px] lg:text-[16px] text-center">
+                <td className="py-6 font-black text-slate-900 dark:text-gray-100 text-[14px] lg:text-[16px] text-center">
                   {contest.participants}
                 </td>
               </tr>

@@ -27,7 +27,7 @@ const METRIC_LABELS = {
 const LinkRow = ({ label, icon: Icon, value, copyKey, copiedLink, onCopy }) => (
   <div className="space-y-1.5">
     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">{label}</label>
-    <div className="flex bg-white border border-gray-100 p-3 rounded-2xl items-center gap-3 shadow-sm">
+    <div className="flex bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-3 rounded-2xl items-center gap-3 shadow-sm">
       <Icon className="text-gray-400 flex-shrink-0" size={14} />
       <span className="text-xs font-bold text-slate-600 truncate flex-1 min-w-0">{value}</span>
       <button
@@ -111,10 +111,10 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div className="min-h-screen flex items-start justify-center p-3 sm:p-6 py-8">
-        <div className="bg-white w-full max-w-6xl rounded-[32px] sm:rounded-[40px] shadow-2xl relative flex flex-col">
+        <div className="bg-white dark:bg-gray-800 w-full max-w-6xl rounded-[32px] sm:rounded-[40px] shadow-2xl relative flex flex-col">
 
           {/* Modal Header */}
-          <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-[32px] sm:rounded-t-[40px]">
+          <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-[32px] sm:rounded-t-[40px]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0 bg-slate-100 flex items-center justify-center text-[13px] font-black text-slate-500 overflow-hidden">
                 {participant.avatar?.url || (typeof participant.avatar === 'string' && participant.avatar) ? (
@@ -128,7 +128,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                 )}
               </div>
               <div className="min-w-0">
-                <h2 className="text-base sm:text-xl font-black text-slate-900 truncate">{participant.name}</h2>
+                <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-gray-100 truncate">{participant.name}</h2>
                 <div className="flex items-center gap-2">
                   <p className="text-[10px] sm:text-xs font-bold text-gray-400">Participant Entry</p>
                   {participant.teamData && (
@@ -148,14 +148,14 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Squad Registry:</span>
               
               {/* Leader */}
-              <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
                 <span className="text-xs">👑</span>
                 <span className="text-xs font-bold text-slate-700">{participant.teamData.leader?.name} (Leader)</span>
               </div>
 
               {/* Teammates */}
               {participant.teamData.members?.map((m, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+                <div key={idx} className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
                   <span className="text-xs">🤝</span>
                   <span className="text-xs font-bold text-slate-600">{m.name}</span>
                   <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-sm ${m.status === 'ACCEPTED' ? 'text-green-500 bg-green-50' : 'text-amber-500 bg-amber-50'}`}>
@@ -191,7 +191,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                     </div>
                   ) : (
                     <div className="relative w-48 sm:w-64 aspect-video rounded-[20px] flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm border border-slate-200/50">
-                      <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center shadow-sm">
+                      <div className="w-12 h-12 rounded-2xl bg-white/ dark:bg-gray-800/ flex items-center justify-center shadow-sm">
                         <FiCode className="text-slate-400" size={24} />
                       </div>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">No preview</p>
@@ -200,7 +200,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                 </div>
 
                 {/* Links Section */}
-                <div className="bg-gray-50 rounded-[24px] p-4 sm:p-6 space-y-3">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-[24px] p-4 sm:p-6 space-y-3">
                   <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Project Assets & Links</h3>
 
 
@@ -240,7 +240,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                   </div>
 
                   {/* PDF Download */}
-                  <div className="flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-3 sm:p-4 mt-2 shadow-sm group">
+                  <div className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-3 sm:p-4 mt-2 shadow-sm group">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="p-2 bg-red-50 rounded-xl flex-shrink-0">
                         <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,7 +271,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                     <h3 className="font-black text-[#fbc111] text-[13px] uppercase tracking-widest">Narrative Evaluation</h3>
                   </div>
                   <textarea
-                    className="w-full h-36 bg-gray-50 rounded-[20px] p-5 text-sm font-semibold text-slate-700 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 transition-all"
+                    className="w-full h-36 bg-gray-50 dark:bg-gray-800 rounded-[20px] p-5 text-sm font-semibold text-slate-700 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 transition-all"
                     placeholder="Type your detailed feedback here..."
                     value={reviewDraft}
                     onChange={(e) => setReviewDraft(e.target.value)}
@@ -280,15 +280,15 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
               </div>
 
               {/* Right Column — Scoring Panel */}
-              <div className="w-full lg:w-[340px] xl:w-[360px] flex-shrink-0 flex flex-col gap-5 bg-slate-50 rounded-[28px] p-5 sm:p-7 border border-gray-100">
+              <div className="w-full lg:w-[340px] xl:w-[360px] flex-shrink-0 flex flex-col gap-5 bg-slate-50 dark:bg-gray-800 rounded-[28px] p-5 sm:p-7 border border-gray-100 dark:border-gray-700">
 
                 {/* Header + Toggle */}
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-2">
                     <FiTrendingUp className="text-[#fbc111]" />
-                    <h3 className="font-black text-slate-800 text-[13px] uppercase tracking-widest">Scoring</h3>
+                    <h3 className="font-black text-slate-800 dark:text-gray-100 text-[13px] uppercase tracking-widest">Scoring</h3>
                   </div>
-                  <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <button
                       onClick={() => setScoreMode('performance')}
                       className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${scoreMode === 'performance' ? 'bg-[#8cc63f] text-white shadow' : 'text-gray-400'}`}
@@ -332,7 +332,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                       readOnly={scoreMode === 'performance'}
                       value={finalScore}
                       onChange={(e) => setCustomScore(parseFloat(e.target.value))}
-                      className="bg-transparent text-4xl font-black text-slate-800 w-20 text-center outline-none"
+                      className="bg-transparent text-4xl font-black text-slate-800 dark:text-gray-100 w-20 text-center outline-none"
                     />
                     <span className="text-xl font-bold text-gray-300">/ 10</span>
                   </div>
@@ -364,7 +364,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
             className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain animate-in zoom-in-95 duration-300"
           />
           <button 
-            className="absolute top-6 right-6 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all border border-white/20 hover:scale-110"
+            className="absolute top-6 right-6 p-4 bg-white/ dark:bg-gray-800/ hover:bg-white/ dark:bg-gray-800/ text-white rounded-full backdrop-blur-md transition-all border border-white/20 hover:scale-110"
             onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
           >
             <FiX size={24} />

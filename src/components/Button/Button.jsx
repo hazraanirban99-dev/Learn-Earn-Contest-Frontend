@@ -13,7 +13,7 @@ const Button = ({ text, onClick, variant = 'primary', disabled, type = 'button',
   
   const variants = {
     primary: "font-bold px-6 py-[14px] rounded-xl bg-gradient-to-r from-[#8cc63f] to-[#fbc111] hover:from-[#7eb036] hover:to-[#e0ad0c] text-white tracking-wide text-[15px] shadow-sm active:scale-95",
-    secondary: "font-bold px-6 py-[14px] rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm active:scale-95",
+    secondary: "font-bold px-6 py-[14px] rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 dark:text-gray-200 shadow-sm active:scale-95",
     danger: "font-bold px-6 py-[14px] rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-sm active:scale-95",
     portalSubmit: `px-12 py-5 rounded-full font-black text-[14px] uppercase tracking-widest shadow-2xl active:scale-95 overflow-hidden group ${
       isLoading 

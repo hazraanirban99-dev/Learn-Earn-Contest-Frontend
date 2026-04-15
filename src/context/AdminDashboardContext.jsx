@@ -33,7 +33,7 @@ export const AdminDashboardProvider = ({ children }) => {
   const fetchDashboardData = async () => {
     // Auth check na hole wait koro
     if (authLoading) return;
-    
+
     // Admin na hole sob data clear kore return koro
     if (!user || user.role !== 'admin') {
       setStats([]); setContests([]); setActivities([]); setActiveContest(null);
@@ -50,7 +50,7 @@ export const AdminDashboardProvider = ({ children }) => {
           let link = null;
           if (s.title === 'Total Contests') link = '/admin/reports';
           if (s.title === 'Total Participants') link = '/admin/participants';
-          
+
           return {
             ...s,
             icon: ICON_MAP[s.icon] || FaTrophy,
@@ -58,7 +58,7 @@ export const AdminDashboardProvider = ({ children }) => {
           };
         });
         setStats(mappedStats);
-        
+
         // Recent contests ke frontend er expected format e map kora hocche
         setContests(statsRes.data.recentContests.map(c => ({
           _id: c._id,
@@ -92,6 +92,18 @@ export const AdminDashboardProvider = ({ children }) => {
     }
   };
 
+  // Sob contests fetch করার helper function (modals এর জন্য)
+  const fetchAllContests = async () => {
+    try {
+      const { data } = await api.get('/admin/contests/admin');
+      if (data.success) return data.data;
+      return [];
+    } catch (error) {
+      console.error('Fetch all contests error:', error);
+      return [];
+    }
+  };
+
   // User login/logout ba auth change hole data refetch korbe
   useEffect(() => {
     fetchDashboardData();
@@ -100,7 +112,9 @@ export const AdminDashboardProvider = ({ children }) => {
   return (
     // sob state ar refetch function provider diye pura admin section e available korchi
     <AdminDashboardContext.Provider value={{
-      stats, contests, skills, activities, activeContest, loading, refetch: fetchDashboardData
+      stats, contests, skills, activities, activeContest, loading, 
+      refetch: fetchDashboardData,
+      fetchAllContests
     }}>
       {children}
     </AdminDashboardContext.Provider>

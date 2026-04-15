@@ -77,7 +77,7 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
 
         const ConfirmToast = ({ closeToast }) => (
             <div className="p-1">
-                <p className="text-[12px] font-black text-slate-800 mb-4 uppercase tracking-tight leading-tight">
+                <p className="text-[12px] font-black text-slate-800 dark:text-gray-100 mb-4 uppercase tracking-tight leading-tight">
                    Are you sure you have submitted all files correctly according to the rules?
                 </p>
                 <div className="flex justify-end gap-2">
@@ -115,7 +115,7 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm shadow-2xl">
             <div className="fixed inset-0" onClick={onClose}></div>
             
-            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto max-h-[90vh]">
+            <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto max-h-[90vh]">
                 
                  {/* Left Sidebar (Desktop Only) */}
                  <div className="hidden lg:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
@@ -150,22 +150,22 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 </div>
 
-                <div className="w-full md:w-3/5 bg-white relative flex flex-col h-full max-h-[90vh]">
-                    <div className="p-6 md:p-8 shrink-0 relative border-b border-gray-100">
+                <div className="w-full md:w-3/5 bg-white dark:bg-gray-800 relative flex flex-col h-full max-h-[90vh]">
+                    <div className="p-6 md:p-8 shrink-0 relative border-b border-gray-100 dark:border-gray-700">
                         <button 
                             onClick={onClose}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-slate-800 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
+                            className="absolute top-6 right-6 text-gray-400 hover:text-slate-800 dark:text-gray-100 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
                         >
                             <FiX size={24} />
                         </button>
-                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Submission Details</h2>
+                        <h2 className="text-2xl font-black text-slate-800 dark:text-gray-100 tracking-tight">Submission Details</h2>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar">
                         <div className="space-y-8">
                             
                             {/* Mobile/Tab Rules (Visible until Large screens) */}
-                            <div className="lg:hidden bg-[#f8faf2] p-4 rounded-2xl border border-[#8cc63f]/20 mb-2">
+                            <div className="lg:hidden bg-[#f8faf2] dark:bg-gray-900 p-4 rounded-2xl border border-[#8cc63f]/20 mb-2">
                                 <h4 className="text-[9px] font-black text-[#6b8f36] uppercase tracking-widest mb-2 flex items-center gap-2">
                                     <FiFileText size={12} /> Submission Rules
                                 </h4>
@@ -265,7 +265,7 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                         </div>
                     </div>
 
-                    <div className="px-6 md:px-8 py-3 sm:py-5 border-t border-gray-100 bg-[#f8faf2] shrink-0 flex justify-center">
+                    <div className="px-6 md:px-8 py-3 sm:py-5 border-t border-gray-100 dark:border-gray-700 bg-[#f8faf2] dark:bg-gray-900 shrink-0 flex justify-center">
                         <Button
                             variant="portalSubmit"
                             text="Final Submit"

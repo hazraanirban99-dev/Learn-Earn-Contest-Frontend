@@ -19,7 +19,7 @@ import { exportToCSV } from '../../utils/exportUtils';
 // Table Row Component - Memoized for performance
 const ParticipantRow = React.memo(({ user, index }) => {
   return (
-    <tr className="hover:bg-white transition-colors duration-200 group border-b border-[#e8efe0]/60">
+    <tr className="hover:bg-white dark:bg-gray-800 transition-colors duration-200 group border-b border-[#e8efe0]/60">
       <td className="py-6 px-10">
         <span className="text-[14px] font-black text-gray-300">
           {index < 9 ? `0${index + 1}` : index + 1}
@@ -30,7 +30,7 @@ const ParticipantRow = React.memo(({ user, index }) => {
           <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[1px]">
             <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
           </div>
-          <span className="font-black text-slate-800 text-[15px] tracking-tight">
+          <span className="font-black text-slate-800 dark:text-gray-100 text-[15px] tracking-tight">
             {user.name}
           </span>
         </div>
@@ -166,7 +166,7 @@ const ParticipantsDirectory = () => {
               <div className="w-10 h-[2px] bg-[#8cc63f]"></div>
               <h4 className="text-[#8cc63f] text-[13px] font-black tracking-[0.3em] uppercase">Student Administration</h4>
             </div>
-            <h1 className="text-5xl lg:text-6xl font-black text-slate-800 tracking-tighter leading-none">
+            <h1 className="text-5xl lg:text-6xl font-black text-slate-800 dark:text-gray-100 tracking-tighter leading-none">
               Participant <span className="text-[#fbc111]">Directory</span>
             </h1>
             <p className="text-gray-400 font-bold text-sm lg:text-base leading-relaxed">
@@ -187,19 +187,19 @@ const ParticipantsDirectory = () => {
         {/* --- Filter Toolbar --- */}
         <div className="flex flex-col sm:flex-row items-center gap-6 justify-between">
           <div className="relative flex items-center bg-[#fbc111] rounded-2xl px-6 py-1 shadow-md border border-[#fbc111]/20 hover:shadow-lg transition-all group w-full sm:w-max">
-            <label className="text-[11px] font-black text-slate-900/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
+            <label className="text-[11px] font-black text-slate-900 dark:text-gray-100/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
             <select
               value={selectedDomain}
               onChange={(e) => {
                 setSelectedDomain(e.target.value);
               }}
-              className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 focus:outline-none w-full min-w-[160px] cursor-pointer pr-8 transition-all"
+              className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 dark:text-gray-100 focus:outline-none w-full min-w-[160px] cursor-pointer pr-8 transition-all"
             >
               {domains.map(domain => (
                 <option key={domain} value={domain}>{domain}</option>
               ))}
             </select>
-            <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900/30">
+            <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900 dark:text-gray-100/30">
               <FiFilter size={16} strokeWidth={3} />
             </div>
           </div>
@@ -216,7 +216,7 @@ const ParticipantsDirectory = () => {
               onChange={(e) => {
                 setSearchQuery(e.target.value);
               }}
-              className="w-full bg-white border border-gray-100 rounded-[20px] py-4 pl-14 pr-6 text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-[#8cc63f]/10 focus:border-[#8cc63f]/30 transition-all placeholder:text-gray-300"
+              className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-[20px] py-4 pl-14 pr-6 text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-[#8cc63f]/10 focus:border-[#8cc63f]/30 transition-all placeholder:text-gray-300"
             />
           </div>
         </div>

@@ -48,7 +48,7 @@ const StatCard = ({ icon: Icon, label, value, suffix = '', color, bgColor, delay
             </div>
 
             {/* Number */}
-            <p className="text-3xl sm:text-4xl font-black text-slate-900 leading-none mb-1 tabular-nums">
+            <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-gray-100 leading-none mb-1 tabular-nums">
                 {shouldAnimate ? formatNum(count, suffix) : formatNum(value, suffix)}
             </p>
 
@@ -154,7 +154,7 @@ const LiveStats = ({ stats }) => {
     ];
 
     return (
-        <section ref={sectionRef} className="w-full bg-white py-16 sm:py-20 overflow-hidden">
+        <section ref={sectionRef} className="w-full bg-white dark:bg-gray-800 py-16 sm:py-20 overflow-hidden">
             <div className="max-w-[1280px] mx-auto px-6 sm:px-12 lg:px-20">
 
                 <div className="text-center mb-12">
@@ -162,7 +162,7 @@ const LiveStats = ({ stats }) => {
                         <span className="w-2 h-2 rounded-full bg-[#8cc63f] animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-[#5c8a14]">Live Platform Stats</span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter leading-tight">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-gray-100 tracking-tighter leading-tight">
                         Numbers That <span className="text-[#8cc63f]">Speak</span> for{' '}
                         <span className="text-[#fbc111]">Themselves</span>
                     </h2>

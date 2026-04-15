@@ -55,12 +55,12 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-all animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-5xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] relative anime-in zoom-in duration-300">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-5xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] relative anime-in zoom-in duration-300">
         
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-8 right-8 p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-slate-900 transition-all z-10"
+          className="absolute top-8 right-8 p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-slate-900 dark:text-gray-100 transition-all z-10"
         >
           <FiX size={24} />
         </button>
@@ -69,7 +69,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
           {/* Header Section */}
           <div className="flex flex-col gap-4 mb-12">
             <span className="text-[#a68945] text-[11px] font-black uppercase tracking-[0.2em]">Community Hub</span>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-none">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-gray-100 tracking-tight leading-none">
               Participant Registry
             </h2>
             <p className="text-gray-500 font-bold text-sm md:text-base max-w-xl leading-relaxed">
@@ -99,15 +99,15 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                      </tr>
                   ) : (
                     participants.map((user, idx) => (
-                      <tr key={idx} className="bg-white rounded-[24px] group hover:shadow-md transition-all">
+                      <tr key={idx} className="bg-white dark:bg-gray-800 rounded-[24px] group hover:shadow-md transition-all">
                         <td className="py-5 px-8 rounded-l-[32px] w-1/2">
                           {user.studentId?.participationType === 'Team' ? (
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2">
                                   <span className="text-[#8cc63f] bg-[#8cc63f]/10 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TEAM</span>
-                                  <div className="font-black text-slate-800 text-[14px]">{user.studentId.teamData?.teamName}</div>
+                                  <div className="font-black text-slate-800 dark:text-gray-100 text-[14px]">{user.studentId.teamData?.teamName}</div>
                                 </div>
-                                <div className="pl-2 border-l-2 border-gray-100 mt-2 space-y-2">
+                                <div className="pl-2 border-l-2 border-gray-100 dark:border-gray-700 mt-2 space-y-2">
                                     <div className="flex items-center gap-2">
                                        <span title="Leader" className="text-lg">👑</span>
                                        <span className="text-[12px] font-bold text-slate-700">{user.studentId.teamData?.leader?.name} (Leader)</span>
@@ -143,7 +143,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                                 )}
                               </div>
                               <div>
-                                <div className="font-black text-slate-800 text-[14px]">{user.studentId?.name || "Unknown"}</div>
+                                <div className="font-black text-slate-800 dark:text-gray-100 text-[14px]">{user.studentId?.name || "Unknown"}</div>
                                 <div className="text-[#fbc111] bg-[#fbc111]/10 px-2 py-0.5 rounded-md inline-block text-[9px] font-black tracking-wider mt-1 uppercase">SOLO</div>
                               </div>
                             </div>
@@ -151,7 +151,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                         </td>
                         <td className="py-5 px-6 font-bold text-slate-500 text-[12px]">
                           <div className="flex flex-col gap-1">
-                             <span className="text-slate-800">{user.studentId?.email || 'N/A'}</span>
+                             <span className="text-slate-800 dark:text-gray-100">{user.studentId?.email || 'N/A'}</span>
                              <span className="text-[10px] text-gray-400">{user.studentId?.contactNumber || 'N/A'}</span>
                           </div>
                         </td>
@@ -188,14 +188,14 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                 Showing <span className="text-slate-700">{participants.length > 0 ? `1 to ${participants.length}` : '0'}</span> of {participants.length} participants
               </span>
               <div className="flex items-center gap-2">
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white dark:bg-gray-800 transition-all border border-gray-100/50">
                   <FiChevronLeft size={20} />
                 </button>
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#8cc63f] text-white font-black text-sm shadow-md shadow-[#8cc63f]/20">1</button>
                 <div className="flex items-center gap-1">
                    {/* Handle theoretical multiple pages if implemented later */}
                 </div>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white transition-all border border-gray-100/50">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white dark:bg-gray-800 transition-all border border-gray-100/50">
                   <FiChevronRight size={20} />
                 </button>
               </div>

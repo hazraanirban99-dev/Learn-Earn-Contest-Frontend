@@ -11,9 +11,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTrend = true, link }) => {
+const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTrend = true, link, onClick }) => {
   const navigate = useNavigate();
-  
+
   const accentBgMap = {
     'text-green-600': 'bg-green-600',
     'text-amber-500': 'bg-amber-500',
@@ -29,10 +29,18 @@ const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTre
     return 'text-amber-600 bg-amber-50';
   };
 
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e);
+    } else if (link) {
+      navigate(link);
+    }
+  };
+
   return (
-    <div 
-      onClick={() => link && navigate(link)}
-      className={`bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100/50 hover:shadow-xl hover:border-[#8cc63f]/30 transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[160px] sm:h-[180px] group active:scale-95 active:shadow-inner touch-manipulation ${link ? 'cursor-pointer' : ''}`}
+    <div
+      onClick={handleClick}
+      className={`bg-white dark:bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100/50 hover:shadow-xl hover:border-[#8cc63f]/30 transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[160px] sm:h-[180px] group active:scale-95 active:shadow-inner touch-manipulation ${(link || onClick) ? 'cursor-pointer' : ''}`}
     >
       {/* Top Header Section */}
       <div className="flex justify-between items-start mb-2">
@@ -51,7 +59,7 @@ const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTre
         <h3 className="text-gray-400 text-[10px] sm:text-[11px] font-black uppercase tracking-widest opacity-80 whitespace-nowrap">
           {title}
         </h3>
-        <p className="text-[18px] sm:text-[20px] lg:text-[22px] xl:text-[24px] font-black text-slate-900 leading-[1.1] tracking-tight truncate group-hover:whitespace-normal group-hover:overflow-visible transition-all">
+        <p className="text-[18px] sm:text-[20px] lg:text-[22px] xl:text-[24px] font-black text-slate-900 dark:text-gray-100 leading-[1.1] tracking-tight truncate group-hover:whitespace-normal group-hover:overflow-visible transition-all">
           {value}
         </p>
       </div>

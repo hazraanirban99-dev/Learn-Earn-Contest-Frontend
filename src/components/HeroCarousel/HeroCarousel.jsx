@@ -9,8 +9,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 
 const HeroCarousel = React.memo(({ contests, loading }) => {
+  const { user } = useAuth();
   const [heroIndex, setHeroIndex] = useState(0);
 
   // Auto-slide effect
@@ -79,7 +81,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                   <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 md:px-20 max-w-3xl">
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                       {contest.tag && (
-                        <div className={`px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-lg ${isLive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-[#fbc111] text-slate-900 shadow-[#fbc111]/20'
+                        <div className={`px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-lg ${isLive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-[#fbc111] text-slate-900 dark:text-gray-100 shadow-[#fbc111]/20'
                           }`}>
                           <div className="flex items-center gap-2">
                             {isLive && (
@@ -112,7 +114,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
                     {/* Optional Button */}
                     {contest.buttonText && (
                       <Link
-                        to={isJoinNow ? "/login" : `/student/contests/${contest.id}`}
+                        to={isJoinNow ? (user ? `/student/contests/${contest.id}` : `/login?redirect=/student/contests/${contest.id}`) : `/student/contests/${contest.id}`}
                         className={`${isJoinNow
                             ? 'bg-[#8cc63f]/20 hover:bg-[#8cc63f]/30 text-[#8cc63f] border border-[#8cc63f]/40 backdrop-blur-sm shadow-emerald-500/10'
                             : 'bg-[#8cc63f] hover:bg-[#7ab332] text-white shadow-[#8cc63f]/30'

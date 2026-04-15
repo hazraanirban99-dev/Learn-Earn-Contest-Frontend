@@ -58,7 +58,7 @@ const DropZone = React.memo(({ label, accept, icon: Icon, hint, note, file, onFi
               <FiCheck size={20} strokeWidth={3} />
             </div>
             <div className="text-center">
-              <p className="text-sm font-black text-slate-800 truncate max-w-[180px]">{file.name}</p>
+              <p className="text-sm font-black text-slate-800 dark:text-gray-100 truncate max-w-[180px]">{file.name}</p>
               <p className="text-[10px] text-gray-400 font-bold mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
             </div>
           </>

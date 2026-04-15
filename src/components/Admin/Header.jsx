@@ -77,17 +77,17 @@ const Header = ({ onMenuClick }) => {
     }, 1000);
   };
 
-  const tabs = [
-    { name: 'Analytics', path: '/admin/dashboard' },
-    { name: 'Contest Reports', path: '/admin/reports' },
-    { name: 'All Participants', path: '/admin/participants' }
+  const navLinks = [
+    { name: 'About Us', path: '/#aboutus' },
+    { name: 'Vision', path: '/#vision' },
+    { name: 'Courses', path: '/#courses' },
+    { name: 'Benefits', path: '/#benefits' },
+    { name: 'Contact', path: '/#contact' },
+    { name: 'Admin', path: '/admin/dashboard' }
   ];
 
-  // Determine active tab based on current path
-  const activeTab = React.useMemo(() => {
-    const currentTab = tabs.find(t => t.path !== '#' && location.pathname === t.path);
-    return currentTab ? currentTab.name : 'Analytics';
-  }, [location.pathname]);
+  // Since we are in the Admin panel, the 'Admin' tab should be active by default
+  const activeTab = 'Admin';
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -114,7 +114,7 @@ const Header = ({ onMenuClick }) => {
   }, []);
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-[300px] z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 lg:px-8 py-3 flex items-center justify-between">
+    <header className="fixed top-0 right-0 left-0 lg:left-[300px] z-50 bg-white/ dark:bg-gray-800/0 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 px-6 lg:px-8 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
         {/* Mobile Menu Toggle */}
         <button 
@@ -132,32 +132,32 @@ const Header = ({ onMenuClick }) => {
         </div>
       </div>
 
-      {/* Tabs Section - Desktop Only */}
+      {/* Nav Section - Desktop Only */}
       <nav className="hidden lg:flex items-center gap-8">
-        {tabs.map((tab) => (
-          tab.path === '#' ? (
-            <button
-              key={tab.name}
-              onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
+        {navLinks.map((link) => (
+          link.path.startsWith('/#') ? (
+            <a
+              key={link.name}
+              href={link.path}
               className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
-                activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
+                activeTab === link.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              {tab.name}
-              {activeTab === tab.name && (
+              {link.name}
+              {activeTab === link.name && (
                 <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
               )}
-            </button>
+            </a>
           ) : (
             <Link
-              key={tab.name}
-              to={tab.path}
+              key={link.name}
+              to={link.path}
               className={`relative py-1 text-[15px] font-black uppercase tracking-widest transition-colors ${
-                activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
+                activeTab === link.name ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              {tab.name}
-              {activeTab === tab.name && (
+              {link.name}
+              {activeTab === link.name && (
                 <span className="absolute bottom-[-14px] left-0 w-full h-[3px] bg-[#8cc63f] rounded-full shadow-[0_2px_10px_rgba(140,198,63,0.4)]" />
               )}
             </Link>
@@ -199,9 +199,9 @@ const Header = ({ onMenuClick }) => {
             </button>
 
             {isNotifOpen && (
-                <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
-                    <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Admin Alerts</h3>
+                <div className="absolute top-full right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-4 bg-gray-50/ dark:bg-gray-800/ border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-gray-100">Admin Alerts</h3>
                         <div className="flex items-center gap-3">
                            {notifications.length > 0 && <span className="text-[10px] font-bold text-red-500">{notifications.length} Requests</span>}
                            <button 
@@ -221,7 +221,7 @@ const Header = ({ onMenuClick }) => {
                         ) : (
                             <div className="divide-y divide-gray-50">
                                 {notifications.map(notif => (
-                                    <div key={notif._id} className="p-4 hover:bg-gray-50/50 transition-colors">
+                                    <div key={notif._id} className="p-4 hover:bg-gray-50/ dark:bg-gray-800/ transition-colors">
                                         <div className="flex flex-col gap-2">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
@@ -278,7 +278,7 @@ const Header = ({ onMenuClick }) => {
 
           <div 
             ref={dropdownRef} 
-            className={`absolute top-full right-0 mt-3 w-72 bg-white rounded-[24px] shadow-2xl border border-gray-100 p-6 flex flex-col gap-6 lg:hidden z-[100] max-h-[80vh] overflow-y-auto scrollbar-hide origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`absolute top-full right-0 mt-3 w-72 bg-white dark:bg-gray-800 rounded-[24px] shadow-2xl border border-gray-100 dark:border-gray-700 p-6 flex flex-col gap-6 lg:hidden z-[100] max-h-[80vh] overflow-y-auto scrollbar-hide origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               isMenuOpen 
                 ? 'opacity-100 scale-y-100 translate-y-0 visible' 
                 : 'opacity-0 scale-y-95 -translate-y-4 invisible pointer-events-none'
@@ -286,14 +286,14 @@ const Header = ({ onMenuClick }) => {
           >
             {showMobileNotifs ? (
                <div className="flex flex-col h-full animate-in slide-in-from-right duration-300">
-                  <div className="flex items-center justify-between mb-6 border-b border-gray-50 pb-4">
+                  <div className="flex items-center justify-between mb-6 border-b border-gray-50 dark:border-gray-700 pb-4">
                      <button 
                         onClick={() => setShowMobileNotifs(false)}
                         className="flex items-center gap-1 text-[#8cc63f] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform"
                      >
                         <FiChevronLeft size={16} /> Back
                      </button>
-                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-800">Admin Alerts</p>
+                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-gray-100">Admin Alerts</p>
                   </div>
                   
                   <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
@@ -304,7 +304,7 @@ const Header = ({ onMenuClick }) => {
                         </div>
                      ) : (
                         notifications.map(notif => (
-                           <div key={notif._id} className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                           <div key={notif._id} className="bg-gray-50/ dark:bg-gray-800/ p-4 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-3">
                               <div className="flex items-center gap-3">
                                  <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0 text-amber-600 font-bold text-[10px]">
                                     {notif.sender?.name?.charAt(0)}
@@ -313,7 +313,7 @@ const Header = ({ onMenuClick }) => {
                                     <span className="font-black">{notif.sender?.name}</span> created team for <span className="font-black">"{notif.contest?.title}"</span>
                                  </p>
                               </div>
-                              <div className="bg-white p-2 rounded-lg border border-amber-50 italic text-[10px] font-bold text-amber-700">
+                              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-amber-50 italic text-[10px] font-bold text-amber-700">
                                  "{notif.reason}"
                               </div>
                               <div className="flex gap-2">
@@ -335,41 +335,42 @@ const Header = ({ onMenuClick }) => {
                       </div>
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <p className="text-sm font-black text-slate-900 uppercase tracking-tighter leading-tight">System Admin</p>
+                      <p className="text-sm font-black text-slate-900 dark:text-gray-100 uppercase tracking-tighter leading-tight">System Admin</p>
                       <p className="text-[10px] font-bold text-gray-400 truncate">{currentUser?.email || 'admin@academy.com'}</p>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Navigation</p>
-                    {tabs.map((tab) => (
-                      tab.path === '#' ? (
-                        <button
-                          key={tab.name}
-                          onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-                          className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                            activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
-                          }`}
-                        >
-                          {tab.name}
-                        </button>
-                      ) : (
-                        <Link
-                          key={tab.name}
-                          to={tab.path}
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 dark:border-gray-700 pb-2">Navigation</p>
+                    {navLinks.map((link) => (
+                      link.path.startsWith('/#') ? (
+                        <a
+                          key={link.name}
+                          href={link.path}
                           onClick={() => setIsMenuOpen(false)}
                           className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
-                            activeTab === tab.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900'
+                            activeTab === link.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900 dark:text-gray-100'
                           }`}
                         >
-                          {tab.name}
+                          {link.name}
+                        </a>
+                      ) : (
+                        <Link
+                          key={link.name}
+                          to={link.path}
+                          onClick={() => setIsMenuOpen(false)}
+                          className={`text-left text-sm font-black uppercase tracking-tight py-1 transition-colors ${
+                            activeTab === link.name ? 'text-[#8cc63f]' : 'text-gray-500 hover:text-slate-900 dark:text-gray-100'
+                          }`}
+                        >
+                          {link.name}
                         </Link>
                       )
                     ))}
                   </div>
 
                   <div className="flex flex-col gap-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Quick Actions</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 dark:border-gray-700 pb-2">Quick Actions</p>
                     <button 
                       onClick={handleRefresh}
                       className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
@@ -395,7 +396,7 @@ const Header = ({ onMenuClick }) => {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-2">Account</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 dark:border-gray-700 pb-2">Account</p>
                     <button 
                       onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
                       className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
@@ -437,10 +438,10 @@ const Header = ({ onMenuClick }) => {
 
           {/* Desktop Profile Dropdown */}
           {isProfileOpen && (
-            <div ref={profileDropdownRef} className="absolute top-full right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 flex flex-col gap-2 z-[100]">
+            <div ref={profileDropdownRef} className="absolute top-full right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 p-4 flex flex-col gap-2 z-[100]">
               <button 
                 onClick={() => { setIsProfileOpen(false); toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" }); }}
-                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] hover:bg-gray-50 px-3 py-2.5 rounded-xl transition-all w-full"
+                className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 px-3 py-2.5 rounded-xl transition-all w-full"
               >
                 <FiEdit size={18} />
                 <span>Edit Profile</span>

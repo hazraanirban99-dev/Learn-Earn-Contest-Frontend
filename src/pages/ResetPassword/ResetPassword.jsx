@@ -60,7 +60,7 @@ const ResetPassword = () => {
             <Navbar />
             <PageTransition>
                 <main className="flex-1 flex items-center justify-center pt-24 px-4 py-6 md:py-10 lg:py-14">
-                <div className="w-full max-w-[1000px] flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
+                <div className="w-full max-w-[1000px] flex flex-col lg:flex-row bg-white dark:bg-gray-800 font-sans text-gray-800 dark:text-gray-200 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                     
                     {/* Left Panel - Branding */}
                     <div className="flex flex-1 bg-linear-to-br from-[#f0f9e1] via-[#f7fcea] to-white p-8 md:p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
@@ -79,7 +79,7 @@ const ResetPassword = () => {
                     </div>
 
                     {/* Right Panel - Form */}
-                    <div className="flex-1 p-6 md:p-12 lg:p-16 flex flex-col items-center justify-center bg-white">
+                    <div className="flex-1 p-6 md:p-12 lg:p-16 flex flex-col items-center justify-center bg-white dark:bg-gray-800">
                         <div className="w-full max-w-[380px]">
                             <div className="flex flex-col items-center mb-10">
                                 <Logo size="lg" className="mb-8" />

@@ -95,7 +95,7 @@ const TypewriterHeader = () => {
 
    return (
       <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight flex flex-wrap items-center justify-center gap-x-2 gap-y-0 text-center leading-[1.2]">
-         <span className="text-slate-900">{text.substring(0, 15)}</span>
+         <span className="text-slate-900 dark:text-gray-100">{text.substring(0, 15)}</span>
          <span className="text-[#8cc63f]">{text.substring(15, 23)}</span>
          <span className="text-[#fbc111]">{text.substring(23)}</span>
          <span className="w-1 h-8 sm:h-12 bg-[#8cc63f] animate-pulse ml-1 rounded-full shrink-0"></span>
@@ -199,7 +199,7 @@ const LandingPage = () => {
    };
 
    return (
-      <div className="min-h-screen bg-[#f8faf2] overflow-x-hidden selection:bg-[#8cc63f]/30">
+      <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 overflow-x-hidden selection:bg-[#8cc63f]/30">
          <style dangerouslySetInnerHTML={{
             __html: `
         @keyframes marquee {
@@ -218,11 +218,11 @@ const LandingPage = () => {
       `}} />
          <Navbar showAuth={true} />
          {/* Navbar Spacer for Landing Page */}
-         <div className="h-16 sm:h-20 w-full bg-[#f8faf2]"></div>
+         <div className="h-16 sm:h-20 w-full bg-[#f8faf2] dark:bg-gray-900"></div>
          <HeroCarousel contests={liveContests} loading={liveLoading} />
          
          {/* Typing Animation Section */}
-         <div className="bg-[#f8faf2] py-6 sm:py-8 border-b border-gray-100/50 overflow-hidden">
+         <div className="bg-[#f8faf2] dark:bg-gray-900 py-6 sm:py-8 border-b border-gray-100/50 overflow-hidden">
             <div className="max-w-[1440px] mx-auto px-6 text-center">
                <div className="inline-flex items-center justify-center gap-2 mb-2">
                   <div className="h-[2px] w-8 bg-[#8cc63f] rounded-full"></div>
@@ -239,7 +239,7 @@ const LandingPage = () => {
             <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                <div className="space-y-6 animate-in slide-in-from-left duration-1000">
                   <span className="inline-block bg-[#fbc111]/10 text-[#d4a017] px-4 py-1 rounded-xl text-[10px] font-black tracking-widest uppercase">Est. 2019</span>
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1] tracking-tight">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-gray-100 leading-[1] tracking-tight">
                      The Future of <br />
                      <span className="text-[#8cc63f]">Scholastic <br /> Excellence.</span>
                   </h1>
@@ -261,7 +261,7 @@ const LandingPage = () => {
                {/* Hero Image Carousel */}
                <div className="relative animate-in zoom-in duration-1000">
                   <div className="absolute -inset-4 bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 rounded-[48px] blur-3xl opacity-50"></div>
-                  <div className="relative bg-white p-3 rounded-[40px] shadow-2xl border border-white/50 overflow-hidden group">
+                  <div className="relative bg-white dark:bg-gray-800 p-3 rounded-[40px] shadow-2xl border border-white/50 overflow-hidden group">
                      {/* The Sliding Images Container */}
                      <div className="relative w-full h-[250px] md:h-[350px] overflow-hidden rounded-[32px]">
                         {heroImages.map((img, idx) => (
@@ -297,25 +297,25 @@ const LandingPage = () => {
          </section>
 
          {/* Institutional Pillars - COMPACT REFINED */}
-         <section id="aboutus" className="py-10 bg-white/50 scroll-mt-28">
+         <section id="aboutus" className="py-10 bg-white/ dark:bg-gray-800/ scroll-mt-28">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
                <div className="mb-10 text-center sm:text-left">
                   <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Institutional Pillars</span>
-                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">The Foundation of Desun</h2>
+                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-gray-100 tracking-tight">The Foundation of Desun</h2>
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
-                     <div className="w-12 h-12 bg-gray-50 flex items-center justify-center rounded-2xl mb-6 group-hover:bg-[#8cc63f]/10 transition-colors">
+                  <div className="bg-white dark:bg-gray-800 p-8 rounded-[40px] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all group">
+                     <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 flex items-center justify-center rounded-2xl mb-6 group-hover:bg-[#8cc63f]/10 transition-colors">
                         <span className="text-xl">🏛️</span>
                      </div>
-                     <h3 className="text-xl font-black text-slate-900 mb-4">History of Foundation</h3>
+                     <h3 className="text-xl font-black text-slate-900 dark:text-gray-100 mb-4">History of Foundation</h3>
                      <p className="text-gray-500 font-bold text-sm leading-relaxed">
                         Founded with a vision to bridge the gap between traditional academic rigor and technological demands.
                      </p>
                   </div>
 
-                  <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
+                  <div className="bg-white dark:bg-gray-800 p-8 rounded-[40px] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
                      <div>
                         <div className="flex items-center gap-6 mb-8">
                            <img 
@@ -324,7 +324,7 @@ const LandingPage = () => {
                               alt="Dr. Artis Thorne" 
                            />
                            <div>
-                              <h4 className="font-black text-slate-900 text-lg">ARGHYA DUTTA</h4>
+                              <h4 className="font-black text-slate-900 dark:text-gray-100 text-lg">ARGHYA DUTTA</h4>
                               <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest leading-none mt-1">Chief Executive Officer (CEO) </p>
                            </div>
                         </div>
@@ -336,7 +336,7 @@ const LandingPage = () => {
                   </div>
 
                   <div id="vision" className="bg-[#5c8a14] p-8 rounded-[40px] shadow-xl text-white relative overflow-hidden group scroll-mt-28">
-                     <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                     <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/ dark:bg-gray-800/ rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                      <h3 className="text-xl font-black mb-4 relative z-10">The Vision</h3>
                      <p className="text-white/80 font-bold text-sm leading-relaxed mb-8 relative z-10">
                         To become the global standard for interdisciplinary excellence, fostering a community of logic and creativity.
@@ -359,7 +359,7 @@ const LandingPage = () => {
          <section id="courses" className="py-10 overflow-hidden scroll-mt-28">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mb-8">
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">Premium Course Tracks</h2>
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-gray-100 tracking-tight">Premium Course Tracks</h2>
                   <span className="bg-[#8cc63f] text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">Continuous Enrollment</span>
                </div>
             </div>
@@ -373,7 +373,7 @@ const LandingPage = () => {
                   {[...courses, ...courses].map((course, idx) => (
                      <div 
                         key={idx} 
-                        className={`w-[280px] bg-white/60 border-2 ${idx % 2 === 0 ? 'border-[#8cc63f]' : 'border-[#fbc111]'} p-8 rounded-[36px] hover:bg-white hover:shadow-xl transition-all cursor-pointer shrink-0 will-change-transform transform-gpu group`}
+                        className={`w-[280px] bg-white/ dark:bg-gray-800/ border-2 ${idx % 2 === 0 ? 'border-[#8cc63f]' : 'border-[#fbc111]'} p-8 rounded-[36px] hover:bg-white dark:bg-gray-800 hover:shadow-xl transition-all cursor-pointer shrink-0 will-change-transform transform-gpu group`}
                      >
                         <h3 className="text-lg font-black text-[#5c8a14] mb-3 group-hover:translate-x-1 transition-transform">{course.title}</h3>
                         <p className="text-gray-400 font-bold text-[11px] leading-relaxed line-clamp-2">{course.desc}</p>
@@ -384,10 +384,10 @@ const LandingPage = () => {
          </section>
 
          {/* Benefits & Contact - COMPACT REFINED */}
-         <section id="benefits" className="py-2 bg-white/30 scroll-mt-28">
+         <section id="benefits" className="py-2 bg-white/ dark:bg-gray-800/ scroll-mt-28">
             <div className="max-w-[1000px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                <div className="bg-[#8cc63f] p-4 sm:p-5 rounded-[24px] shadow-lg space-y-3 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/ dark:bg-gray-800/ rounded-full blur-xl"></div>
                   <h2 className="text-lg md:text-xl font-black text-white leading-tight">Student Benefits</h2>
                   <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">
                      {[
@@ -399,7 +399,7 @@ const LandingPage = () => {
                         'Learning Modules'
                      ].map((benefit, i) => (
                         <div key={i} className="flex items-center gap-2 group">
-                           <div className="w-4 h-4 bg-white/20 rounded flex items-center justify-center group-hover:bg-white transition-colors shrink-0">
+                           <div className="w-4 h-4 bg-white/ dark:bg-gray-800/ rounded flex items-center justify-center group-hover:bg-white dark:bg-gray-800 transition-colors shrink-0">
                               <FiCheck size={8} className="text-white group-hover:text-[#8cc63f] transition-colors" />
                            </div>
                            <span className="text-white font-black text-[9px] uppercase tracking-wide opacity-90 truncate">{benefit}</span>
@@ -409,18 +409,18 @@ const LandingPage = () => {
                </div>
 
                <div id="contact" className="bg-[#fbc111] p-4 sm:p-5 rounded-[24px] shadow-lg space-y-3 scroll-mt-28">
-                  <h2 className="text-lg md:text-xl font-black text-slate-800 leading-tight">Contact Us</h2>
+                  <h2 className="text-lg md:text-xl font-black text-slate-800 dark:text-gray-100 leading-tight">Contact Us</h2>
                   <div className="space-y-2">
-                     <div className="flex items-center gap-2 text-slate-800">
-                        <FiMail className="shrink-0 text-slate-900" size={14} />
+                     <div className="flex items-center gap-2 text-slate-800 dark:text-gray-100">
+                        <FiMail className="shrink-0 text-slate-900 dark:text-gray-100" size={14} />
                         <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide break-all">contact@desunacademy.in</span>
                      </div>
-                     <div className="flex items-center gap-2 text-slate-800">
-                        <FiPhone className="shrink-0 text-slate-900" size={14} />
+                     <div className="flex items-center gap-2 text-slate-800 dark:text-gray-100">
+                        <FiPhone className="shrink-0 text-slate-900 dark:text-gray-100" size={14} />
                         <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide">+91 91470 61005</span>
                      </div>
-                     <div className="flex items-center gap-2 text-slate-800">
-                        <FiMapPin className="shrink-0 text-slate-900" size={14} />
+                     <div className="flex items-center gap-2 text-slate-800 dark:text-gray-100">
+                        <FiMapPin className="shrink-0 text-slate-900 dark:text-gray-100" size={14} />
                         <span className="font-black text-[9px] sm:text-[10px] uppercase tracking-wide">Kolkata, WB</span>
                      </div>
                   </div>
@@ -439,7 +439,7 @@ const LandingPage = () => {
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
                <div className="text-center mb-12 space-y-2">
                   <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.3em]">The Scholastic Journey</span>
-                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">How it Works</h2>
+                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-gray-100 tracking-tight">How it Works</h2>
                </div>
 
                <div className="relative">
@@ -459,11 +459,11 @@ const LandingPage = () => {
                               <div className="absolute -top-2 -right-2 w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-[10px] font-black border-4 border-[#f8faf2] z-20 shadow-lg">
                                  {step.step}
                               </div>
-                              <div className="w-20 h-20 bg-white rounded-[28px] flex items-center justify-center text-[#8cc63f] text-3xl shadow-xl group-hover:scale-110 transition-transform group-hover:bg-[#8cc63f] group-hover:text-white border-2 border-transparent group-hover:border-white transform-gpu">
+                              <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-[28px] flex items-center justify-center text-[#8cc63f] text-3xl shadow-xl group-hover:scale-110 transition-transform group-hover:bg-[#8cc63f] group-hover:text-white border-2 border-transparent group-hover:border-white transform-gpu">
                                  <step.icon />
                               </div>
                            </div>
-                           <h4 className="text-lg font-black text-slate-900 mb-2">{step.title}</h4>
+                           <h4 className="text-lg font-black text-slate-900 dark:text-gray-100 mb-2">{step.title}</h4>
                            <p className="text-gray-400 font-bold text-[11px] leading-relaxed px-4">{step.desc}</p>
                         </div>
                      ))}
@@ -472,10 +472,10 @@ const LandingPage = () => {
             </div>
          </section>
          {/* Explore Categories - PREMIUM CARD GRID */}
-         <section className="py-12 md:py-16 bg-[#f8faf2]">
+         <section className="py-12 md:py-16 bg-[#f8faf2] dark:bg-gray-900">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
                <div className="text-center mb-12 space-y-3">
-                  <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-800">
+                  <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-800 dark:text-gray-100">
                      EXPLORE <span className="text-[#8cc63f]">CATEGORIES</span>
                   </h2>
                   <p className="text-gray-400 font-bold text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
@@ -506,7 +506,7 @@ const LandingPage = () => {
                   ].map((cat, idx) => (
                      <div 
                         key={idx} 
-                        className="bg-white rounded-[48px] p-6 shadow-xl border border-gray-100 flex flex-col items-center text-center group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+                        className="bg-white dark:bg-gray-800 rounded-[48px] p-6 shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
                      >
                         <div className="w-full h-[220px] rounded-[36px] overflow-hidden mb-6 relative">
                            <img 
@@ -518,7 +518,7 @@ const LandingPage = () => {
                            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-100"></div>
                         </div>
                         
-                        <h3 className="text-xl font-black text-slate-900 mb-3">{cat.title}</h3>
+                        <h3 className="text-xl font-black text-slate-900 dark:text-gray-100 mb-3">{cat.title}</h3>
                         <p className="text-gray-400 font-bold text-[11px] leading-relaxed mb-6 px-4">
                            {cat.desc}
                         </p>
@@ -536,23 +536,23 @@ const LandingPage = () => {
          </section>
 
          {/* Academic Contests Section with Loading/Error Handling */}
-         <section className="py-12 bg-white/40 overflow-hidden">
+         <section className="py-12 bg-white/ dark:bg-gray-800/ overflow-hidden">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
                <div>
                   <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Engage & Compete</span>
-                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">Academic Contests</h2>
+                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-gray-100 tracking-tight">Academic Contests</h2>
                </div>
                {!loading && contests.length > 0 && (
                   <div className="flex gap-4">
                      <button
                         onClick={handlePrev}
-                        className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
+                        className="w-12 h-12 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
                      >
                         <FiChevronLeft size={24} />
                      </button>
                      <button
                         onClick={handleNext}
-                        className="w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
+                        className="w-12 h-12 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#8cc63f] shadow-lg hover:shadow-[#8cc63f]/20 transition-all active:scale-90"
                      >
                         <FiChevronRight size={24} />
                      </button>
@@ -584,7 +584,7 @@ const LandingPage = () => {
                      className="absolute left-[5%] xl:left-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
                      style={{ transform: 'translateX(-50%)' }}
                   >
-                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
+                     <div className="bg-white dark:bg-gray-800 p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
                         <img loading="lazy" src={contests[getCardIndex(-1)]?.image} className="w-full h-[180px] object-cover rounded-[36px] grayscale" alt="Contest" />
                         <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(-1)]?.title}</h3></div>
                      </div>
@@ -592,10 +592,10 @@ const LandingPage = () => {
 
                   {/* CENTER CARD (ACTIVE) */}
                   <div className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y">
-                     <div className="bg-white p-5 md:p-6 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
+                     <div className="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
                         {/* Mixed border effect */}
                         <div className="absolute -inset-[8px] rounded-[48px] bg-gradient-to-tr from-[#8cc63f] via-[#fbc111] to-[#8cc63f] -z-10 opacity-70"></div>
-                        <div className="bg-white rounded-[40px] absolute inset-0 -z-10"></div>
+                        <div className="bg-white dark:bg-gray-800 rounded-[40px] absolute inset-0 -z-10"></div>
                         
                         <div className="w-full h-[180px] md:h-[200px] rounded-[36px] overflow-hidden shrink-0 transform-gpu shadow-xl relative">
                            <img
@@ -613,12 +613,12 @@ const LandingPage = () => {
                               </span>
                               <FaTrophy className="text-[#fbc111] animate-bounce" size={16} />
                            </div>
-                           <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight px-2">
+                           <h3 className="text-lg md:text-xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-tight px-2">
                               {contests[currentIndex]?.title}
                            </h3>
-                           <div className="flex items-center justify-center gap-2 py-2 border-t border-gray-50 mt-3">
+                           <div className="flex items-center justify-center gap-2 py-2 border-t border-gray-50 dark:border-gray-700 mt-3">
                               <FiMapPin className="text-[#8cc63f]" size={14} />
-                              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">{contests[currentIndex]?.date}</span>
+                              <span className="text-[10px] font-black text-slate-900 dark:text-gray-100 uppercase tracking-widest leading-none">{contests[currentIndex]?.date}</span>
                            </div>
                         </div>
                      </div>
@@ -629,7 +629,7 @@ const LandingPage = () => {
                      className="absolute right-[5%] xl:right-[15%] w-[250px] md:w-[350px] transform scale-[0.7] opacity-10 md:opacity-20 blur-[4px] transition-all duration-1000 select-none z-10 pointer-events-none hidden lg:block transform-gpu"
                      style={{ transform: 'translateX(50%)' }}
                   >
-                     <div className="bg-white p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
+                     <div className="bg-white dark:bg-gray-800 p-6 rounded-[48px] shadow-sm flex flex-col gap-4">
                         <img loading="lazy" src={contests[getCardIndex(1)]?.image} className="w-full h-[180px] object-cover rounded-[36px] grayscale" alt="Contest" />
                         <div className="py-2"><h3 className="text-xl font-black text-slate-200">{contests[getCardIndex(1)]?.title}</h3></div>
                      </div>

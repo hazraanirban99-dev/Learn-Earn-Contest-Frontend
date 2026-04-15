@@ -9,8 +9,10 @@ import axios from 'axios';
 
 // Base URL ta .env theke newa hocche (VITE_API_URL).
 // Local development e http://localhost:8000/api/v1 use hobe.
+const fallbackUrl = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || fallbackUrl,
   withCredentials: true, // Cookie based auth er jonno eta must — nahole session kaje asbena
   headers: {
     'Content-Type': 'application/json',

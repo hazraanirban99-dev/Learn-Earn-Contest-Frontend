@@ -9,9 +9,9 @@
 // ============================================================
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import UserNavbar from '../../components/Navbar/UserNavbar';
+import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import SubmitContestModal from '../../components/Modals/SubmitContestModal';
 import { FiFileText, FiAward, FiClock, FiCheckCircle, FiMoreHorizontal, FiCode, FiLayout, FiTrendingUp, FiMessageSquare, FiX } from 'react-icons/fi';
@@ -107,19 +107,19 @@ const StudentSubmission = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8faf2] font-sans selection:bg-[#8cc63f]/30">
-            <UserNavbar />
+        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30">
+            <Navbar />
             <PageTransition>
                 {/* ── PAGE HEADER ─────────────────────────────────────── */}
-                <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pt-16 pb-8">
+                <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pt-32 pb-8">
                     <span className="text-[#8cc63f] text-[10px] font-black uppercase tracking-[0.2em] mb-3 block">
                         Scholastic Atelier
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-[1.05] mb-4">
-                        My Submissions
+                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-[1.05] mb-4">
+                        My Contests
                     </h1>
                     <p className="text-gray-500 font-medium text-sm max-w-2xl">
-                        Track your academic progress through competitive challenges. Manage active contest entries and review your performance history within the Desun ecosystem.
+                        Monitor your competitive progress and active applications. Review past performances and track your journey through the Desun ecosystem.
                     </p>
                 </div>
 
@@ -128,18 +128,18 @@ const StudentSubmission = () => {
                     {/* ── CURRENTLY APPLIED CONTESTS ──────────────────────── */}
                     <div className="mb-16">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-black text-slate-800">Currently Applied Contests</h2>
+                            <h2 className="text-2xl font-black text-slate-800 dark:text-gray-100">Currently Applied Contests</h2>
                             <div className="w-20 h-2 bg-[#8cc63f] rounded-full hidden sm:block"></div>
                         </div>
                         
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="bg-white rounded-[40px] h-64 animate-pulse"></div>
+                                    <div key={i} className="bg-white dark:bg-gray-800 rounded-[40px] h-64 animate-pulse"></div>
                                 ))}
                             </div>
                         ) : appliedContests.length === 0 ? (
-                            <div className="bg-white/50 border border-dashed border-gray-200 rounded-[40px] py-16 text-center">
+                            <div className="bg-white/ dark:bg-gray-800/ border border-dashed border-gray-200 dark:border-gray-700 rounded-[40px] py-16 text-center">
                                 <p className="text-gray-400 font-bold">No active applications found.</p>
                                 <button onClick={() => navigate('/student/contests')} className="mt-4 text-[#8cc63f] font-black text-xs uppercase tracking-widest hover:underline">Explore Contests</button>
                             </div>
@@ -160,16 +160,16 @@ const StudentSubmission = () => {
 
                     {/* ── PAST SUBMISSIONS ────────────────────────────────── */}
                     <div className="mb-12">
-                        <h2 className="text-2xl font-black text-slate-800 mb-8">Past Submissions</h2>
+                        <h2 className="text-2xl font-black text-slate-800 dark:text-gray-100 mb-8">Past Submissions</h2>
                         
                         {loading ? (
                             <div className="space-y-4">
                                 {[1, 2].map(i => (
-                                    <div key={i} className="bg-white rounded-[32px] h-32 animate-pulse"></div>
+                                    <div key={i} className="bg-white dark:bg-gray-800 rounded-[32px] h-32 animate-pulse"></div>
                                 ))}
                             </div>
                         ) : pastSubmissions.length === 0 ? (
-                            <div className="text-center py-12 bg-white/30 rounded-[32px] border border-dashed border-gray-200">
+                            <div className="text-center py-12 bg-white/ dark:bg-gray-800/ rounded-[32px] border border-dashed border-gray-200 dark:border-gray-700">
                                 <p className="text-gray-400 font-bold">No past submissions found.</p>
                             </div>
                         ) : (
@@ -188,7 +188,7 @@ const StudentSubmission = () => {
                                                 {sub.icon}
                                             </div>
                                             <div>
-                                                <h3 className="text-sm font-black text-slate-800 mb-0.5">{sub.name}</h3>
+                                                <h3 className="text-sm font-black text-slate-800 dark:text-gray-100 mb-0.5">{sub.name}</h3>
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{sub.date}</span>
                                                     {sub.teamName && (
@@ -215,7 +215,7 @@ const StudentSubmission = () => {
                                                 <div className="flex flex-wrap items-center gap-3">
                                                     <div className="bg-[#8cc63f]/10 px-4 py-2 rounded-xl flex items-center gap-2">
                                                         <span className="text-[10px] font-black text-[#5c8a14] uppercase">SCORE:</span>
-                                                        <span className="text-sm font-black text-slate-800">{sub.score || 0}</span>
+                                                        <span className="text-sm font-black text-slate-800 dark:text-gray-100">{sub.score || 0}</span>
                                                     </div>
                                                     {sub.feedback && (
                                                         <div className="relative">
@@ -275,28 +275,28 @@ const StudentSubmission = () => {
                     <div className="absolute inset-0 bg-black/10 backdrop-blur-sm pointer-events-auto" />
                     
                     <div 
-                        className="relative mt-20 mr-4 w-full max-w-sm bg-white rounded-3xl shadow-2xl border-4 border-[#fbc111] overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-auto"
+                        className="relative mt-20 mr-4 w-full max-w-sm bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border-4 border-[#fbc111] overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div className="bg-[#fbc111] px-6 py-4 flex justify-between items-center">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-black text-[#8cc63f]">
+                                <div className="w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center font-black text-[#8cc63f]">
                                     FE
                                 </div>
-                                <span className="font-black text-slate-800 uppercase tracking-tighter">Evaluator Feedback</span>
+                                <span className="font-black text-slate-800 dark:text-gray-100 uppercase tracking-tighter">Evaluator Feedback</span>
                             </div>
                             <button 
                                 onClick={() => setActiveFeedbackId(null)}
                                 className="p-2 hover:bg-black/5 rounded-full transition-colors"
                             >
-                                <FiX className="text-slate-800" size={20} />
+                                <FiX className="text-slate-800 dark:text-gray-100" size={20} />
                             </button>
                         </div>
 
                         {/* Message Body (SMS Style) */}
-                        <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4 bg-slate-50">
-                            <div className="bg-white p-4 rounded-2xl rounded-tr-none shadow-sm border border-slate-100 relative">
+                        <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4 bg-slate-50 dark:bg-gray-800">
+                            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl rounded-tr-none shadow-sm border border-slate-100 dark:border-gray-700 relative">
                                 <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap font-medium">
                                     {pastSubmissions.find(s => s.id === activeFeedbackId)?.feedback}
                                 </p>

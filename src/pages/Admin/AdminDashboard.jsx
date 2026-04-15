@@ -6,22 +6,54 @@
 // Monthly/Weekly toggle ache chart er view change korar jonno.
 // ============================================================
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import StatCard from '../../components/Admin/StatCard';
 import EnrollmentChart from '../../components/Admin/EnrollmentChart';
 import RecentContestsTable from '../../components/Admin/RecentContestsTable';
-import { 
-  LaunchCard, 
-  RecentActivityCard, 
-  SkillTrajectory, 
-  UpcomingContestCard 
+import ContestListModal from '../../components/Admin/ContestListModal';
+import {
+  LaunchCard,
+  RecentActivityCard,
+  SkillTrajectory,
+  UpcomingContestCard
 } from '../../components/Admin/SidebarContainers';
+import { useNavigate } from 'react-router-dom';
 import { useAdminDashboard } from '../../context/AdminDashboardContext';
 
 const AdminDashboard = () => {
-  const { stats } = useAdminDashboard();
-  const [activeToggle, setActiveToggle] = React.useState('Monthly');
+  const navigate = useNavigate();
+  const { stats, fetchAllContests } = useAdminDashboard();
+  const [activeToggle, setActiveToggle] = useState('Monthly');
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalContests, setModalContests] = useState([]);
+  const [modalLoading, setModalLoading] = useState(false);
+
+  const handleCardClick = async (type) => {
+    // Only handle contest related stats
+    if (!type.includes('Contest')) return;
+
+    setModalTitle(type);
+    setIsModalOpen(true);
+    setModalLoading(true);
+
+    const all = await fetchAllContests();
+    let filtered = [];
+
+    if (type.includes('Upcoming')) {
+      filtered = all.filter(c => c.status === 'UPCOMING');
+    } else if (type.includes('Active')) {
+      filtered = all.filter(c => c.status === 'ONGOING');
+    } else if (type.includes('Completed')) {
+      filtered = all.filter(c => c.status === 'COMPLETED');
+    }
+
+    setModalContests(filtered);
+    setModalLoading(false);
+  };
 
   return (
     <AdminLayout>
@@ -29,7 +61,7 @@ const AdminDashboard = () => {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-0">
           <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none uppercase">
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-none uppercase">
               Executive Overview
             </h1>
             <p className="text-gray-400 font-bold text-sm lg:text-base opacity-80 uppercase tracking-tighter">
@@ -41,11 +73,10 @@ const AdminDashboard = () => {
               <button
                 key={mode}
                 onClick={() => setActiveToggle(mode)}
-                className={`flex-1 sm:flex-none px-6 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all rounded-xl ${
-                  activeToggle === mode 
-                    ? 'bg-white text-[#8cc63f] shadow-md transform scale-105' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
+                className={`flex-1 sm:flex-none px-6 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all rounded-xl ${activeToggle === mode
+                  ? 'bg-white dark:bg-gray-800 text-[#8cc63f] shadow-md transform scale-105'
+                  : 'text-gray-400 hover:text-gray-600'
+                  }`}
               >
                 {mode}
               </button>
@@ -56,7 +87,14 @@ const AdminDashboard = () => {
         {/* Stats Grid — 4 cards in one row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {stats.map((stat, idx) => (
-            <StatCard key={idx} {...stat} showTrend={false} />
+            <StatCard
+              key={idx}
+              {...stat}
+              showTrend={false}
+              onClick={['Active Contests', 'Upcoming Contests', 'Completed Contests'].includes(stat.title) 
+                ? () => handleCardClick(stat.title) 
+                : undefined}
+            />
           ))}
         </div>
 
@@ -80,13 +118,22 @@ const AdminDashboard = () => {
 
           {/* New Bottom Region: Upcoming Contest & Skill Trajectory (Equal width) */}
           <div className="col-span-12 xl:col-span-6">
-            <UpcomingContestCard />
+            <UpcomingContestCard onViewAll={() => handleCardClick('Upcoming Contests')} />
           </div>
           <div className="col-span-12 xl:col-span-6 h-full">
             <SkillTrajectory />
           </div>
         </div>
       </div>
+
+      {/* Report Modal */}
+      <ContestListModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={modalTitle}
+        contests={modalContests}
+        loading={modalLoading}
+      />
     </AdminLayout>
   );
 };

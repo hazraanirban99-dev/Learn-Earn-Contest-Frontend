@@ -19,7 +19,7 @@ const Register = () => {
       {/* Main Content - takes remaining space */}
       <main className="flex-1 flex items-center justify-center pt-28 md:pt-32 px-4 pb-6 md:pb-10 lg:pb-14">
         <PageTransition className="flex items-center justify-center w-full">
-          <div className="w-full max-w-[1200px] flex flex-col lg:flex-row bg-white font-sans text-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
+          <div className="w-full max-w-[1200px] flex flex-col lg:flex-row bg-white dark:bg-gray-800 font-sans text-gray-800 dark:text-gray-200 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
           
             {/* Left Panel */}
             <div className="flex flex-1 bg-linear-to-b from-[#6ca518] to-[#467008] p-8 md:p-12 lg:p-16 text-white flex-col justify-between">
@@ -36,7 +36,7 @@ const Register = () => {
 
                   <div className="space-y-6 flex flex-col items-center lg:items-start text-left">
                     <div className="flex items-start gap-4">
-                      <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+                      <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/ dark:bg-gray-800/ text-[#fbc111] flex items-center justify-center shrink-0">
                         <FiCheckCircle size={20} />
                       </div>
                       <div className="pt-0.5">
@@ -45,7 +45,7 @@ const Register = () => {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/10 text-[#fbc111] flex items-center justify-center shrink-0">
+                      <div className="w-10.5 h-10.5 rounded-xl border border-white/20 bg-white/ dark:bg-gray-800/ text-[#fbc111] flex items-center justify-center shrink-0">
                         <FiStar size={20} />
                       </div>
                       <div className="pt-0.5">
@@ -58,7 +58,7 @@ const Register = () => {
               </div>
 
               <div className="flex flex-col items-center lg:items-start mt-6 lg:mt-0">
-                <div className="h-px w-full bg-white/20 mb-6 max-w-sm"></div>
+                <div className="h-px w-full bg-white/ dark:bg-gray-800/ mb-6 max-w-sm"></div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                   <div className="flex -space-x-3">
                     <img src="https://i.pravatar.cc/100?img=11" alt="Scholar" className="w-10 h-10 rounded-full border-2 border-[#4a770a]" />
@@ -73,7 +73,7 @@ const Register = () => {
             </div>
 
             {/* Right Panel - Auth Form */}
-            <div className="flex-1 p-6 md:p-10 lg:py-12 lg:px-16 w-full lg:w-auto flex flex-col items-center justify-center bg-[#e5faa7] lg:bg-white transition-colors duration-300">
+            <div className="flex-1 p-6 md:p-10 lg:py-12 lg:px-16 w-full lg:w-auto flex flex-col items-center justify-center bg-[#e5faa7] lg:bg-white dark:bg-gray-800 transition-colors duration-300">
               <AuthForm type="register" />
             </div>
           

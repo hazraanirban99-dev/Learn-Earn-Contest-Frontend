@@ -156,7 +156,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all hover:bg-white hover:shadow-sm"
+              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-white dark:bg-gray-800 hover:shadow-sm"
             >
               {years.map(y => <option key={y}>{y}</option>)}
             </select>
@@ -169,7 +169,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all hover:bg-white hover:shadow-sm"
+              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-white dark:bg-gray-800 hover:shadow-sm"
             >
               {months.map(m => <option key={m}>{m}</option>)}
             </select>
@@ -182,7 +182,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedDomain}
               onChange={(e) => setSelectedDomain(e.target.value)}
-              className="w-full bg-[#fcf3d9]/50 border-2 border-transparent hover:border-[#fbc111]/30 focus:border-[#fbc111]/50 focus:bg-[#fcf3d9]/80 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm"
+              className="w-full bg-[#fcf3d9]/50 border-2 border-transparent hover:border-[#fbc111]/30 focus:border-[#fbc111]/50 focus:bg-[#fcf3d9]/80 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all shadow-sm"
             >
               <option value="ALL">All Domains</option>
               <option value="MERN">MERN</option>
@@ -201,7 +201,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedContest}
               onChange={(e) => setSelectedContest(e.target.value)}
-              className="w-full bg-white border-2 border-gray-100 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
+              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
             >
               <option value="" disabled>
                 {filteredContests.length === 0 ? 'No contests match this selection' : 'Select a contest'}
@@ -221,7 +221,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
               <select 
                 value={selectedParticipant}
                 onChange={(e) => setSelectedParticipant(e.target.value)}
-                className="w-full bg-white border-2 border-gray-100 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
+                className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all shadow-sm focus:border-[#8cc63f]/40"
               >
                 <option value="" disabled>
                   {availableSubmissions.length === 0 ? 'No participants available' : 'Select a candidate'}

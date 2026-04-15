@@ -34,22 +34,22 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
     fetchData();
   }, [view, user]);
 
-  const maxVal = chartData.length > 0 ? Math.max(...chartData.map(d => d.value), 1) : 1;
+  const maxVal = chartData.length > 0 ? Math.max(...chartData.flatMap(d => [d.value, d.contestValue || 0]), 1) : 1;
 
   return (
-    <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-gray-100 flex flex-col gap-8 relative h-full transition-all duration-500 hover:shadow-xl hover:border-[#8cc63f]/20">
+    <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-8 relative h-full transition-all duration-500 hover:shadow-xl hover:border-[#8cc63f]/20">
       <div className="flex justify-between items-start">
         <div className="space-y-1">
-          <h3 className="text-[18px] lg:text-[22px] font-black text-slate-800 tracking-tight uppercase leading-none">
-            Enrollment Dynamics
+          <h3 className="text-[18px] lg:text-[22px] font-black text-slate-800 dark:text-gray-100 tracking-tight uppercase leading-none">
+            Enrollment & Contest Dynamics
           </h3>
           <p className="text-gray-400 text-xs lg:text-sm font-black opacity-80 uppercase tracking-tighter">
-            Student registration flow ({view})
+            Students vs Contests Flow ({view})
           </p>
         </div>
         <button 
           onClick={() => navigate('/admin/users')}
-          className="p-2.5 bg-gray-50 rounded-xl text-gray-400 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 transition-all border border-gray-100"
+          className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-xl text-gray-400 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 transition-all border border-gray-100 dark:border-gray-700"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h.01M12 12h.01M19 12h.01" />
@@ -64,32 +64,56 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
       ) : (
         <>
           <div className="flex-1 flex flex-col min-h-0 overflow-x-auto pb-6 custom-scrollbar">
-            <div className="min-w-[580px] flex-1 flex flex-col gap-8">
-              <div className="relative h-[240px] w-full flex items-end justify-between px-2 gap-2 sm:gap-3 lg:gap-4 border-b border-gray-100/50 pt-10">
+            <div className="min-w-[1100px] flex-1 flex flex-col gap-8">
+              <div className="relative h-[240px] w-full flex items-end justify-between px-2 gap-4 sm:gap-6 lg:gap-10 border-b border-gray-100/50 pt-10">
                 {chartData.map((item, index) => {
-                  const heightPct = maxVal > 0 ? Math.max((item.value / maxVal) * 100, item.value > 0 ? 5 : 2.5) : 2.5;
+                  const studentHeight = maxVal > 0 ? Math.max((item.value / maxVal) * 100, item.value > 0 ? 5 : 2.5) : 2.5;
+                  const contestHeight = maxVal > 0 ? Math.max(((item.contestValue || 0) / maxVal) * 100, (item.contestValue || 0) > 0 ? 5 : 2.5) : 2.5;
+
                   return (
                     <div 
                       key={index} 
-                      className="flex-1 h-full relative flex flex-col justify-end group cursor-pointer touch-manipulation z-10"
+                      className="flex-1 h-full relative flex items-end justify-center gap-1 sm:gap-1.5 lg:gap-2 z-10"
                     >
-                      {/* Tooltip/Number - Now in the MIDDLE of the bar hit area */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-300 opacity-0 group-hover:opacity-100 pointer-events-none scale-75 group-hover:scale-110">
-                        <div className="bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-2 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 flex flex-col items-center leading-none">
-                          <span className="text-[#fbc111] text-lg">{item.value}</span>
-                          <span className="uppercase tracking-[0.2em] text-[7px] mt-1">Students</span>
+                      {/* --- Student Bar --- */}
+                      <div className="flex-1 h-full relative flex flex-col justify-end group/student cursor-pointer">
+                        {/* Tooltip */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-300 opacity-0 group-hover/student:opacity-100 pointer-events-none scale-75 group-hover/student:scale-110">
+                          <div className="bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-2 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 flex flex-col items-center leading-none">
+                            <span className="text-[#fbc111] text-lg">{item.value}</span>
+                            <span className="uppercase tracking-[0.2em] text-[7px] mt-1">Students</span>
+                          </div>
                         </div>
+                        {/* the bar */}
+                        <div
+                          className="relative w-full rounded-t-lg lg:rounded-t-xl transition-all duration-300 ease-out origin-bottom shadow-sm group-hover/student:scale-y-110 group-hover/student:!bg-[#fbc111] group-hover/student:!bg-none group-hover/student:shadow-[0_15px_35px_rgba(251,193,17,0.45)]"
+                          style={{
+                            height: `${studentHeight}%`,
+                            backgroundColor: '#a855f7',
+                            backgroundImage: 'linear-gradient(to top, #a855f7, #c084fc)'
+                          }}
+                        />
                       </div>
 
-                      {/* Bar */}
-                      <div
-                        className="relative w-full rounded-t-xl transition-all duration-300 ease-out origin-bottom shadow-sm group-hover:scale-y-110 group-hover:!bg-[#fbc111] group-hover:!bg-none group-hover:shadow-[0_15px_35px_rgba(251,193,17,0.45)]"
-                        style={{
-                          height: `${heightPct}%`,
-                          backgroundColor: '#a855f7',
-                          backgroundImage: 'linear-gradient(to top, #a855f7, #c084fc)'
-                        }}
-                      />
+                      {/* --- Contest Bar --- */}
+                      <div className="flex-1 h-full relative flex flex-col justify-end group/contest cursor-pointer">
+                        {/* Tooltip */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-300 opacity-0 group-hover/contest:opacity-100 pointer-events-none scale-75 group-hover/contest:scale-110">
+                          <div className="bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-2 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 flex flex-col items-center leading-none">
+                            <span className="text-[#3b82f6] text-lg">{item.contestValue || 0}</span>
+                            <span className="uppercase tracking-[0.2em] text-[7px] mt-1">Contests</span>
+                          </div>
+                        </div>
+                        {/* the bar */}
+                        <div
+                          className="relative w-full rounded-t-lg lg:rounded-t-xl transition-all duration-300 ease-out origin-bottom shadow-sm group-hover/contest:scale-y-110 group-hover/contest:!bg-[#8cc63f] group-hover/contest:!bg-none group-hover/contest:shadow-[0_15px_35px_rgba(140,198,63,0.45)]"
+                          style={{
+                            height: `${contestHeight}%`,
+                            backgroundColor: '#60a5fa',
+                            backgroundImage: 'linear-gradient(to top, #3b82f6, #60a5fa)'
+                          }}
+                        />
+                      </div>
                     </div>
                   );
                 })}

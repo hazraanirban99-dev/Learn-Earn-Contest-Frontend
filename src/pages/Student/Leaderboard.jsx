@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FiAward, FiArrowLeft, FiUser, FiUsers, FiStar, FiRefreshCw } from 'react-icons/fi';
-import UserNavbar from '../../components/Navbar/UserNavbar';
+import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
@@ -113,7 +113,7 @@ const Leaderboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f8faf2] flex items-center justify-center">
+            <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-16 h-16 border-4 border-[#8cc63f]/20 border-t-[#8cc63f] rounded-full animate-spin" />
                     <p className="text-[#8cc63f] font-black text-xs uppercase tracking-widest">Loading Leaderboard...</p>
@@ -126,8 +126,8 @@ const Leaderboard = () => {
     const rest = leaderboard.slice(3);
 
     return (
-        <div className="min-h-screen bg-[#f8faf2] selection:bg-[#8cc63f]/20">
-            <UserNavbar />
+        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 selection:bg-[#8cc63f]/20 pt-20">
+            <Navbar />
 
             <PageTransition>
                 <section className="max-w-6xl mx-auto px-6 py-12 lg:py-20">
@@ -141,25 +141,25 @@ const Leaderboard = () => {
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                             <div>
                                 <span className="text-[#fbc111] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Scholastic Atelier</span>
-                                <h1 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter leading-tight">
+                                <h1 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-gray-100 tracking-tighter leading-tight">
                                     {toTitleCase(contest?.title || 'Contest')} <br />
                                     <span className="text-[#8cc63f]">Leaderboard</span>
                                 </h1>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="bg-white px-6 py-4 rounded-[24px] shadow-sm border border-gray-100 flex items-center gap-3">
+                                <div className="bg-white dark:bg-gray-800 px-6 py-4 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
                                     <div className="p-3 bg-emerald-50 rounded-xl">
                                         <FiAward className="text-[#8cc63f]" size={22} />
                                     </div>
                                     <div>
                                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Reviewed</p>
-                                        <p className="text-2xl font-black text-slate-800">{leaderboard.length}</p>
+                                        <p className="text-2xl font-black text-slate-800 dark:text-gray-100">{leaderboard.length}</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => fetchLeaderboard(true)}
                                     disabled={refreshing}
-                                    className="p-4 bg-white rounded-[20px] border border-gray-100 shadow-sm hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 transition-all text-gray-400 hover:text-[#8cc63f] disabled:opacity-50"
+                                    className="p-4 bg-white dark:bg-gray-800 rounded-[20px] border border-gray-100 dark:border-gray-700 shadow-sm hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 transition-all text-gray-400 hover:text-[#8cc63f] disabled:opacity-50"
                                 >
                                     <FiRefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
                                 </button>
@@ -168,11 +168,11 @@ const Leaderboard = () => {
                     </div>
 
                     {leaderboard.length === 0 ? (
-                        <div className="bg-white rounded-[40px] py-24 text-center border border-dashed border-gray-200">
+                        <div className="bg-white dark:bg-gray-800 rounded-[40px] py-24 text-center border border-dashed border-gray-200 dark:border-gray-700">
                             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
                                 <FiAward className="text-slate-300" size={36} />
                             </div>
-                            <h3 className="text-slate-900 font-black text-xl mb-2">No Results Yet</h3>
+                            <h3 className="text-slate-900 dark:text-gray-100 font-black text-xl mb-2">No Results Yet</h3>
                             <p className="text-gray-400 font-medium">The leaderboard will appear once the admin reviews submissions.</p>
                         </div>
                     ) : (
@@ -186,7 +186,7 @@ const Leaderboard = () => {
                                         return (
                                             <div
                                                 key={item._id}
-                                                className={`relative bg-white p-7 rounded-[40px] border-2 ${cfg.border} transition-all hover:shadow-2xl hover:-translate-y-2 overflow-hidden shadow-lg ${cfg.glow} ${cfg.scale}`}
+                                                className={`relative bg-white dark:bg-gray-800 p-7 rounded-[40px] border-2 ${cfg.border} transition-all hover:shadow-2xl hover:-translate-y-2 overflow-hidden shadow-lg ${cfg.glow} ${cfg.scale}`}
                                             >
                                                 {/* Rank Crown */}
                                                 <div className={`absolute top-0 right-0 px-5 py-2.5 rounded-bl-[30px] font-black text-[11px] uppercase tracking-widest text-white ${cfg.badge}`}>
@@ -195,7 +195,7 @@ const Leaderboard = () => {
 
                                                 <div className="flex flex-col items-center text-center pt-4">
                                                     <Avatar src={info.avatar} name={info.avatarName} size="lg" />
-                                                    <h3 className="text-lg font-black text-slate-900 mt-4 mb-1 leading-tight">{info.displayName}</h3>
+                                                    <h3 className="text-lg font-black text-slate-900 dark:text-gray-100 mt-4 mb-1 leading-tight">{info.displayName}</h3>
 
                                                     {info.isTeam ? (
                                                         <div className="flex flex-wrap justify-center gap-1 mb-3">
@@ -229,15 +229,15 @@ const Leaderboard = () => {
                             )}
 
                             {/* ── FULL STANDINGS TABLE ──────────── */}
-                            <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
-                                <div className="px-8 py-6 border-b border-gray-50 bg-slate-50/50 flex items-center justify-between">
-                                    <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight">Full Standings</h2>
+                            <div className="bg-white dark:bg-gray-800 rounded-[40px] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+                                <div className="px-8 py-6 border-b border-gray-50 dark:border-gray-700 bg-slate-50/ dark:bg-gray-800/ flex items-center justify-between">
+                                    <h2 className="text-lg font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">Full Standings</h2>
                                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{leaderboard.length} entries</span>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left min-w-[600px]">
                                         <thead>
-                                            <tr className="border-b border-gray-50">
+                                            <tr className="border-b border-gray-50 dark:border-gray-700">
                                                 <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-16">Rank</th>
                                                 <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Participant</th>
                                                 <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Team / Solo</th>
@@ -248,7 +248,7 @@ const Leaderboard = () => {
                                             {leaderboard.map((item, index) => {
                                                 const info = getParticipantInfo(item);
                                                 return (
-                                                    <tr key={item._id} className="hover:bg-slate-50/80 transition-colors group">
+                                                    <tr key={item._id} className="hover:bg-slate-50/ dark:bg-gray-800/ transition-colors group">
                                                         {/* Rank */}
                                                         <td className="px-8 py-5">
                                                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm ${
@@ -266,7 +266,7 @@ const Leaderboard = () => {
                                                             <div className="flex items-center gap-3">
                                                                 <Avatar src={info.avatar} name={info.avatarName} />
                                                                 <div>
-                                                                    <p className="font-black text-slate-800 text-sm group-hover:text-[#8cc63f] transition-colors">
+                                                                    <p className="font-black text-slate-800 dark:text-gray-100 text-sm group-hover:text-[#8cc63f] transition-colors">
                                                                         {info.displayName}
                                                                     </p>
                                                                     <div className="flex items-center gap-1 mt-0.5">
@@ -293,7 +293,7 @@ const Leaderboard = () => {
                                                                     ))}
                                                                 </div>
                                                             ) : (
-                                                                <span className="px-3 py-1.5 bg-slate-50 rounded-lg text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-100">
+                                                                <span className="px-3 py-1.5 bg-slate-50 dark:bg-gray-800 rounded-lg text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-100 dark:border-gray-700">
                                                                     {info.domain || 'General'}
                                                                 </span>
                                                             )}
@@ -301,7 +301,7 @@ const Leaderboard = () => {
 
                                                         {/* Score */}
                                                         <td className="px-8 py-5 text-center">
-                                                            <span className="text-2xl font-black text-slate-800">{item.score || 0}</span>
+                                                            <span className="text-2xl font-black text-slate-800 dark:text-gray-100">{item.score || 0}</span>
                                                         </td>
                                                     </tr>
                                                 );

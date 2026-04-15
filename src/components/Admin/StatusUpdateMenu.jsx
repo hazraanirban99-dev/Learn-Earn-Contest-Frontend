@@ -15,7 +15,7 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
   const statuses = [
     { id: 'UPCOMING', label: 'Mark as Upcoming', icon: FiClock, color: 'text-amber-500', bg: 'hover:bg-amber-50' },
     { id: 'ONGOING', label: 'Mark as Ongoing', icon: FiPlay, color: 'text-[#8cc63f]', bg: 'hover:bg-green-50' },
-    { id: 'COMPLETED', label: 'Mark as Completed', icon: FiCheckCircle, color: 'text-gray-500', bg: 'hover:bg-gray-50' },
+    { id: 'COMPLETED', label: 'Mark as Completed', icon: FiCheckCircle, color: 'text-gray-500', bg: 'hover:bg-gray-50 dark:bg-gray-800' },
   ];
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 w-max bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-right-2 duration-300 flex items-center gap-1 px-2">
+        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 w-max bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-right-2 duration-300 flex items-center gap-1 px-2">
           {statuses.map((status) => (
             <button
               key={status.id}

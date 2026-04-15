@@ -57,7 +57,7 @@ const Logo = React.memo(({
         <div className="flex flex-col">
           {showText && (
             <h2 className={`${currentSize.text} font-black tracking-tight leading-none uppercase transition-colors ${
-              variant === 'light' ? 'text-white' : 'text-slate-900 group-hover:text-[#8cc63f]'
+              variant === 'light' ? 'text-white' : 'text-slate-900 dark:text-gray-100 group-hover:text-[#8cc63f]'
             }`}>
               DESUN ACADEMY
             </h2>

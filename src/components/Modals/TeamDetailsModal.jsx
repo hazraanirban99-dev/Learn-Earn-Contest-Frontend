@@ -128,22 +128,22 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                 
                 {/* Header */}
-                <div className="p-4 md:p-6 border-b border-gray-50 flex justify-between items-center bg-[#f8faf2]">
+                <div className="p-4 md:p-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-[#f8faf2] dark:bg-gray-900">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-[#8cc63f] flex items-center justify-center text-white shadow-lg shadow-[#8cc63f]/20 shrink-0">
                             <FiUsers size={18} />
                         </div>
                         <div className="min-w-0">
-                            <h3 className="text-[11px] md:text-sm font-black text-slate-800 uppercase tracking-widest leading-none mb-1 truncate">Squad Directory</h3>
+                            <h3 className="text-[11px] md:text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest leading-none mb-1 truncate">Squad Directory</h3>
                             <p className="text-[9px] md:text-[10px] font-bold text-gray-400 truncate max-w-[150px] md:max-w-[200px]">{contestTitle}</p>
                         </div>
                     </div>
                     <button 
                         onClick={onClose}
-                        className="p-1.5 md:p-2 text-gray-400 hover:text-slate-800 hover:bg-gray-100 rounded-full transition-all shrink-0"
+                        className="p-1.5 md:p-2 text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-gray-100 rounded-full transition-all shrink-0"
                     >
                         <FiX size={18} />
                     </button>
@@ -162,7 +162,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                 <h4 className={`text-[9px] font-black uppercase tracking-widest mb-1 ${team.participationType === 'Solo' ? 'text-[#d4a017]' : 'text-[#8cc63f]'}`}>
                                     {team.participationType === 'Solo' ? 'Deployment Type' : 'Squad Callsign'}
                                 </h4>
-                                <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none">
+                                <h2 className="text-2xl font-black text-slate-800 dark:text-gray-100 tracking-tight leading-none">
                                     {team.participationType === 'Solo' ? 'Solo Mission' : team.name}
                                 </h2>
                             </div>
@@ -174,7 +174,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                 </p>
                                 
                                 {/* Leader/Self */}
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-white rounded-2xl border border-gray-100 shadow-sm gap-3">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm gap-3">
                                     <div className="flex items-center gap-3 w-full">
                                         <div className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-[10px] font-black text-white relative shrink-0 ${team.participationType === 'Solo' ? 'bg-[#fbc111]' : 'bg-slate-800'}`}>
                                             {team.leader?.name?.[0] || '?'}
@@ -185,7 +185,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                             )}
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[11px] md:text-xs font-black text-slate-800 truncate">{team.leader?.name}</p>
+                                            <p className="text-[11px] md:text-xs font-black text-slate-800 dark:text-gray-100 truncate">{team.leader?.name}</p>
                                             <p className="text-[8px] md:text-[9px] font-black text-[#8cc63f] uppercase tracking-tighter">
                                                 {team.participationType === 'Solo' ? 'Participant' : 'Leader / Captain'}
                                             </p>
@@ -201,13 +201,13 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
 
                                 {/* Others (Only if Team) */}
                                 {team.participationType === 'Team' && team.members?.map((m, idx) => (
-                                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-white rounded-2xl border border-gray-100 shadow-sm gap-3 animate-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
+                                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm gap-3 animate-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
                                         <div className="flex items-center gap-3 w-full">
                                             <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500 shrink-0">
                                                 {m.user?.name?.[0] || '?'}
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-[11px] md:text-xs font-black text-slate-800 truncate">{m.user?.name}</p>
+                                                <p className="text-[11px] md:text-xs font-black text-slate-800 dark:text-gray-100 truncate">{m.user?.name}</p>
                                                 <p className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Teammate / Scholar</p>
                                             </div>
                                             <span className={`sm:hidden text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : 'text-amber-500 bg-amber-50'}`}>
@@ -239,7 +239,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                     </button>
                                 </div>
                             ) : isAddingMember ? (
-                                <div className="space-y-4 pt-4 border-t border-gray-100 animate-in slide-in-from-bottom-2 duration-300">
+                                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-700 animate-in slide-in-from-bottom-2 duration-300">
                                     <div>
                                         <label className="text-[10px] font-black text-[#8cc63f] uppercase tracking-widest ml-1 mb-2 block">Search for Scholars</label>
                                         <div className="relative">
@@ -251,7 +251,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                                 placeholder="Search by name or email..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-11 pr-4 py-3.5 text-xs font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] outline-none transition-all"
+                                                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl pl-11 pr-4 py-3.5 text-xs font-bold text-slate-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] outline-none transition-all"
                                             />
                                             {isSearching && (
                                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -262,15 +262,15 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                     </div>
                                     
                                     {searchResults.length > 0 && (
-                                        <div className="max-h-40 overflow-y-auto rounded-xl border border-gray-100 divide-y divide-gray-50 bg-white shadow-inner">
+                                        <div className="max-h-40 overflow-y-auto rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-50 bg-white dark:bg-gray-800 shadow-inner">
                                             {searchResults.map(m => (
-                                                <div key={m._id} className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors">
+                                                <div key={m._id} className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 hover:bg-slate-50 dark:bg-gray-800 transition-colors">
                                                     <div className="flex items-center gap-3 w-full min-w-0">
-                                                        <div className="w-8 h-8 rounded-full bg-[#fbc111] flex items-center justify-center text-[10px] font-black text-slate-800 shrink-0">
+                                                        <div className="w-8 h-8 rounded-full bg-[#fbc111] flex items-center justify-center text-[10px] font-black text-slate-800 dark:text-gray-100 shrink-0">
                                                             {m.name?.[0] || '?'}
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <p className="text-[11px] md:text-xs font-black text-slate-800 truncate">{m.name}</p>
+                                                            <p className="text-[11px] md:text-xs font-black text-slate-800 dark:text-gray-100 truncate">{m.name}</p>
                                                             <p className="text-[9px] font-bold text-gray-400 font-mono truncate">{m.email}</p>
                                                         </div>
                                                     </div>
@@ -293,27 +293,27 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                                 setSearchQuery('');
                                                 setSearchResults([]);
                                             }}
-                                            className="px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 hover:bg-gray-50 transition-all"
+                                            className="px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 transition-all"
                                         >
                                             Cancel
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="space-y-4 pt-4 border-t border-gray-100 animate-in slide-in-from-bottom-2 duration-300">
+                                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-700 animate-in slide-in-from-bottom-2 duration-300">
                                     <div>
                                         <label className="text-[10px] font-black text-red-500 uppercase tracking-widest ml-1 mb-2 block">Reason for Departure</label>
                                         <textarea 
                                             placeholder="Explain why you wish to leave this squad..."
                                             value={reason}
                                             onChange={(e) => setReason(e.target.value)}
-                                            className="w-full h-24 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-[11px] md:text-xs font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all resize-none"
+                                            className="w-full h-24 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-4 text-[11px] md:text-xs font-bold text-slate-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all resize-none"
                                         />
                                     </div>
                                     <div className="flex flex-col sm:flex-row gap-3">
                                         <button 
                                             onClick={() => setIsRequestingChange(false)}
-                                            className="w-full sm:flex-1 py-3 md:py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 hover:bg-gray-50 transition-all order-2 sm:order-1"
+                                            className="w-full sm:flex-1 py-3 md:py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 transition-all order-2 sm:order-1"
                                         >
                                             Abort
                                         </button>
@@ -336,7 +336,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                     )}
                 </div>
 
-                <div className="p-4 bg-gray-50 text-center">
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 text-center">
                     <p className="text-[10px] font-bold text-gray-400">All squad modifications require administrative authorization.</p>
                 </div>
 

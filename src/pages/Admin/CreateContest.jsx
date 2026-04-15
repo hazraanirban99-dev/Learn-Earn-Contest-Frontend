@@ -96,8 +96,8 @@ const CreateContest = () => {
   return (
     <AdminLayout>
       {loading && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm transition-all duration-300">
-           <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-3xl shadow-2xl border border-[#8cc63f]/20">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/ dark:bg-gray-800/ backdrop-blur-sm transition-all duration-300">
+           <div className="flex flex-col items-center gap-4 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-[#8cc63f]/20">
               <div className="w-14 h-14 border-[5px] border-transparent border-t-[#8cc63f] border-r-[#8cc63f] border-b-[#fbc111] border-l-[#fbc111] rounded-full animate-spin shadow-lg"></div>
               <p className="text-[#8cc63f] font-black text-[11px] uppercase tracking-widest animate-pulse">Forging Contest...</p>
            </div>
@@ -112,7 +112,7 @@ const CreateContest = () => {
               <span className="text-[#8cc63f]">›</span>
               <span className="text-[#8cc63f]">NEW SCHOLASTIC CHALLENGE</span>
             </nav>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-tight">
               Craft New <span className="text-[#8cc63f]">Contest</span>
             </h1>
             <div className="border-l-4 border-[#fbc111] pl-4 sm:pl-6 py-1 bg-yellow-50/30 rounded-r-xl max-w-xl">
@@ -141,7 +141,7 @@ const CreateContest = () => {
                   value={formData.title}
                   onChange={handleInputChange}
                   placeholder="e.g., The Bauhaus Revival..."
-                  className="w-full bg-[#f8faf6]/80 border-2 border-transparent focus:border-[#8cc63f]/30 focus:bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-5 text-base sm:text-lg font-bold text-slate-800 placeholder-gray-300 outline-none transition-all shadow-sm group-hover:shadow-md"
+                  className="w-full bg-[#f8faf6]/80 border-2 border-transparent focus:border-[#8cc63f]/30 focus:bg-white dark:bg-gray-800 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 text-base sm:text-lg font-bold text-slate-800 dark:text-gray-100 placeholder-gray-300 outline-none transition-all shadow-sm group-hover:shadow-md"
                 />
               </div>
             </div>
@@ -151,8 +151,8 @@ const CreateContest = () => {
               <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 group-focus-within:text-[#8cc63f] transition-colors">
                 PROJECT DESCRIPTION
               </label>
-              <div className="bg-[#f8faf6]/50 border-2 border-transparent focus-within:border-[#8cc63f]/20 focus-within:bg-white rounded-[32px] overflow-hidden shadow-sm transition-all group-hover:shadow-md">
-                <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex flex-wrap items-center gap-4 sm:gap-6 bg-white/50 backdrop-blur-sm">
+              <div className="bg-[#f8faf6]/50 border-2 border-transparent focus-within:border-[#8cc63f]/20 focus-within:bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden shadow-sm transition-all group-hover:shadow-md">
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 dark:border-gray-700 flex flex-wrap items-center gap-4 sm:gap-6 bg-white/ dark:bg-gray-800/ backdrop-blur-sm">
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiBold size={16} strokeWidth={3} /></button>
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiItalic size={16} strokeWidth={3} /></button>
                    <button className="text-yellow-500 hover:scale-110 transition-transform"><FiList size={16} strokeWidth={3} /></button>
@@ -183,7 +183,7 @@ const CreateContest = () => {
                 />
                 <div 
                   onClick={() => thumbnailInputRef.current.click()}
-                  className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#fbc111]/40 hover:bg-[#fbc111]/5 cursor-pointer h-full relative overflow-hidden group"
+                  className="border-4 border-dashed border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#fbc111]/40 hover:bg-[#fbc111]/5 cursor-pointer h-full relative overflow-hidden group"
                 >
                   {previews.thumbnail && (
                     <img src={previews.thumbnail} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-10 transition-opacity" />
@@ -192,7 +192,7 @@ const CreateContest = () => {
                     <FiUploadCloud size={20} className="text-yellow-400" />
                   </div>
                   <div className="text-center relative z-10">
-                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                    <p className="text-xs sm:text-sm font-black text-slate-900 dark:text-gray-100 uppercase tracking-tight">
                       {previews.thumbnail ? 'Change Thumbnail' : 'Upload Thumbnail'}
                     </p>
                     <p className="text-gray-400 font-bold text-[9px] sm:text-[10px]">16:9 Aspect Ratio / Max 5MB</p>
@@ -213,13 +213,13 @@ const CreateContest = () => {
                 />
                 <div 
                   onClick={() => syllabusInputRef.current.click()}
-                  className="border-4 border-dashed border-gray-100 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 cursor-pointer h-full group"
+                  className="border-4 border-dashed border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-4 transition-all hover:border-[#8cc63f]/30 hover:bg-[#8cc63f]/5 cursor-pointer h-full group"
                 >
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                     <FiUploadCloud size={20} className="text-[#8cc63f]" />
                   </div>
                   <div className="text-center">
-                    <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                    <p className="text-xs sm:text-sm font-black text-slate-900 dark:text-gray-100 uppercase tracking-tight">
                       {previews.syllabusName || 'Upload Syllabus PDF'}
                     </p>
                     <p className="text-gray-400 font-bold text-[9px] sm:text-[10px]">PDF format / Max 25MB</p>
@@ -250,7 +250,7 @@ const CreateContest = () => {
                       className={`flex-1 flex items-center justify-center gap-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
                         projectType === type.id 
                           ? 'bg-[#8cc63f] text-white shadow-lg scale-[1.02]' 
-                          : 'text-gray-400 hover:text-slate-800 hover:bg-white/50'
+                          : 'text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-white/ dark:bg-gray-800/'
                       }`}
                     >
                       <type.icon size={18} />
@@ -260,17 +260,17 @@ const CreateContest = () => {
                 </div>
 
                 <div className={`transition-all duration-500 overflow-hidden ${projectType === 'Team' ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white border-2 border-[#8cc63f]/10 rounded-[20px] sm:rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                  <div className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f]/10 rounded-[20px] sm:rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
                     <div className="flex flex-col px-3 sm:px-6">
                        <span className="text-[8px] sm:text-[9px] font-black text-[#8cc63f] uppercase tracking-widest block mb-1">Max Team Capacity</span>
-                       <span className="text-xl sm:text-2xl font-black text-slate-800 tabular-nums">{teamSize} Members</span>
+                       <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-gray-100 tabular-nums">{teamSize} Members</span>
                     </div>
                     
                     <div className="flex items-center gap-1 sm:gap-2 mr-1 shrink-0">
                       <button 
                         type="button"
                         onClick={() => setTeamSize(Math.max(2, teamSize - 1))}
-                        className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90 shrink-0"
+                        className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 dark:bg-gray-800 rounded-xl sm:rounded-2xl flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90 shrink-0"
                       >
                          <FiMinus size={18} strokeWidth={3} className="sm:w-5 sm:h-5" />
                       </button>
@@ -300,7 +300,7 @@ const CreateContest = () => {
                 <select 
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
-                  className="w-full bg-[#f1f8e8] border-2 border-white rounded-[20px] px-5 sm:px-6 py-4 sm:py-5 text-sm sm:text-base text-slate-800 font-black appearance-none outline-none focus:bg-white focus:border-[#8cc63f]/20 transition-all cursor-pointer shadow-sm"
+                  className="w-full bg-[#f1f8e8] border-2 border-white rounded-[20px] px-5 sm:px-6 py-4 sm:py-5 text-sm sm:text-base text-slate-800 dark:text-gray-100 font-black appearance-none outline-none focus:bg-white dark:bg-gray-800 focus:border-[#8cc63f]/20 transition-all cursor-pointer shadow-sm"
                 >
                   <option value="MERN">MERN</option>
                   <option value="UIUX">UIUX</option>
@@ -326,7 +326,7 @@ const CreateContest = () => {
                     className={`flex-1 min-w-[60px] py-3 px-2 rounded-2xl text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${
                       rigor === lvl 
                         ? 'bg-[#8cc63f] text-white shadow-lg scale-105' 
-                        : 'text-gray-500 hover:text-slate-800 hover:bg-white/50'
+                        : 'text-gray-500 hover:text-slate-800 dark:text-gray-100 hover:bg-white/ dark:bg-gray-800/'
                     }`}
                   >
                     {lvl}
@@ -336,12 +336,12 @@ const CreateContest = () => {
             </div>
 
             {/* Scholastic Window (Dates) */}
-            <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-700">
               <label className="text-[11px] font-black uppercase tracking-widest text-[#8cc63f]">
                 SCHOLASTIC WINDOW
               </label>
               <div className="space-y-4">
-                <div className="bg-white border-2 border-gray-100 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                <div className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
                   <div className="flex items-center gap-3 px-1">
                     <FiCalendar className="text-[#8cc63f]" size={16} />
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">START DATE & TIME</span>
@@ -351,10 +351,10 @@ const CreateContest = () => {
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleInputChange}
-                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 outline-none text-sm"
+                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 dark:text-gray-100 outline-none text-sm"
                   />
                 </div>
-                <div className="bg-white border-2 border-gray-100 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
+                <div className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-3xl p-4 flex flex-col gap-3 shadow-sm hover:border-[#8cc63f]/30 transition-all">
                   <div className="flex items-center gap-3 px-1">
                     <FiCalendar className="text-[#8cc63f]" size={16} />
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">END DATE & TIME</span>
@@ -364,14 +364,14 @@ const CreateContest = () => {
                     name="endDate"
                     value={formData.endDate}
                     onChange={handleInputChange}
-                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 outline-none text-sm"
+                    className="w-full bg-[#f8faf6] rounded-xl px-4 py-3 font-bold text-slate-800 dark:text-gray-100 outline-none text-sm"
                   />
                 </div>
               </div>
             </div>
 
             <div className="pt-6 sm:pt-10">
-              <div className="bg-white border-2 border-green-200 rounded-[32px] p-6 sm:p-8 space-y-6 relative overflow-hidden group shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all">
+              <div className="bg-white dark:bg-gray-800 border-2 border-green-200 rounded-[32px] p-6 sm:p-8 space-y-6 relative overflow-hidden group shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all">
                 <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-green-400/5 rounded-full blur-2xl group-hover:bg-green-400/10 transition-colors" />
                 
                 <div className="flex items-center gap-4">
@@ -394,7 +394,7 @@ const CreateContest = () => {
                         placeholder="0.00"
                         value={formData.cashPrize}
                         onChange={handleInputChange}
-                        className="w-full bg-green-50/20 border border-green-100 rounded-2xl pl-10 pr-4 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-slate-700 placeholder-green-200 outline-none focus:bg-white focus:border-green-300 transition-all shadow-sm"
+                        className="w-full bg-green-50/20 border border-green-100 rounded-2xl pl-10 pr-4 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-slate-700 placeholder-green-200 outline-none focus:bg-white dark:bg-gray-800 focus:border-green-300 transition-all shadow-sm"
                       />
                     </div>
                   </div>
@@ -410,7 +410,7 @@ const CreateContest = () => {
                             onClick={() => setFormData({...formData, expertCertificate: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
                               formData.expertCertificate === opt 
-                                ? 'bg-white text-green-600 shadow-sm' 
+                                ? 'bg-white dark:bg-gray-800 text-green-600 shadow-sm' 
                                 : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >
@@ -430,7 +430,7 @@ const CreateContest = () => {
                             onClick={() => setFormData({...formData, internshipOffer: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
                               formData.internshipOffer === opt 
-                                ? 'bg-white text-green-600 shadow-sm' 
+                                ? 'bg-white dark:bg-gray-800 text-green-600 shadow-sm' 
                                 : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >

@@ -44,9 +44,9 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
     const renderSearchResults = () => {
         if (!searchResults.length) return null;
         return (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto mt-2">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto mt-2">
                 {searchResults.map(m => (
-                    <div key={m._id} className="p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+                    <div key={m._id} className="p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-gray-50 dark:bg-gray-800 transition-colors">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#8cc63f] to-[#7ab332] text-white flex items-center justify-center font-black text-[10px] md:text-xs overflow-hidden shadow-inner shrink-0">
                                 {m.avatar?.url ? (
@@ -56,7 +56,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                 )}
                             </div>
                             <div className="min-w-0">
-                                <p className="text-xs md:text-sm font-black text-slate-800 truncate">{m.name}</p>
+                                <p className="text-xs md:text-sm font-black text-slate-800 dark:text-gray-100 truncate">{m.name}</p>
                                 <p className="text-[9px] md:text-[10px] font-bold text-gray-400 font-mono truncate">{m.email}</p>
                             </div>
                         </div>
@@ -210,7 +210,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
             ></div>
 
             {/* Modal Container */}
-            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto md:h-[min(700px,95vh)]">
+            <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95 duration-300 h-auto md:h-[min(700px,95vh)]">
 
                 {/* Left Sidebar (Dark Green Design) */}
                 <div className="hidden md:flex w-2/5 bg-[#4a7010] p-10 flex-col justify-between relative overflow-hidden">
@@ -237,20 +237,20 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                 </div>
 
                 {/* Right Form Container */}
-                <div className="w-full md:w-3/5 relative flex flex-col h-full bg-white">
+                <div className="w-full md:w-3/5 relative flex flex-col h-full bg-white dark:bg-gray-800">
 
                     {/* Fixed Header */}
                     <div className="p-6 md:p-8 lg:p-12 pb-4 shrink-0 relative">
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-slate-800 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
+                            className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-slate-800 dark:text-gray-100 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
                         >
                             <FiX size={20} className="md:hidden" />
                             <FiX size={24} className="hidden md:block" />
                         </button>
 
                         <div className="pr-8">
-                            <h2 className="text-xl md:text-2xl font-black text-slate-800 mb-1 md:mb-2">Apply for Contest</h2>
+                            <h2 className="text-xl md:text-2xl font-black text-slate-800 dark:text-gray-100 mb-1 md:mb-2">Apply for Contest</h2>
                             <p className="text-gray-500 font-medium text-[11px] md:text-sm">Fill in the details to register your participation.</p>
                         </div>
                     </div>
@@ -265,7 +265,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                         <FiUserPlus size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Individual Entry</h4>
+                                        <h4 className="text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">Individual Entry</h4>
                                         <p className="text-[11px] font-bold text-gray-400 font-sans mt-0.5">You are applying for this scholastic challenge as a solo contestant.</p>
                                     </div>
                                 </div>
@@ -296,9 +296,9 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                     <div className="flex justify-between items-center mb-6">
                                                         <div>
                                                             <h4 className="text-[10px] font-black text-[#8cc63f] uppercase tracking-[0.2em] mb-1">Your Squad</h4>
-                                                            <h3 className="text-2xl font-black text-slate-800 tracking-tight">{teamData.name}</h3>
+                                                            <h3 className="text-2xl font-black text-slate-800 dark:text-gray-100 tracking-tight">{teamData.name}</h3>
                                                         </div>
-                                                        <div className="px-4 py-2 bg-white rounded-xl border border-[#8cc63f]/20 shadow-sm text-[10px] font-black text-slate-800 uppercase tracking-widest">
+                                                        <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border border-[#8cc63f]/20 shadow-sm text-[10px] font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest">
                                                             Team Confirmed
                                                         </div>
                                                     </div>
@@ -312,7 +312,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                         </div>
                                                         
                                                         {/* Leader */}
-                                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white rounded-xl border border-gray-50 gap-3">
+                                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-50 dark:border-gray-700 gap-3">
                                                             <div className="flex items-center gap-3 w-full">
                                                                 <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-white uppercase overflow-hidden shadow-inner shrink-0">
                                                                     {teamData.leader?.avatar?.url ? (
@@ -322,7 +322,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                                     )}
                                                                 </div>
                                                                 <div className="min-w-0 flex-1">
-                                                                    <p className="text-xs font-black text-slate-800 truncate">{teamData.leader?.name}</p>
+                                                                    <p className="text-xs font-black text-slate-800 dark:text-gray-100 truncate">{teamData.leader?.name}</p>
                                                                     <p className="text-[10px] font-bold text-[#8cc63f] uppercase tracking-tighter">Leader</p>
                                                                 </div>
                                                                 <span className="sm:hidden text-[9px] font-black text-[#8cc63f] uppercase tracking-widest bg-[#8cc63f]/10 px-2 py-1 rounded">Creator</span>
@@ -332,9 +332,9 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
 
                                                         {/* Multi Members */}
                                                         {teamData.members && teamData.members.map((m, idx) => (
-                                                            <div key={m.user?._id || idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white rounded-xl border border-gray-50 gap-3">
+                                                            <div key={m.user?._id || idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-50 dark:border-gray-700 gap-3">
                                                                 <div className="flex items-center gap-3 w-full">
-                                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase overflow-hidden shadow-inner border border-gray-100 shrink-0">
+                                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase overflow-hidden shadow-inner border border-gray-100 dark:border-gray-700 shrink-0">
                                                                         {m.user?.avatar?.url ? (
                                                                             <img src={m.user.avatar.url} className="w-full h-full object-cover" alt="" />
                                                                         ) : (
@@ -342,7 +342,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                                         )}
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
-                                                                        <p className="text-xs font-black text-slate-800 truncate">{m.user?.name}</p>
+                                                                        <p className="text-xs font-black text-slate-800 dark:text-gray-100 truncate">{m.user?.name}</p>
                                                                         <p className="text-[10px] font-bold text-gray-400 font-mono italic truncate">{m.user?.email}</p>
                                                                     </div>
                                                                     <span className={`sm:hidden text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : 'text-amber-500 bg-amber-50'}`}>
@@ -359,7 +359,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
 
                                                 {/* Invite More Section (If team exists but not full) */}
                                                 {(teamData.members?.length || 0) + 1 < (contest?.maxTeamSize || 0) && (
-                                                    <div className="pt-6 border-t border-dashed border-gray-100 mt-6">
+                                                    <div className="pt-6 border-t border-dashed border-gray-100 dark:border-gray-700 mt-6">
                                                         <div className="flex items-center gap-2 mb-4 ml-1">
                                                             <div className="w-1.5 h-4 bg-[#fbc111] rounded-full" />
                                                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Invite More Teammates</label>
@@ -371,7 +371,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                                 placeholder={`Find more scholars for your squad...`}
                                                                 value={searchQuery}
                                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                                className="w-full bg-[#f8faf2] rounded-xl pl-12 pr-4 py-4 border-none outline-none text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
+                                                                className="w-full bg-[#f8faf2] dark:bg-gray-900 rounded-xl pl-12 pr-4 py-4 border-none outline-none text-sm font-bold text-slate-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
                                                             />
                                                         </div>
                                                         {renderSearchResults()}
@@ -394,7 +394,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                         placeholder="E.g. Full Stack Wizards"
                                                         value={teamName}
                                                         onChange={(e) => setTeamName(e.target.value)}
-                                                        className="w-full bg-[#f8faf2] rounded-xl px-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all font-mono"
+                                                        className="w-full bg-[#f8faf2] dark:bg-gray-900 rounded-xl px-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-[#8cc63f]/30 transition-all font-mono"
                                                     />
                                                 </div>
 
@@ -410,7 +410,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                                             placeholder={`Search for scholars...`}
                                                             value={searchQuery}
                                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                                            className="w-full bg-[#f8faf2] rounded-xl pl-10 md:pl-12 pr-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
+                                                            className="w-full bg-[#f8faf2] dark:bg-gray-900 rounded-xl pl-10 md:pl-12 pr-4 py-3 md:py-4 border-none outline-none text-xs md:text-sm font-bold text-slate-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-[#fbc111]/30 transition-all shadow-sm"
                                                         />
                                                     </div>
                                                     {renderSearchResults()}
@@ -424,14 +424,14 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 bg-white shrink-0">
+                    <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0">
                         {!isTeamContest && (
-                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] rounded-2xl cursor-pointer hover:bg-[#ecf0e6] transition-colors mb-4 md:mb-6">
+                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] dark:bg-gray-900 rounded-2xl cursor-pointer hover:bg-[#ecf0e6] transition-colors mb-4 md:mb-6">
                                 <input
                                     type="checkbox"
                                     checked={agreed}
                                     onChange={(e) => setAgreed(e.target.checked)}
-                                    className="mt-1 w-4 h-4 text-[#8cc63f] bg-white border-gray-300 rounded focus:ring-[#8cc63f] shrink-0"
+                                    className="mt-1 w-4 h-4 text-[#8cc63f] bg-white dark:bg-gray-800 border-gray-300 rounded focus:ring-[#8cc63f] shrink-0"
                                 />
                                 <span className="text-[10px] md:text-xs font-medium text-gray-600 leading-relaxed text-left">
                                     I agree to the <span className="font-bold text-[#8cc63f] underline">Contest Rules</span> and confirm that all members are currently enrolled in Desun Academy.
@@ -444,7 +444,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                             disabled={isSubmitting || (isTeamContest && (!hasChecked || (teamData && (1 + (teamData.members?.length || 0)) < contest?.maxTeamSize)))}
                             className={`w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-black text-[11px] md:text-[13px] uppercase tracking-widest transition-all flex justify-center items-center gap-2 md:gap-3 shadow-xl ${(isSubmitting || (isTeamContest && (!hasChecked || (teamData && (1 + (teamData.members?.length || 0)) < contest?.maxTeamSize))))
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
-                                    : 'bg-gradient-to-r from-[#8cc63f] to-[#fbc111] hover:brightness-105 text-slate-900 shadow-[#8cc63f]/30 active:scale-95 cursor-pointer'
+                                    : 'bg-gradient-to-r from-[#8cc63f] to-[#fbc111] hover:brightness-105 text-slate-900 dark:text-gray-100 shadow-[#8cc63f]/30 active:scale-95 cursor-pointer'
                                 }`}
                         >
                             <span className="truncate">

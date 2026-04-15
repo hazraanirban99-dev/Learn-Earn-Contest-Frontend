@@ -11,6 +11,7 @@ import Footer from './Footer/Footer';
 import Navbar from './Navbar/Navbar';
 import Logo from './Common/Logo';
 import ScrollToTop from './Common/ScrollToTop';
+import Loader from './Common/Loader';
 
 export {
   InputField,
@@ -20,5 +21,6 @@ export {
   Footer,
   Navbar,
   Logo,
-  ScrollToTop
+  ScrollToTop,
+  Loader
 };

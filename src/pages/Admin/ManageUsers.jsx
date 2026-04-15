@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useUsers } from '../../context/UserContext';
 import EditUserModal from '../../components/Admin/EditUserModal';
 import AdminLayout from '../../layouts/AdminLayout';
-import { FiSearch, FiDownload, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiShield } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiShield } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
-import { exportToCSV } from '../../utils/exportUtils';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 
 const ManageUsers = () => {
@@ -147,7 +146,7 @@ const ManageUsers = () => {
   const handleDeleteUser = React.useCallback((id) => {
     const ConfirmToast = ({ closeToast }) => (
       <div className="p-1">
-        <p className="text-sm font-black text-slate-800 mb-3 uppercase tracking-tight">Delete this participant?</p>
+        <p className="text-sm font-black text-slate-800 dark:text-gray-100 mb-3 uppercase tracking-tight">Delete this participant?</p>
         <div className="flex gap-2">
           <button
             onClick={() => {
@@ -199,18 +198,18 @@ const ManageUsers = () => {
           </div>
 
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute top-full left-0 w-full bg-white border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50">
+            <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50 dark:border-gray-700">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Most Matched Results</span>
               </div>
               {suggestions.map((s, idx) => (
                 <button
                   key={idx}
                   onMouseDown={() => handleSuggestionClick(s)}
-                  className="w-full text-left px-6 py-4 hover:bg-[#f8faea] flex items-center justify-between group border-b border-gray-50 last:border-0"
+                  className="w-full text-left px-6 py-4 hover:bg-[#f8faea] flex items-center justify-between group border-b border-gray-50 dark:border-gray-700 last:border-0"
                 >
                   <div className="flex flex-col">
-                    <span className="text-sm font-black text-slate-800 tracking-tight">{s.label}</span>
+                    <span className="text-sm font-black text-slate-800 dark:text-gray-100 tracking-tight">{s.label}</span>
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest transition-colors group-hover:text-[#5c8a14]">
                       {s.type === 'contest' ? `Filter by Contest` : `View Scholar Details`}
                     </span>
@@ -229,21 +228,13 @@ const ManageUsers = () => {
             <span className="bg-[#fcf3d9] text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
               Registry Management
             </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-[1.1]">
+            <h1 className="text-4xl lg:text-5xl font-black text-slate-800 dark:text-gray-100 tracking-tight leading-[1.1]">
               Manage Scholars & Participants
             </h1>
             <p className="text-gray-500 font-bold text-sm lg:text-base max-w-xl leading-relaxed">
               Oversee the academic collective. Review registration data, manage domain assignments, and ensure participant integrity across the atelier.
             </p>
           </div>
-
-          <button
-            onClick={() => exportToCSV(users, 'Scholar_Registry')}
-            className="bg-[#8cc63f] hover:bg-[#7db534] text-white px-6 py-3.5 rounded-xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#8cc63f]/20 h-fit whitespace-nowrap w-full lg:w-auto"
-          >
-            <FiDownload size={18} />
-            <span>Export User List</span>
-          </button>
         </div>
 
         <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
@@ -254,7 +245,7 @@ const ManageUsers = () => {
                 onChange={(e) => {
                   setSelectedContest(e.target.value);
                 }}
-                className="appearance-none bg-white border border-[#8cc63f]/30 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#8cc63f]/60 transition-all"
+                className="appearance-none bg-white dark:bg-gray-800 border border-[#8cc63f]/30 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#8cc63f]/60 transition-all"
               >
                 <option value="All Contests">All Contests</option>
                 {contests.map(c => <option key={c} value={c}>{c}</option>)}
@@ -270,7 +261,7 @@ const ManageUsers = () => {
                 onChange={(e) => {
                   setSelectedDomain(e.target.value);
                 }}
-                className="appearance-none bg-white border border-[#fbc111]/40 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#fbc111]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#fbc111]/80 transition-all"
+                className="appearance-none bg-white dark:bg-gray-800 border border-[#fbc111]/40 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#fbc111]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#fbc111]/80 transition-all"
               >
                 <option value="All Domains">All Domains</option>
                 <option value="MERN">MERN</option>
@@ -299,12 +290,12 @@ const ManageUsers = () => {
               <tbody className="divide-y divide-[#e8efe0]/60">
                 {visibleUsers.length > 0 ? (
                   visibleUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-white transition-colors duration-200 group">
+                    <tr key={user.id} className="hover:bg-white dark:bg-gray-800 transition-colors duration-200 group">
                       <td className="py-5 px-8">
                         <div className="flex items-center gap-4">
                           <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-gray-100 shadow-sm" />
                           <div>
-                            <div className="font-black text-slate-800 text-[15px]">{user.name}</div>
+                            <div className="font-black text-slate-800 dark:text-gray-100 text-[15px]">{user.name}</div>
                             <div className="text-[9px] text-[#fbc111] font-black tracking-widest mt-0.5 uppercase">PARTICIPANT MEMBER</div>
                           </div>
                         </div>

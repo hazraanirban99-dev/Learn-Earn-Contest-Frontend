@@ -10,16 +10,16 @@ const Ratings = () => {
    ];
 
    return (
-      <section className="py-16 bg-[#f8faf2]">
+      <section className="py-16 bg-[#f8faf2] dark:bg-gray-900">
          <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
             <div className="text-center mb-12">
                <span className="text-[#a68945] text-[10px] font-black uppercase tracking-[0.3em] mb-2 block">Our Performance</span>
-               <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">Ratings</h2>
+               <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-gray-100 tracking-tight">Ratings</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                {ratingsData.map((rating, idx) => (
-                  <div key={idx} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all text-center group relative overflow-hidden">
+                  <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-[40px] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all text-center group relative overflow-hidden">
                      <div className="relative z-10">
                         <div className="text-4xl font-black mb-2" style={{ color: rating.color }}>
                            {rating.score}

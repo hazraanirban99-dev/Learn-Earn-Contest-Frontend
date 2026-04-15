@@ -68,7 +68,7 @@ export default function DeclareWinners() {
       <div className="flex flex-col gap-6 sm:gap-8 max-w-[1440px] mx-auto pb-10 animate-in fade-in duration-500 px-2 sm:px-0">
         
         {/* Integrated Header & Filter Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 bg-white p-6 sm:p-7 rounded-[40px] shadow-sm border border-[#e8efe0] mt-4 relative overflow-hidden group">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 bg-white dark:bg-gray-800 p-6 sm:p-7 rounded-[40px] shadow-sm border border-[#e8efe0] mt-4 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#8cc63f]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
           
           {/* Left Column: Declare Winners Info (50%) */}
@@ -79,7 +79,7 @@ export default function DeclareWinners() {
                   Scholastic Atelier
                 </h4>
              </div>
-             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none mb-2">
+             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-none mb-2">
                Declare <span className="text-[#5c8a14]">Winners</span>
              </h1>
              <p className="text-gray-500 font-bold text-xs sm:text-sm leading-relaxed max-w-md">
@@ -88,7 +88,7 @@ export default function DeclareWinners() {
           </div>
 
           {/* Right Column: Global Filter System (50%) */}
-          <div className="flex flex-col z-10 lg:pl-6 lg:border-l border-gray-100">
+          <div className="flex flex-col z-10 lg:pl-6 lg:border-l border-gray-100 dark:border-gray-700">
              <ContestUserFilter showParticipant={false} onSelectionChange={handleFilterChange} />
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function DeclareWinners() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full mt-4">
           {topWinners.length > 0 ? (
             topWinners.sort((a,b) => a.rank - b.rank).map((winner, idx) => (
-              <div key={idx} className="bg-white rounded-3xl p-5 shadow-sm border border-[#e8efe0] relative overflow-hidden flex flex-col items-center text-center hover:shadow-lg transition-all duration-500 group border-b-4" style={{borderColor: winner.rank === 1 ? '#fbc111' : winner.rank === 2 ? '#8cc63f' : '#dca51a'}}>
+              <div key={idx} className="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-[#e8efe0] relative overflow-hidden flex flex-col items-center text-center hover:shadow-lg transition-all duration-500 group border-b-4" style={{borderColor: winner.rank === 1 ? '#fbc111' : winner.rank === 2 ? '#8cc63f' : '#dca51a'}}>
                 
                 {/* Background Decoration */}
                 <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full blur-2xl opacity-10 pointer-events-none group-hover:scale-150 transition-transform duration-1000 ${winner.rank === 1 ? 'bg-[#fbc111]' : winner.rank === 2 ? 'bg-[#8cc63f]' : 'bg-[#dca51a]'}`}></div>
@@ -120,15 +120,15 @@ export default function DeclareWinners() {
 
                 {/* Info */}
                 <div className="mb-4 w-full px-2">
-                  <h2 className="text-lg font-black text-slate-900 tracking-tight mb-0.5 group-hover:text-[#5c8a14] transition-colors truncate">{winner.name}</h2>
+                  <h2 className="text-lg font-black text-slate-900 dark:text-gray-100 tracking-tight mb-0.5 group-hover:text-[#5c8a14] transition-colors truncate">{winner.name}</h2>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate">{winner.school}</p>
                 </div>
 
                 {/* Score */}
-                <div className="mt-auto w-full pt-4 border-t border-gray-100 flex flex-col items-center">
+                <div className="mt-auto w-full pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col items-center">
                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Final Marks</span>
                    <div className="flex items-center gap-1.5">
-                      <span className={`text-2xl font-black ${winner.rank === 1 ? 'text-[#dca51a]' : 'text-slate-800'}`}>{winner.score.toFixed(1)}</span>
+                      <span className={`text-2xl font-black ${winner.rank === 1 ? 'text-[#dca51a]' : 'text-slate-800 dark:text-gray-100'}`}>{winner.score.toFixed(1)}</span>
                       
                    </div>
                 </div>
@@ -136,7 +136,7 @@ export default function DeclareWinners() {
               </div>
             ))
           ) : (
-            <div className="col-span-full bg-white rounded-[40px] p-20 border-2 border-dashed border-[#e8efe0] flex flex-col items-center justify-center text-gray-400 font-bold">
+            <div className="col-span-full bg-white dark:bg-gray-800 rounded-[40px] p-20 border-2 border-dashed border-[#e8efe0] flex flex-col items-center justify-center text-gray-400 font-bold">
                <FiInfo size={40} className="mb-4 opacity-20" />
                <p>Select a contest with evaluated participants to announce winners</p>
             </div>
@@ -144,10 +144,10 @@ export default function DeclareWinners() {
         </div>
 
         {/* Full Leaderboard Table Section */}
-        <div className="bg-white rounded-[32px] border border-[#e8efe0] shadow-sm overflow-hidden mt-6">
+        <div className="bg-white dark:bg-gray-800 rounded-[32px] border border-[#e8efe0] shadow-sm overflow-hidden mt-6">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row items-center justify-between p-6 sm:p-8 border-b border-[#e8efe0] gap-4">
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">Full Leaderboard</h2>
+            <h2 className="text-xl font-black text-slate-900 dark:text-gray-100 tracking-tight">Full Leaderboard</h2>
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button 
                 onClick={() => exportToCSV(rankedParticipants, `Full_Leaderboard_${formatDateDDMMYYYY(new Date())}`)}
@@ -161,7 +161,7 @@ export default function DeclareWinners() {
           <div className="overflow-x-auto w-full scrollbar-hide">
             <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-full">
               <thead>
-                <tr className="uppercase text-[9px] font-black tracking-[0.15em] text-gray-400 bg-[#fefdfa] border-b border-gray-100">
+                <tr className="uppercase text-[9px] font-black tracking-[0.15em] text-gray-400 bg-[#fefdfa] border-b border-gray-100 dark:border-gray-700">
                   <th className="py-5 px-8 w-20 text-center">Rank</th>
                   <th className="py-5 px-6">Participant</th>
                   <th className="py-5 px-8 text-right">Final Marks</th>
@@ -175,7 +175,7 @@ export default function DeclareWinners() {
                       <div className="flex items-center gap-4">
                         <img src={item.avatar} alt={item.name} className="w-10 h-10 rounded-full object-cover bg-gray-100 shadow-sm" />
                         <div>
-                          <div className="font-black text-slate-800 text-sm">{item.name}</div>
+                          <div className="font-black text-slate-800 dark:text-gray-100 text-sm">{item.name}</div>
                           <div className="text-[11px] font-bold text-gray-400 mt-0.5">{item.school}</div>
                         </div>
                       </div>
@@ -209,7 +209,7 @@ export default function DeclareWinners() {
           <div className="absolute -right-32 -bottom-32 w-96 h-96 bg-[#8cc63f] rounded-full opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
           
           <div className="space-y-3 z-10 flex-1 text-center md:text-left">
-             <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Ready to crown the champions?</h2>
+             <h2 className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-gray-100 tracking-tight">Ready to crown the champions?</h2>
              <p className="text-sm font-bold text-gray-600 max-w-xl mx-auto md:mx-0 leading-relaxed">
                Once finalized, certificates will be auto-generated, winners will be publicly announced on the portal, and the top performers will receive their prize notifications immediately.
              </p>

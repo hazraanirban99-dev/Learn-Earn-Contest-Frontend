@@ -8,7 +8,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from 'react';
-import UserNavbar from '../../components/Navbar/UserNavbar';
+import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import ContestCard from '../../components/Cards/ContestCard';
@@ -222,24 +222,24 @@ const AllContests = () => {
       <div className="space-y-3">
          {data.map(val => (
             <div key={val} onClick={() => toggle(type, val)} className="flex items-center gap-3 cursor-pointer group select-none">
-               <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${selected.includes(val) ? 'bg-[#8cc63f] border-[#8cc63f]' : 'border-gray-200 group-hover:border-[#8cc63f]'}`}>
+               <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${selected.includes(val) ? 'bg-[#8cc63f] border-[#8cc63f]' : 'border-gray-200 dark:border-gray-700 group-hover:border-[#8cc63f]'}`}>
                   {selected.includes(val) && (
                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   )}
                </div>
-               <span className={`text-sm font-bold truncate ${selected.includes(val) ? 'text-slate-800' : 'text-gray-500 group-hover:text-slate-700'}`}>{val}</span>
+               <span className={`text-sm font-bold truncate ${selected.includes(val) ? 'text-slate-800 dark:text-gray-100' : 'text-gray-500 group-hover:text-slate-700'}`}>{val}</span>
             </div>
          ))}
       </div>
    );
 
    return (
-      <div className="min-h-screen bg-[#f8faf2] font-sans">
-         <UserNavbar />
+      <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans pt-20">
+         <Navbar />
          <PageTransition>
             <HeroCarousel contests={carouselData} loading={loading} />
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mt-8">
-               <div className="bg-white p-2 rounded-full shadow-lg border border-[#fbc111]/40 flex items-center max-w-2xl mx-auto">
+               <div className="bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg border border-[#fbc111]/40 flex items-center max-w-2xl mx-auto">
                   <div className="pl-6 pr-4 text-[#8cc63f]">
                      <FiSearch size={20} />
                   </div>
@@ -248,7 +248,7 @@ const AllContests = () => {
                      placeholder="Search contests..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="w-full bg-transparent border-none outline-none text-slate-800 placeholder-gray-400 font-bold py-4"
+                     className="w-full bg-transparent border-none outline-none text-slate-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-bold py-4"
                   />
                </div>
             </div>
@@ -259,13 +259,13 @@ const AllContests = () => {
                <div className="relative" ref={domainRef}>
                   <button 
                      onClick={() => setIsDomainOpen(!isDomainOpen)}
-                     className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedDomains.length > 0 ? 'bg-[#8cc63f] border-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                     className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedDomains.length > 0 ? 'bg-[#8cc63f] border-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-600 text-slate-800 dark:text-gray-200'}`}
                   >
                      <FiFilter size={14} className="shrink-0" />
                      <span className="truncate">Domain {selectedDomains.length > 0 && `(${selectedDomains.length})`}</span>
                   </button>
                   {isDomainOpen && (
-                     <div className="absolute top-full left-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                     <div className="absolute top-full left-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-50 dark:border-gray-700 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
                         <FilterSection type="domain" data={domains} selected={selectedDomains} toggle={toggleFilter} />
                      </div>
                   )}
@@ -275,13 +275,13 @@ const AllContests = () => {
                <div className="relative" ref={statusRef}>
                   <button 
                       onClick={() => setIsStatusOpen(!isStatusOpen)}
-                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedStatuses.length > 0 ? 'bg-[#fbc111] border-[#fbc111] text-slate-900 shadow-lg shadow-[#fbc111]/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedStatuses.length > 0 ? 'bg-[#fbc111] border-[#fbc111] text-slate-900 dark:text-gray-100 shadow-lg shadow-[#fbc111]/20' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-600 text-slate-800 dark:text-gray-200'}`}
                   >
                      <FiTrendingUp size={14} className="shrink-0" />
                      <span className="truncate">Status {selectedStatuses.length > 0 && `(${selectedStatuses.length})`}</span>
                   </button>
                   {isStatusOpen && (
-                     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-50 dark:border-gray-700 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
                         <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
                      </div>
                   )}
@@ -291,13 +291,13 @@ const AllContests = () => {
                <div className="relative" ref={enrollmentRef}>
                   <button 
                       onClick={() => setIsEnrollmentOpen(!isEnrollmentOpen)}
-                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedEnrollment.length > 0 ? 'bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white border-gray-100 text-slate-800'}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedEnrollment.length > 0 ? 'bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-600 text-slate-800 dark:text-gray-200'}`}
                   >
                      <FiCheckCircle size={14} className="shrink-0" />
                      <span className="truncate">My Status {selectedEnrollment.length > 0 && `(${selectedEnrollment.length})`}</span>
                   </button>
                   {isEnrollmentOpen && (
-                     <div className="absolute top-full right-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl border border-gray-50 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
+                     <div className="absolute top-full right-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-50 dark:border-gray-700 p-4 z-[50] animate-in fade-in zoom-in-95 duration-200">
                         <FilterSection type="participation" data={enrollmentOptions} selected={selectedEnrollment} toggle={toggleFilter} />
                      </div>
                   )}
@@ -307,22 +307,22 @@ const AllContests = () => {
             <section className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 py-12 lg:py-16 flex flex-col lg:flex-row gap-12">
                {/* DESKTOP SIDEBAR (Visible only on large screens) */}
                <aside className="hidden lg:block w-64 shrink-0 space-y-8">
-                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 sticky top-24">
-                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-24">
+                     <h3 className="text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <FiFilter className="text-[#8cc63f]" size={18} /> Domain
                      </h3>
                      <FilterSection type="domain" data={domains} selected={selectedDomains} toggle={toggleFilter} />
                      
-                     <div className="my-8 border-t border-gray-50"></div>
+                     <div className="my-8 border-t border-gray-50 dark:border-gray-700"></div>
 
-                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                     <h3 className="text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <FiTrendingUp className="text-[#fbc111]" size={18} /> Status
                      </h3>
                      <FilterSection type="status" data={statuses} selected={selectedStatuses} toggle={toggleFilter} />
 
-                     <div className="my-8 border-t border-gray-50"></div>
+                     <div className="my-8 border-t border-gray-50 dark:border-gray-700"></div>
 
-                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                     <h3 className="text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <FiCheckCircle className="text-indigo-500" size={18} /> Participation
                      </h3>
                      <FilterSection type="participation" data={enrollmentOptions} selected={selectedEnrollment} toggle={toggleFilter} />
@@ -333,20 +333,20 @@ const AllContests = () => {
                      <div className="space-y-12">
                         {[1, 2, 3].map(i => (
                            <div key={i} className="animate-pulse">
-                              <div className="w-48 h-6 bg-gray-200 rounded mb-6"></div>
+                              <div className="w-48 h-6 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                 <div className="h-64 bg-white rounded-[40px]"></div>
-                                 <div className="h-64 bg-white rounded-[40px]"></div>
+                                 <div className="h-64 bg-white dark:bg-gray-800 rounded-[40px]"></div>
+                                 <div className="h-64 bg-white dark:bg-gray-800 rounded-[40px]"></div>
                               </div>
                            </div>
                         ))}
                      </div>
                   ) : Object.keys(groupedContests).length === 0 ? (
-                     <div className="text-center py-20"><h3 className="text-2xl font-black text-slate-800 mb-2">No contests found</h3></div>
+                     <div className="text-center py-20"><h3 className="text-2xl font-black text-slate-800 dark:text-gray-100 mb-2">No contests found</h3></div>
                   ) : (
                      Object.entries(groupedContests).map(([domain, contests]) => (
                         <div key={domain}>
-                           <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3 mb-8">
+                           <h2 className="text-2xl font-black text-slate-800 dark:text-gray-100 tracking-tight flex items-center gap-3 mb-8">
                               <span className={getDomainColor(domain)}>{getDomainIcon(domain)}</span>{domain}
                            </h2>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

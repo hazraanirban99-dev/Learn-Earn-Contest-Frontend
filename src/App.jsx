@@ -8,7 +8,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
-import { Navbar, Footer, ScrollToTop } from './components';
+import { Navbar, Footer, ScrollToTop, Loader } from './components';
 
 // React.lazy diye pages load kora hocche — prottekta page alada alada chunk e thakbe.
 // Eite initial load fast hoy karon sob page ekbar e download hoy na.
@@ -17,6 +17,7 @@ const Login = React.lazy(() => import('./pages/Login/Login'));
 const Register = React.lazy(() => import('./pages/Register/Register'));
 const ResetPassword = React.lazy(() => import('./pages/ResetPassword/ResetPassword'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
+const Participants = React.lazy(() => import('./pages/Participants'));
 
 // --- Admin er sob page alada alada lazy load e define kora ---
 const AdminDashboard = React.lazy(() => import('./pages/Admin').then(module => ({ default: module.AdminDashboard })));
@@ -37,10 +38,7 @@ const Leaderboard = React.lazy(() => import('./pages/Student').then(module => ({
 
 // Page load hote time lagle ei FallbackLoader spinner show korbe - Suspense er jonno dorkar
 const FallbackLoader = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8faf2]">
-    <div className="w-12 h-12 border-4 text-[#8cc63f] rounded-full spinner-dual mb-4"></div>
-    <span className="text-[#a68945] text-[10px] font-black uppercase tracking-widest animate-pulse">Loading Environment...</span>
-  </div>
+  <Loader fullPage text="Configuring Scholastic Environment..." />
 );
 
 function App() {
@@ -52,6 +50,7 @@ function App() {
           <Routes>
             {/* Public Routes — Login na korleo dekhano jabe */}
             <Route path="/" element={<LandingPage />} />
+            <Route path="/participants" element={<Participants />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/password/reset/:token" element={<ResetPassword />} />
@@ -70,11 +69,15 @@ function App() {
               <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
             </Route>
 
+            {/* Shared Protected Routes — Accessible by both Students and Admins */}
+            <Route element={<ProtectedRoute allowedRoles={['student', 'admin']} />}>
+              <Route path="/student/contests/:id" element={<ContestDetails />} />
+            </Route>
+
             {/* Protected Student Routes — Sudhu student role e login thakle access pabe */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
               <Route path="/student/contests" element={<AllContests />} />
-              <Route path="/student/contests/:id" element={<ContestDetails />} />
               <Route path="/student/submissions" element={<StudentSubmission />} />
               <Route path="/student/leaderboard/:id" element={<Leaderboard />} />
             </Route>

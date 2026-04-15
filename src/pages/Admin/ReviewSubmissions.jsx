@@ -53,12 +53,12 @@ export default function ReviewSubmissions() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-4">
           <div className="space-y-2">
             <h4 className="text-[#fbc111] text-[10px] sm:text-[12px] font-black tracking-[0.2em] uppercase">Scholastic Atelier</h4>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">Review Submissions</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-none">Review Submissions</h1>
           </div>
           <ContestUserFilter showParticipant={false} onSelectionChange={handleFilterChange} />
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-[24px] shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700">
           <div className="relative flex-1 w-full">
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
@@ -66,11 +66,11 @@ export default function ReviewSubmissions() {
               placeholder="Search participants by name..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border-2 border-transparent focus:border-[#8cc63f]/20 rounded-xl pl-12 pr-4 py-2.5 text-sm font-semibold outline-none transition-all"
+              className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/20 rounded-xl pl-12 pr-4 py-2.5 text-sm font-semibold outline-none transition-all"
             />
           </div>
           <div className="flex items-center gap-6 px-4">
-            <div className="flex flex-col items-end px-4 border-r border-gray-100">
+            <div className="flex flex-col items-end px-4 border-r border-gray-100 dark:border-gray-700">
               <span className="text-[10px] font-black text-gray-400 uppercase">Total Entries</span>
               <span className="text-base font-black text-[#fbc111]">{participants.length}</span>
             </div>
@@ -81,12 +81,12 @@ export default function ReviewSubmissions() {
           </div>
         </div>
 
-        <div className="bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
           {participants.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-50">
+                  <tr className="bg-gray-50/ dark:bg-gray-800/ border-b border-gray-50 dark:border-gray-700">
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Participant</th>
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Action</th>
@@ -103,7 +103,7 @@ export default function ReviewSubmissions() {
                         <div className="flex items-center gap-4">
                           <img src={p.avatar} className="w-10 h-10 rounded-xl object-cover shadow-sm" alt="avatar" />
                           <div className="flex-1">
-                            <p className="text-sm font-black text-slate-800 group-hover:text-[#fbc111] transition-colors">{p.name}</p>
+                            <p className="text-sm font-black text-slate-800 dark:text-gray-100 group-hover:text-[#fbc111] transition-colors">{p.name}</p>
                             
                             {isTeam && teamData && (
                               <div className="mt-1 flex flex-wrap gap-1.5">
@@ -138,7 +138,7 @@ export default function ReviewSubmissions() {
                       <td className="px-8 py-5 text-right">
                         <button 
                           onClick={() => handleViewSubmission(p)}
-                          className="px-5 py-2.5 bg-white border-2 border-slate-100 hover:border-[#8cc63f]/20 hover:bg-[#8cc63f]/5 rounded-xl text-[11px] font-black text-slate-600 hover:text-[#8cc63f] uppercase tracking-widest transition-all shadow-sm flex items-center gap-2 ml-auto"
+                          className="px-5 py-2.5 bg-white dark:bg-gray-800 border-2 border-slate-100 dark:border-gray-700 hover:border-[#8cc63f]/20 hover:bg-[#8cc63f]/5 rounded-xl text-[11px] font-black text-slate-600 hover:text-[#8cc63f] uppercase tracking-widest transition-all shadow-sm flex items-center gap-2 ml-auto"
                         >
                           <FiEye /> Review Now
                         </button>
@@ -151,8 +151,8 @@ export default function ReviewSubmissions() {
             </div>
           ) : (
             <div className="p-24 text-center">
-              <div className="w-20 h-20 bg-gray-50 rounded-[32px] flex items-center justify-center mx-auto mb-6"><FiUsers className="text-gray-300 text-3xl" /></div>
-              <h3 className="text-xl font-black text-slate-800 mb-2">No Submissions Found</h3>
+              <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-[32px] flex items-center justify-center mx-auto mb-6"><FiUsers className="text-gray-300 text-3xl" /></div>
+              <h3 className="text-xl font-black text-slate-800 dark:text-gray-100 mb-2">No Submissions Found</h3>
               <p className="text-sm font-bold text-gray-400 max-w-xs mx-auto">Please select a contest from the filter to view submissions.</p>
             </div>
           )}

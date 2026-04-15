@@ -31,7 +31,7 @@ const UserNavbar = () => {
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.role === 'student') {
       fetchNotifications();
       const interval = setInterval(fetchNotifications, 30000); 
       return () => clearInterval(interval);
@@ -93,7 +93,7 @@ const UserNavbar = () => {
   const handleDelete = async () => {
     const ConfirmAccountDelete = ({ closeToast }) => (
       <div className="p-1">
-        <p className="text-[12px] font-black text-slate-800 mb-3 uppercase tracking-tight leading-tight">
+        <p className="text-[12px] font-black text-slate-800 dark:text-gray-100 mb-3 uppercase tracking-tight leading-tight">
            Final Warning: Are you sure you want to delete your account? 
         </p>
         <div className="flex justify-end gap-2 px-2 pb-1">
@@ -139,9 +139,9 @@ const UserNavbar = () => {
   return (
     <>
       {/* Spacer to prevent layout collapse since nav is fixed */}
-      <div className="h-20 w-full bg-[#f8faf2]"></div>
+      <div className="h-20 w-full bg-[#f8faf2] dark:bg-gray-900"></div>
 
-      <nav className="fixed top-0 left-0 w-full z-[100] bg-[#f8faf2] border-b border-gray-100 shadow-sm">
+      <nav className="fixed top-0 left-0 w-full z-[100] bg-[#f8faf2] dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700 shadow-sm">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 h-20 flex items-center justify-between">
         
         {/* 1. BRANDING (Left) */}
@@ -158,7 +158,7 @@ const UserNavbar = () => {
                 key={link.label}
                 to={link.path}
                 className={`relative py-1 text-[13px] font-black uppercase tracking-[0.1em] transition-all duration-300 ${
-                  isActive ? 'text-[#8cc63f]' : 'text-slate-500 hover:text-slate-900'
+                  isActive ? 'text-[#8cc63f]' : 'text-slate-500 hover:text-slate-900 dark:text-gray-100'
                 }`}
               >
                 {link.label}
@@ -196,9 +196,9 @@ const UserNavbar = () => {
              </button>
 
              {isNotifOpen && (
-                <div className="fixed sm:absolute top-20 sm:top-full left-4 sm:left-auto right-4 sm:right-0 mt-3 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
-                    <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Notifications</h3>
+                <div className="fixed sm:absolute top-20 sm:top-full left-4 sm:left-auto right-4 sm:right-0 mt-3 sm:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-4 bg-gray-50/ dark:bg-gray-800/ border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-gray-100">Notifications</h3>
                         {notifications.length > 0 && <span className="text-[10px] font-bold text-[#8cc63f]">{notifications.length} Pending</span>}
                     </div>
                     <div className="max-h-96 overflow-y-auto">
@@ -210,7 +210,7 @@ const UserNavbar = () => {
                         ) : (
                             <div className="divide-y divide-gray-50">
                                 {notifications.map(notif => (
-                                    <div key={notif._id} className="p-4 hover:bg-gray-50/50 transition-colors">
+                                    <div key={notif._id} className="p-4 hover:bg-gray-50/ dark:bg-gray-800/ transition-colors">
                                         <div className="flex gap-3">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'TEAM_INVITE' ? 'bg-[#fbc111]/20' : 'bg-[#8cc63f]/20'}`}>
                                                 {notif.type === 'TEAM_INVITE' ? <FiUser className="text-[#ebaa00]" size={14} /> : <FiCheck className="text-[#8cc63f]" size={14} />}
@@ -264,7 +264,7 @@ const UserNavbar = () => {
           <div className="hidden lg:flex items-center gap-3 relative" ref={dropdownRef}>
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-3 hover:bg-white/50 p-1.5 pr-4 rounded-full transition-all border border-transparent hover:border-gray-200"
+              className="flex items-center gap-3 hover:bg-white/ dark:bg-gray-800/ p-1.5 pr-4 rounded-full transition-all border border-transparent hover:border-gray-200 dark:border-gray-700"
             >
               <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black text-xs">
                  {currentUser.avatar?.url ? (
@@ -273,13 +273,13 @@ const UserNavbar = () => {
                     getInitials(currentUser.name)
                  )}
               </div>
-              <span className="text-sm font-black text-slate-800 tracking-wide">Hi, {currentUser.name}</span>
+              <span className="text-sm font-black text-slate-800 dark:text-gray-100 tracking-wide">Hi, {currentUser.name}</span>
             </button>
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-               <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
+               <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
                      <div className="w-8 h-8 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-[10px]">
                         {currentUser.avatar?.url ? (
                             <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
@@ -288,7 +288,7 @@ const UserNavbar = () => {
                         )}
                      </div>
                      <div className="flex flex-col">
-                        <span className="text-sm font-black text-slate-800 leading-none">{currentUser.name}</span>
+                        <span className="text-sm font-black text-slate-800 dark:text-gray-100 leading-none">{currentUser.name}</span>
                         <span className="text-[10px] text-gray-400 font-bold uppercase mt-1">Student</span>
                      </div>
                   </div>
@@ -298,14 +298,14 @@ const UserNavbar = () => {
                          setIsDropdownOpen(false);
                          setIsProfileModalOpen(true);
                      }} 
-                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#8cc63f] hover:bg-gray-50 transition-colors"
+                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 transition-colors"
                   >
                      <FiSettings size={16} /> View Profile
                   </button>
                   <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors">
                      <FiTrash2 size={16} /> Delete Account
                   </button>
-                  <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#fbc111] hover:bg-gray-50 transition-colors border-t border-gray-50">
+                  <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#fbc111] hover:bg-gray-50 dark:bg-gray-800 transition-colors border-t border-gray-50 dark:border-gray-700">
                      <FiLogOut size={16} /> Logout
                   </button>
                </div>
@@ -315,7 +315,7 @@ const UserNavbar = () => {
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2.5 text-slate-800 hover:bg-gray-100 rounded-xl transition-all"
+            className="lg:hidden p-2.5 text-slate-800 dark:text-gray-100 hover:bg-gray-100 rounded-xl transition-all"
           >
             {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
@@ -324,9 +324,9 @@ const UserNavbar = () => {
 
       {/* MOBILE MENU (Slide Down) */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-2xl p-6 flex flex-col gap-6 animate-in slide-in-from-top-2 duration-200 z-[99]">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 shadow-2xl p-6 flex flex-col gap-6 animate-in slide-in-from-top-2 duration-200 z-[99]">
           
-          <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
+          <div className="flex items-center gap-4 pb-6 border-b border-gray-100 dark:border-gray-700">
              <div className="w-12 h-12 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black">
                 {currentUser.avatar?.url ? (
                     <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
@@ -335,7 +335,7 @@ const UserNavbar = () => {
                 )}
              </div>
              <div>
-                <p className="text-lg font-black text-slate-800">Hi, {currentUser.name}</p>
+                <p className="text-lg font-black text-slate-800 dark:text-gray-100">Hi, {currentUser.name}</p>
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Student Portal</p>
              </div>
           </div>
@@ -355,7 +355,7 @@ const UserNavbar = () => {
             ))}
           </div>
           
-          <div className="flex flex-col gap-4 pt-4 border-t border-gray-50">
+          <div className="flex flex-col gap-4 pt-4 border-t border-gray-50 dark:border-gray-700">
             <button 
               onClick={() => window.location.reload()}
               className="flex sm:hidden items-center gap-3 text-sm font-black text-gray-500 hover:text-[#8cc63f] uppercase tracking-widest text-left"

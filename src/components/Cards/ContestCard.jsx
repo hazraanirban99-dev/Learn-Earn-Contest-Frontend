@@ -31,10 +31,10 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
     const isTeamContest = contest.projectType === 'Team';
 
     const statusClasses = isOngoing 
-        ? 'text-emerald-500 bg-emerald-50' 
+        ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/30' 
         : isUpcoming 
-            ? 'text-blue-500 bg-blue-50' 
-            : 'text-gray-500 bg-gray-100';
+            ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+            : 'text-gray-500 bg-gray-100 dark:bg-gray-700';
 
     const statusDotColor = isOngoing 
         ? 'bg-emerald-500' 
@@ -62,7 +62,7 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
 
     return (
         <div 
-            className="bg-white p-8 pt-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-[#8cc63f]/5 transition-all flex flex-col h-full group relative overflow-hidden"
+            className="bg-white dark:bg-gray-800 p-8 pt-10 rounded-[40px] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-2xl hover:shadow-[#8cc63f]/5 transition-all flex flex-col h-full group relative overflow-hidden"
         >
             {/* Alternating Top Line */}
             <div className={`absolute top-0 left-0 w-full h-2 ${index % 2 === 0 ? 'bg-[#8cc63f]' : 'bg-[#fbc111]'}`}></div>
@@ -116,21 +116,21 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
             
             {/* Card Body */}
             <div className="flex-1">
-                <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-[#5c8a14] transition-colors line-clamp-2">
+                <h3 className="text-xl font-black text-slate-900 dark:text-gray-100 mb-3 group-hover:text-[#5c8a14] dark:group-hover:text-[#8cc63f] transition-colors line-clamp-2">
                     {contest.title}
                 </h3>
-                <p className="text-sm font-bold text-gray-400 leading-relaxed line-clamp-3 mb-6">
+                <p className="text-sm font-bold text-gray-400 dark:text-gray-400 leading-relaxed line-clamp-3 mb-6">
                     {contest.desc}
                 </p>
             </div>
 
             {/* Card Footer (Date/Winner & CTA) */}
-            <div className="mt-auto pt-6 border-t border-gray-50">
+            <div className="mt-auto pt-6 border-t border-gray-50 dark:border-gray-700">
                 {variant === 'dashboard' ? (
                     <div className="flex items-end justify-between">
                         <div>
                             <p className="text-[10px] font-black text-[#fbc111] tracking-widest uppercase mb-1">{contest.dateInfo}</p>
-                            <p className="text-sm font-black text-slate-800">{contest.dateValue}</p>
+                            <p className="text-sm font-black text-slate-800 dark:text-gray-100">{contest.dateValue}</p>
                             
                             {contest.participantsCount !== undefined && (
                                 <div className="mt-4">
@@ -148,7 +148,7 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
                         </div>
                         <Link 
                             to={`/student/contests/${contest.id}`}
-                            className="bg-[#fbc111]/10 hover:bg-[#fbc111] text-[#d4a017] hover:text-slate-900 px-5 py-2.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all"
+                            className="bg-[#fbc111]/10 hover:bg-[#fbc111] text-[#d4a017] hover:text-slate-900 dark:text-gray-100 px-5 py-2.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all"
                         >
                             View Details
                         </Link>

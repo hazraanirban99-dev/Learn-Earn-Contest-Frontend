@@ -29,9 +29,9 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
       case 'ONGOING':
         return 'bg-[#f4f8ec] text-[#8cc63f] border-[#e2edd3]/50';
       case 'COMPLETED':
-        return 'bg-gray-100 text-gray-400 border-gray-200';
+        return 'bg-gray-100 text-gray-400 border-gray-200 dark:border-gray-700';
       default:
-        return 'bg-gray-50 text-gray-500 border-gray-200';
+        return 'bg-gray-50 dark:bg-gray-800 text-gray-500 border-gray-200 dark:border-gray-700';
     }
   };
 
@@ -41,11 +41,11 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
     if (d.includes('ui') || d.includes('ux')) return 'bg-violet-50 text-violet-600 border-violet-200';
     if (d.includes('marketing') || d.includes('digital')) return 'bg-orange-50 text-orange-500 border-orange-200';
     if (d.includes('analytics')) return 'bg-teal-50 text-teal-600 border-teal-200';
-    return 'bg-gray-50 text-gray-500 border-gray-200';
+    return 'bg-gray-50 dark:bg-gray-800 text-gray-500 border-gray-200 dark:border-gray-700';
   };
 
   return (
-    <tr className="hover:bg-white transition-colors duration-200 group border-b border-[#e8efe0]/60">
+    <tr className="hover:bg-white dark:bg-gray-800 transition-colors duration-200 group border-b border-[#e8efe0]/60">
       <td className="py-6 px-10">
         <span className="text-[14px] font-black text-gray-300">
           {index < 9 ? `0${index + 1}` : index + 1}
@@ -53,7 +53,7 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
       </td>
       <td className="py-6 px-4">
         <div className="flex flex-col">
-          <span className="font-black text-slate-800 text-[16px] tracking-tight leading-tight">
+          <span className="font-black text-slate-800 dark:text-gray-100 text-[16px] tracking-tight leading-tight">
             {contest.title}
           </span>
         </div>
@@ -69,7 +69,7 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
         </span>
       </td>
       <td className="py-6 px-4">
-        <span className="text-[16px] font-black text-slate-800">
+        <span className="text-[16px] font-black text-slate-800 dark:text-gray-100">
           {contest.participants.toLocaleString()}
         </span>
       </td>
@@ -193,7 +193,7 @@ const ContestReports = () => {
                 <div className="w-10 h-[2px] bg-[#fbc111]"></div>
                 <h4 className="text-[#fbc111] text-[13px] font-black tracking-[0.3em] uppercase">Academic Dashboard</h4>
               </div>
-              <h1 className="text-5xl lg:text-6xl font-black text-slate-800 tracking-tighter leading-none">
+              <h1 className="text-5xl lg:text-6xl font-black text-slate-800 dark:text-gray-100 tracking-tighter leading-none">
                 Contest <span className="text-[#5c8a14]">Archives</span>
               </h1>
             </div>
@@ -202,19 +202,19 @@ const ContestReports = () => {
             <div className="flex items-center gap-4 w-full sm:w-auto">
               {/* Domain Filter Dropdown */}
               <div className="relative flex-1 sm:flex-none flex items-center bg-[#fbc111] rounded-2xl px-6 py-1 shadow-md border border-[#fbc111]/20 hover:shadow-lg transition-all group">
-                <label className="text-[11px] font-black text-slate-900/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
+                <label className="text-[11px] font-black text-slate-900 dark:text-gray-100/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
                 <select
                   value={selectedDomain}
                   onChange={(e) => {
                     setSelectedDomain(e.target.value);
                   }}
-                  className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
+                  className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 dark:text-gray-100 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
                 >
                   {domains.map(domain => (
                     <option key={domain} value={domain}>{domain}</option>
                   ))}
                 </select>
-                <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900/30">
+                <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900 dark:text-gray-100/30">
                   <FiFilter size={16} strokeWidth={3} />
                 </div>
               </div>

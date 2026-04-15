@@ -122,17 +122,17 @@ const ProfileModal = ({ isOpen, onClose }) => {
             <div className="fixed inset-0" onClick={onClose}></div>
 
             {/* Modal Card */}
-            <div className="relative w-full max-w-[500px] bg-white rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 mt-4 mb-4">
+            <div className="relative w-full max-w-[500px] bg-white dark:bg-gray-800 rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 mt-4 mb-4">
 
                 {/* Header Section */}
                 <div className="flex items-center justify-between p-6 pb-2">
                     <div className="flex items-center gap-3">
 
-                        <h2 className="text-xl font-black text-slate-800">Scholar Workspace</h2>
+                        <h2 className="text-xl font-black text-slate-800 dark:text-gray-100">Scholar Workspace</h2>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-slate-800 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-2 text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-gray-100 rounded-full transition-colors"
                     >
                         <FiX size={20} />
                     </button>
@@ -144,7 +144,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     {/* Avatar Block */}
                     <div className="flex flex-col items-center justify-center mt-4 mb-8">
                         <div className="relative group">
-                            <div className="w-24 h-24 rounded-full border-[3px] border-[#8cc63f]/30 p-1 bg-white shadow-inner overflow-hidden flex items-center justify-center">
+                            <div className="w-24 h-24 rounded-full border-[3px] border-[#8cc63f]/30 p-1 bg-white dark:bg-gray-800 shadow-inner overflow-hidden flex items-center justify-center">
                                 {previewPic ? (
                                     <img
                                         src={previewPic}
@@ -215,10 +215,10 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                 />
 
                                 <div className="flex flex-col gap-1.5 w-full mb-4">
-                                    <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">Gender</label>
+                                    <label className="text-[11px] font-bold text-gray-800 dark:text-gray-200 tracking-tight uppercase">Gender</label>
                                     <div className="flex items-center gap-4 bg-[#f4f7eb] rounded-lg px-4 h-13">
                                         {['Male', 'Female', 'Other'].map(g => (
-                                            <label key={g} className="flex items-center gap-1.5 cursor-pointer text-[12px] font-bold text-slate-600 hover:text-slate-900 transition-colors">
+                                            <label key={g} className="flex items-center gap-1.5 cursor-pointer text-[12px] font-bold text-slate-600 hover:text-slate-900 dark:text-gray-100 transition-colors">
                                                 <input
                                                     type="radio"
                                                     name="gender"
@@ -258,12 +258,12 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                 />
                                 <div className="flex flex-col gap-1.5 w-full mb-4">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-[11px] font-bold text-gray-800 tracking-tight uppercase">Email Address</label>
+                                        <label className="text-[11px] font-bold text-gray-800 dark:text-gray-200 tracking-tight uppercase">Email Address</label>
                                         <span className="px-2 py-0.5 bg-[#8cc63f]/10 text-[#5c8a14] border border-[#8cc63f]/20 rounded-md text-[8px] font-black tracking-wider uppercase flex items-center gap-1">
                                             <FiCheckCircle size={10} /> Verified
                                         </span>
                                     </div>
-                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 border border-gray-100 px-4">
+                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4">
                                         <span className="text-[12px] font-bold text-gray-400 select-none truncate">{formData.email}</span>
                                     </div>
                                 </div>
@@ -284,17 +284,17 @@ const ProfileModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Footer Section */}
-                <div className="bg-[#f8faf2] px-6 py-6 flex items-center justify-end gap-6 shrink-0 relative z-20 shadow-[0_-10px_20px_rgba(240,244,230,0.5)]">
+                <div className="bg-[#f8faf2] dark:bg-gray-900 px-6 py-6 flex items-center justify-end gap-6 shrink-0 relative z-20 shadow-[0_-10px_20px_rgba(240,244,230,0.5)]">
                     <button
                         onClick={onClose}
-                        className="text-[#5c8a14] font-black text-xs uppercase tracking-widest hover:text-slate-800 transition-colors"
+                        className="text-[#5c8a14] font-black text-xs uppercase tracking-widest hover:text-slate-800 dark:text-gray-100 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="bg-gradient-to-r from-[#8cc63f] to-[#e6d013] hover:brightness-105 text-slate-900 rounded-xl px-8 py-3.5 font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#8cc63f]/30 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="bg-gradient-to-r from-[#8cc63f] to-[#e6d013] hover:brightness-105 text-slate-900 dark:text-gray-100 rounded-xl px-8 py-3.5 font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#8cc63f]/30 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isSaving ? (
                             <>

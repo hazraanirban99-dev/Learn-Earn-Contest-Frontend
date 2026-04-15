@@ -17,7 +17,7 @@ const PortalSelect = React.memo(({ label, value, onChange, options, placeholder,
         id={id}
         value={value}
         onChange={onChange}
-        className="w-full bg-[#f1f8e8] border-2 border-transparent focus:border-[#8cc63f]/40 focus:bg-white rounded-2xl px-5 py-4 text-slate-800 font-bold appearance-none outline-none transition-all cursor-pointer shadow-sm text-sm"
+        className="w-full bg-[#f1f8e8] border-2 border-transparent focus:border-[#8cc63f]/40 focus:bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 text-slate-800 dark:text-gray-100 font-bold appearance-none outline-none transition-all cursor-pointer shadow-sm text-sm"
       >
         <option value="" disabled hidden>{placeholder}</option>
         {options.map(opt => (

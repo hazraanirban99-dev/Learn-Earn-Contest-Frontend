@@ -157,21 +157,21 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/40 backdrop-blur-sm transition-opacity">
-      <div className="bg-white w-full max-w-4xl rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-4xl rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
-        <div className="px-6 md:px-10 py-6 md:py-8 border-b border-gray-100 flex justify-between items-start shrink-0">
+        <div className="px-6 md:px-10 py-6 md:py-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start shrink-0">
           <div className="flex-1 min-w-0 pr-4">
             <span className="inline-block bg-[#f1f8e8] text-[#6ca518] text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
               Edit Contest Configuration
             </span>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight truncate">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-tight truncate">
               {formData.title || "Loading..."}
             </h2>
           </div>
           <button 
             onClick={handleClose}
-            className="p-3 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 hover:text-slate-900 transition-colors"
+            className="p-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 rounded-full text-gray-500 hover:text-slate-900 dark:text-gray-100 transition-colors"
           >
             <FiX size={24} />
           </button>
@@ -187,12 +187,12 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
             <>
               {/* Contest Title */}
               <div className="space-y-3">
-                <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Contest Title</label>
+                <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Contest Title</label>
                 <input 
                   type="text" 
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full bg-[#f8faf6]/80 focus:bg-white border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-4 text-[15px] font-semibold text-slate-800 outline-none transition-all shadow-sm"
+                  className="w-full bg-[#f8faf6]/80 focus:bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-4 text-[15px] font-semibold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-sm"
                   placeholder="Enter contest title"
                 />
               </div>
@@ -201,12 +201,12 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                  {/* Domain */}
                  <div className="space-y-3">
-                   <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Scholastic Domain</label>
+                   <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Scholastic Domain</label>
                    <div className="relative">
                      <select 
                        value={formData.domain}
                        onChange={(e) => setFormData({...formData, domain: e.target.value})}
-                       className="w-full bg-[#f8faf6]/80 focus:bg-white border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-4 text-[15px] font-bold text-slate-800 outline-none transition-all shadow-sm appearance-none cursor-pointer"
+                       className="w-full bg-[#f8faf6]/80 focus:bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-4 text-[15px] font-bold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-sm appearance-none cursor-pointer"
                      >
                        <option value="MERN">MERN</option>
                        <option value="UIUX">UIUX</option>
@@ -218,7 +218,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
 
                  {/* Rigor */}
                  <div className="space-y-3">
-                   <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Academic Rigor</label>
+                   <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Academic Rigor</label>
                    <div className="flex bg-[#f8faf6]/80 p-1.5 rounded-2xl gap-1">
                      {['Easy', 'Medium', 'Hard'].map(level => (
                        <button
@@ -227,8 +227,8 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                          onClick={() => setFormData({...formData, rigor: level})}
                          className={`flex-1 py-3 px-1 rounded-xl text-[10px] sm:text-[13px] font-bold transition-all ${
                            formData.rigor === level 
-                             ? 'bg-white border-2 border-[#8cc63f] text-[#6ca518] shadow-sm scale-[1.02]' 
-                             : 'border-2 border-transparent text-gray-500 hover:text-slate-800 hover:bg-white/50'
+                             ? 'bg-white dark:bg-gray-800 border-2 border-[#8cc63f] text-[#6ca518] shadow-sm scale-[1.02]' 
+                             : 'border-2 border-transparent text-gray-500 hover:text-slate-800 dark:text-gray-100 hover:bg-white/ dark:bg-gray-800/'
                          }`}
                        >
                          {level}
@@ -241,7 +241,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                {/* Collaboration Strategy */}
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                  <div className="space-y-3">
-                   <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Collaboration Strategy</label>
+                   <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Collaboration Strategy</label>
                    <div className="flex bg-[#f8faf6]/80 p-1.5 rounded-2xl gap-1">
                      {['Solo', 'Team'].map(type => (
                        <button
@@ -251,7 +251,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                          className={`flex-1 py-3 px-1 rounded-xl text-[10px] sm:text-[13px] font-bold transition-all ${
                            formData.projectType === type 
                              ? 'bg-[#8cc63f] text-white shadow-sm scale-[1.02]' 
-                             : 'text-gray-500 hover:text-slate-800 hover:bg-white/50'
+                             : 'text-gray-500 hover:text-slate-800 dark:text-gray-100 hover:bg-white/ dark:bg-gray-800/'
                          }`}
                        >
                          {type} Project
@@ -262,14 +262,14 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
 
                  {formData.projectType === 'Team' && (
                    <div className="space-y-3">
-                     <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Max Team Size</label>
+                     <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Max Team Size</label>
                      <input 
                        type="number"
                        min="2"
                        max="10"
                        value={formData.maxTeamSize}
                        onChange={(e) => setFormData({...formData, maxTeamSize: Number(e.target.value)})}
-                       className="w-full bg-[#f8faf6]/80 focus:bg-white border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-[15px] font-bold text-slate-800 outline-none transition-all shadow-sm"
+                       className="w-full bg-[#f8faf6]/80 focus:bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-[15px] font-bold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-sm"
                      />
                    </div>
                  )}
@@ -277,13 +277,13 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
 
               {/* Project Description Editor */}
               <div className="space-y-3">
-                <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Project Description</label>
-                <div className="bg-[#f8faf6]/80 rounded-[24px] overflow-hidden shadow-sm border-2 border-transparent focus-within:border-[#8cc63f]/20 focus-within:bg-white transition-all">
-                  <div className="flex gap-4 px-5 py-3 border-b border-gray-100 bg-white/50">
-                    <button type="button" className="text-gray-500 hover:text-slate-900 transition-colors"><FiBold size={16} /></button>
-                    <button type="button" className="text-gray-500 hover:text-slate-900 transition-colors"><FiItalic size={16} /></button>
-                    <button type="button" className="text-gray-500 hover:text-slate-900 transition-colors"><FiList size={16} /></button>
-                    <button type="button" className="text-gray-500 hover:text-slate-900 transition-colors"><FiLink size={16} /></button>
+                <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Project Description</label>
+                <div className="bg-[#f8faf6]/80 rounded-[24px] overflow-hidden shadow-sm border-2 border-transparent focus-within:border-[#8cc63f]/20 focus-within:bg-white dark:bg-gray-800 transition-all">
+                  <div className="flex gap-4 px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-white/ dark:bg-gray-800/">
+                    <button type="button" className="text-gray-500 hover:text-slate-900 dark:text-gray-100 transition-colors"><FiBold size={16} /></button>
+                    <button type="button" className="text-gray-500 hover:text-slate-900 dark:text-gray-100 transition-colors"><FiItalic size={16} /></button>
+                    <button type="button" className="text-gray-500 hover:text-slate-900 dark:text-gray-100 transition-colors"><FiList size={16} /></button>
+                    <button type="button" className="text-gray-500 hover:text-slate-900 dark:text-gray-100 transition-colors"><FiLink size={16} /></button>
                   </div>
                   <textarea 
                     value={formData.description}
@@ -297,21 +297,21 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <div className="space-y-3">
-                  <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Start Date & Time</label>
+                  <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Start Date & Time</label>
                   <input 
                     type="datetime-local" 
                     value={formData.startDate}
                     onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                    className="w-full bg-[#f8faf6]/80 focus:bg-white border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-semibold text-slate-800 outline-none transition-all shadow-sm"
+                    className="w-full bg-[#f8faf6]/80 focus:bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-semibold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-sm"
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">End Date & Time</label>
+                  <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">End Date & Time</label>
                   <input 
                     type="datetime-local" 
                     value={formData.endDate}
                     onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                    className="w-full bg-[#f8faf6]/80 focus:bg-white border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-semibold text-slate-800 outline-none transition-all shadow-sm"
+                    className="w-full bg-[#f8faf6]/80 focus:bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/30 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-semibold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -321,10 +321,10 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                   <div className="p-2 bg-green-50 rounded-lg text-green-600">
                     <FiAward size={20} />
                   </div>
-                  <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Award & Recognition</label>
+                  <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Award & Recognition</label>
                 </div>
                 
-                <div className="bg-white border-2 border-green-100 rounded-[28px] p-6 space-y-6 shadow-sm shadow-green-500/5">
+                <div className="bg-white dark:bg-gray-800 border-2 border-green-100 rounded-[28px] p-6 space-y-6 shadow-sm shadow-green-500/5">
                   {/* Cash Prize */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black tracking-widest text-green-600 uppercase">Cash Prize</label>
@@ -335,7 +335,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                         placeholder="0.00"
                         value={formData.cashPrize}
                         onChange={(e) => setFormData({...formData, cashPrize: e.target.value})}
-                        className="w-full bg-[#f1f8e8]/30 border border-green-50 rounded-2xl pl-10 pr-4 py-4 font-bold text-slate-700 placeholder-green-200 outline-none focus:bg-white focus:border-[#8cc63f]/20 transition-all shadow-sm"
+                        className="w-full bg-[#f1f8e8]/30 border border-green-50 rounded-2xl pl-10 pr-4 py-4 font-bold text-slate-700 placeholder-green-200 outline-none focus:bg-white dark:bg-gray-800 focus:border-[#8cc63f]/20 transition-all shadow-sm"
                       />
                     </div>
                   </div>
@@ -353,7 +353,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                             onClick={() => setFormData({...formData, expertCertificate: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
                               formData.expertCertificate === opt 
-                                ? 'bg-white text-green-600 shadow-sm' 
+                                ? 'bg-white dark:bg-gray-800 text-green-600 shadow-sm' 
                                 : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >
@@ -374,7 +374,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                             onClick={() => setFormData({...formData, internshipOffer: opt})}
                             className={`flex-1 rounded-xl text-[10px] sm:text-[11px] font-black uppercase transition-all ${
                               formData.internshipOffer === opt 
-                                ? 'bg-white text-green-600 shadow-sm' 
+                                ? 'bg-white dark:bg-gray-800 text-green-600 shadow-sm' 
                                 : 'text-green-400/60 hover:text-green-500'
                             }`}
                           >
@@ -389,24 +389,24 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Contest Thumbnail</label>
-                  <label className="block border-2 border-dashed border-gray-200 bg-[#f8faf6]/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-[#8cc63f]/5 hover:border-[#8cc63f]/30 transition-all group overflow-hidden relative min-h-[140px]">
+                  <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Contest Thumbnail</label>
+                  <label className="block border-2 border-dashed border-gray-200 dark:border-gray-700 bg-[#f8faf6]/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-[#8cc63f]/5 hover:border-[#8cc63f]/30 transition-all group overflow-hidden relative min-h-[140px]">
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'thumbnail')} />
                     {previews.thumbnail ? (
                       <img src={previews.thumbnail} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-10 shadow-inner" />
                     ) : null}
                     <FiUploadCloud size={28} className="text-[#8cc63f] relative z-10 group-hover:scale-110 transition-transform" />
-                    <span className="text-[12px] font-black text-slate-800 relative z-10">{previews.thumbnail ? 'Replace Cover Image' : 'Upload Cover Image'}</span>
+                    <span className="text-[12px] font-black text-slate-800 dark:text-gray-100 relative z-10">{previews.thumbnail ? 'Replace Cover Image' : 'Upload Cover Image'}</span>
                     <span className="text-[10px] text-gray-400 font-bold relative z-10">PNG, JPG up to 5MB</span>
                   </label>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[12px] font-bold text-gray-800 uppercase tracking-widest">Project Syllabus (PDF)</label>
-                  <label className="block border-2 border-dashed border-gray-200 bg-[#f8faf6]/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-all min-h-[140px] group">
+                  <label className="text-[12px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest">Project Syllabus (PDF)</label>
+                  <label className="block border-2 border-dashed border-gray-200 dark:border-gray-700 bg-[#f8faf6]/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-all min-h-[140px] group">
                     <input type="file" className="hidden" accept="application/pdf" onChange={(e) => handleFileChange(e, 'syllabus')} />
                     <FiUploadCloud size={28} className="text-blue-500 group-hover:scale-110 transition-transform" />
-                    <span className="text-[12px] font-black text-slate-800 text-center px-2">
+                    <span className="text-[12px] font-black text-slate-800 dark:text-gray-100 text-center px-2">
                        {previews.syllabusName || 'Upload Syllabus PDF'}
                     </span>
                     <span className="text-[10px] text-gray-400 font-bold">Max 25MB</span>
@@ -418,7 +418,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 md:px-10 py-6 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center shrink-0 gap-4">
+        <div className="px-6 md:px-10 py-6 border-t border-gray-100 dark:border-gray-700 bg-gray-50/ dark:bg-gray-800/ flex flex-col sm:flex-row justify-between items-center shrink-0 gap-4">
           <button 
             type="button"
             onClick={handleDiscard}
@@ -432,7 +432,7 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
             <button 
               onClick={handleClose}
               disabled={isSaving}
-              className="flex-1 sm:flex-none px-6 py-3.5 text-gray-500 hover:text-slate-900 font-bold text-sm transition-colors"
+              className="flex-1 sm:flex-none px-6 py-3.5 text-gray-500 hover:text-slate-900 dark:text-gray-100 font-bold text-sm transition-colors"
             >
               Cancel
             </button>

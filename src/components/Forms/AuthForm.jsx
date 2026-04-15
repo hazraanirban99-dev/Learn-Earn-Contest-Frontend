@@ -15,7 +15,7 @@ import {
 } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { InputField, Button, SocialButton } from '../index';
 import { toast } from 'react-toastify';
@@ -25,6 +25,7 @@ const AuthForm = ({ type }) => {
   const isRegister = type === 'register';
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const firstInputRef = useRef(null);
@@ -139,11 +140,18 @@ const AuthForm = ({ type }) => {
           toast.success(`Welcome back ${data.data.user.name}!`);
           login(data.data.user);
           
-          // Role base redirection
-          if (data.data.user.role === 'admin') {
-            navigate('/admin/dashboard');
+          const searchParams = new URLSearchParams(location.search);
+          const redirectUrl = searchParams.get('redirect');
+
+          if (redirectUrl) {
+             navigate(redirectUrl);
           } else {
-            navigate('/student/dashboard');
+            // Role base redirection
+            if (data.data.user.role === 'admin') {
+              navigate('/admin/dashboard');
+            } else {
+              navigate('/student/dashboard');
+            }
           }
         }
       } catch (error) {
@@ -162,11 +170,11 @@ const AuthForm = ({ type }) => {
         <Logo 
           size="lg" 
           className="mb-10" 
-          imgClassName="bg-white rounded-full shadow-sm flex items-center justify-center p-0.5" 
+          imgClassName="bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center p-0.5" 
         />
         
         <div className="text-center">
-          <h2 className={`font-black text-black mb-1.5 tracking-tight leading-tight uppercase ${isRegister ? 'text-[32px]' : 'text-[34px]'}`}>
+          <h2 className={`font-black text-black dark:text-gray-100 mb-1.5 tracking-tight leading-tight uppercase ${isRegister ? 'text-[32px]' : 'text-[34px]'}`}>
             {isForgotPassword ? 'Reset Password' : isRegister ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-gray-500 text-[15px] font-bold opacity-70">
@@ -209,10 +217,10 @@ const AuthForm = ({ type }) => {
 
         {isRegister && (
           <div className="mb-4">
-            <label className="text-[11px] font-bold text-gray-800 tracking-tight block mb-3 uppercase">Gender</label>
+            <label className="text-[11px] font-bold text-gray-800 dark:text-gray-200 tracking-tight block mb-3 uppercase">Gender</label>
             <div className="flex gap-6 ml-1">
               {['Male', 'Female', 'Other'].map(g => (
-                <label key={g} className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-gray-600 transition-colors hover:text-gray-900">
+                <label key={g} className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-gray-600 dark:text-gray-300 transition-colors hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100">
                   <input
                     type="radio"
                     name="gender"
@@ -258,7 +266,7 @@ const AuthForm = ({ type }) => {
                 required
               />
               {isRegister && (
-                <p className="text-[9.5px] sm:whitespace-nowrap text-black font-semibold mt-2 leading-tight">
+                <p className="text-[9.5px] sm:whitespace-nowrap text-black dark:text-gray-100 font-semibold mt-2 leading-tight">
                   <span className="text-[#fbc111] font-black mr-1">Note:</span> Min 8 chars, 1 uppercase, 1 number, 1 special char (@$!%*?&#).
                 </p>
               )}
@@ -280,7 +288,7 @@ const AuthForm = ({ type }) => {
               name={isRegister ? "termsAccepted" : "keepLoggedIn"}
               checked={isRegister ? formData.termsAccepted : formData.keepLoggedIn}
               onChange={handleChange}
-              className="w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white"
+              className="w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white dark:bg-gray-800"
             />
             <label htmlFor={isRegister ? "terms" : "keepLoggedIn"} className="text-sm text-gray-600 font-semibold cursor-pointer flex-1 uppercase tracking-tight">
               {isRegister ? (
@@ -317,10 +325,10 @@ const AuthForm = ({ type }) => {
           {/* Divider */}
           <div className="relative my-10 lg:my-12">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
+              <div className="w-full border-t border-gray-100 dark:border-gray-700"></div>
             </div>
             <div className="relative flex justify-center text-[10px] font-black tracking-[0.2em] text-gray-300">
-              <span className="bg-[#e5faa7] lg:bg-white px-5 uppercase">
+              <span className="bg-[#e5faa7] dark:bg-gray-800 lg:bg-white dark:bg-gray-800 dark:lg:bg-gray-800 px-5 uppercase">
                 {isRegister ? 'OR REGISTER WITH' : 'OR CONTINUE WITH'}
               </span>
             </div>
@@ -334,7 +342,7 @@ const AuthForm = ({ type }) => {
               onClick={() => console.log("Google Login Clicked")}
             />
             {isRegister && (
-              <SocialButton text="Apple" icon={FaApple} iconColor="text-black" onClick={() => console.log('Apple login clicked')} />
+              <SocialButton text="Apple" icon={FaApple} iconColor="text-black dark:text-gray-100" onClick={() => console.log('Apple login clicked')} />
             )}
           </div>
 

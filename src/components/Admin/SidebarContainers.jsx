@@ -18,8 +18,8 @@ export const LaunchCard = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-gradient-to-br from-[#8cc63f] to-[#a6d843] rounded-[32px] p-8 text-white shadow-2xl shadow-[#8cc63f]/30 flex flex-col items-center text-center gap-6 relative overflow-hidden group h-full">
-      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
-      <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center border-2 border-white/30 backdrop-blur-md transition-all duration-500 shadow-xl">
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/ dark:bg-gray-800/ rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
+      <div className="w-16 h-16 rounded-2xl bg-white/ dark:bg-gray-800/ flex items-center justify-center border-2 border-white/30 backdrop-blur-md transition-all duration-500 shadow-xl">
         <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
@@ -32,7 +32,7 @@ export const LaunchCard = () => {
       </div>
       <button
         onClick={() => navigate('/admin/contests/create')}
-        className="w-full bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30"
+        className="w-full bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white dark:bg-gray-800 hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30"
       >
         Create New Contest
       </button>
@@ -52,9 +52,9 @@ export const RecentActivityCard = () => {
   };
 
   return (
-    <div className="bg-white rounded-[32px] p-6 sm:p-8 flex flex-col gap-8 h-full border border-gray-100 shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 flex flex-col gap-8 h-full border border-gray-100 dark:border-gray-700 shadow-sm">
       <div className="flex items-center justify-between px-1">
-        <h4 className="font-black text-slate-800 text-xl tracking-tight uppercase leading-none">Recent Activity</h4>
+        <h4 className="font-black text-slate-800 dark:text-gray-100 text-xl tracking-tight uppercase leading-none">Recent Activity</h4>
       </div>
 
       <div className="relative flex-1 pl-8">
@@ -68,7 +68,7 @@ export const RecentActivityCard = () => {
                 <div className="w-4 h-4 rounded-full bg-gray-100 shrink-0 animate-pulse ml-[-26px]" />
                 <div className="flex-1 space-y-2">
                   <div className="h-3 bg-gray-100 rounded-full animate-pulse w-3/4" />
-                  <div className="h-2 bg-gray-50 rounded-full animate-pulse w-1/2" />
+                  <div className="h-2 bg-gray-50 dark:bg-gray-800 rounded-full animate-pulse w-1/2" />
                 </div>
               </div>
             ))
@@ -89,7 +89,7 @@ export const RecentActivityCard = () => {
                   style={{ backgroundColor: dot, marginLeft: '-27px' }}
                 />
                 <div className="flex flex-col gap-0.5 min-w-0">
-                  <p className="text-[12px] sm:text-[13px] leading-tight font-bold text-slate-800 uppercase tracking-tight">
+                  <p className="text-[12px] sm:text-[13px] leading-tight font-bold text-slate-800 dark:text-gray-100 uppercase tracking-tight">
                     <span className="opacity-50 font-black">New {typeLabel}</span>{' '}
                     <span className="font-black">{item.name}</span>{' '}
                     <span className="opacity-50 font-black">{actionLabel}</span>
@@ -112,7 +112,7 @@ export const SkillTrajectory = () => {
   const { skills } = useAdminDashboard();
   return (
     <div className="bg-[#e9f2db]/40 rounded-[32px] p-6 sm:p-8 flex flex-col gap-8 h-full border-b-4 border-[#8cc63f]/10 group">
-      <h4 className="font-black text-slate-800 text-xl tracking-tight uppercase leading-none px-1">Skill Trajectory</h4>
+      <h4 className="font-black text-slate-800 dark:text-gray-100 text-xl tracking-tight uppercase leading-none px-1">Skill Trajectory</h4>
       <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-8 sm:gap-4 flex-1">
         {skills.map((skill, index) => (
           <div key={index} className="flex flex-col items-center gap-4">
@@ -124,7 +124,7 @@ export const SkillTrajectory = () => {
                   strokeLinecap="round" className="transition-all duration-1000 ease-out drop-shadow-md" />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[14px] sm:text-[12px] xl:text-[14px] font-black text-slate-900 group-hover/gauge:scale-125 transition-transform">
+                <span className="text-[14px] sm:text-[12px] xl:text-[14px] font-black text-slate-900 dark:text-gray-100 group-hover/gauge:scale-125 transition-transform">
                   {skill.value}%
                 </span>
               </div>
@@ -138,7 +138,7 @@ export const SkillTrajectory = () => {
 };
 
 // ─── Upcoming Contest Card ────────────────────────────────────────────────────
-export const UpcomingContestCard = () => {
+export const UpcomingContestCard = ({ onViewAll }) => {
   const navigate = useNavigate();
   const { activeContest, loading } = useAdminDashboard();
 
@@ -152,22 +152,35 @@ export const UpcomingContestCard = () => {
 
   return (
     <div
-      className="rounded-[32px] p-6 sm:p-8 text-white flex flex-col gap-6 relative overflow-hidden group h-full shadow-2xl"
+      className="rounded-[32px] p-6 sm:p-8 text-white flex flex-col gap-6 relative overflow-hidden group h-full shadow-2xl transition-all duration-300 hover:scale-[1.01]"
       style={{ backgroundColor: bgColor, boxShadow: `0 20px 60px ${bgColor}40` }}
     >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12 blur-xl transition-all group-hover:scale-150 duration-700" />
-      <span className="bg-white/20 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full w-fit shadow-sm border border-white/20">
-        {activeContest?.status === 'ONGOING' ? 'Active Contest' : 'Upcoming Contest'}
-      </span>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/ dark:bg-gray-800/ rounded-full -translate-y-12 translate-x-12 blur-xl transition-all group-hover:scale-150 duration-700" />
+      <div className="flex justify-between items-start z-10">
+        <span className="bg-white/ dark:bg-gray-800/ text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full w-fit shadow-sm border border-white/20">
+          {activeContest?.status === 'ONGOING' ? 'Active Contest' : 'Upcoming Contest'}
+        </span>
+        {onViewAll && (
+          <button 
+            onClick={(e) => { e.stopPropagation(); onViewAll(); }}
+            className="text-[10px] font-black uppercase tracking-widest hover:underline opacity-80 hover:opacity-100 transition-all"
+          >
+            View Report
+          </button>
+        )}
+      </div>
 
       {loading ? (
         <div className="space-y-3 animate-pulse">
-          <div className="h-6 bg-white/20 rounded-xl w-3/4" />
-          <div className="h-4 bg-white/10 rounded-xl w-full" />
-          <div className="h-4 bg-white/10 rounded-xl w-2/3" />
+          <div className="h-6 bg-white/ dark:bg-gray-800/ rounded-xl w-3/4" />
+          <div className="h-4 bg-white/ dark:bg-gray-800/ rounded-xl w-full" />
+          <div className="h-4 bg-white/ dark:bg-gray-800/ rounded-xl w-2/3" />
         </div>
       ) : (
-        <div className="min-h-0 flex-1">
+        <div 
+          className="min-h-0 flex-1 cursor-pointer"
+          onClick={() => onViewAll?.()}
+        >
           <h3 className="text-[20px] sm:text-[22px] xl:text-[26px] font-black leading-[1.1] tracking-tight uppercase">
             {activeContest?.title || 'No Active Contest'}
           </h3>
@@ -182,16 +195,21 @@ export const UpcomingContestCard = () => {
         </div>
       )}
 
-      <button
-        onClick={() => navigate('/admin/submissions')}
-        className="bg-white px-6 py-4 rounded-xl font-black text-sm flex items-center justify-between hover:bg-[#fbc111] hover:!text-white transition-all shadow-xl active:scale-95 uppercase tracking-widest"
-        style={{ color: bgColor }}
-      >
-        Begin Review
-        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
-      </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto">
+        <button
+          onClick={() => navigate('/admin/submissions')}
+          className="bg-white dark:bg-gray-800 px-4 py-3.5 rounded-xl font-black text-[11px] flex items-center justify-center hover:bg-[#fbc111] hover:!text-white transition-all shadow-xl active:scale-95 uppercase tracking-widest"
+          style={{ color: bgColor }}
+        >
+          Begin Review
+        </button>
+        <button
+          onClick={() => onViewAll?.()}
+          className="bg-black/20 border border-white/20 backdrop-blur-md px-4 py-3.5 rounded-xl font-black text-[11px] flex items-center justify-center hover:bg-white/ dark:bg-gray-800/ transition-all shadow-xl active:scale-95 uppercase tracking-widest text-white"
+        >
+          All Contests
+        </button>
+      </div>
     </div>
   );
 };
