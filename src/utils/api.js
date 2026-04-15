@@ -19,9 +19,72 @@ const api = axios.create({
 
 // Response interceptor — sob response er age ek jayga e error check kora hocche.
 // Jodi backend theke error ashe (401, 403, 500 etc), ekhane message ta extract hobe.
+// 401 Unauthorized hole access token expired dhore niye refresh token use kore automatic new token anar logic.
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response, // Success hole sudhu response pass thru koro
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    // // Check if error is 401 (Unauthorized) and we haven't retried this request yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (originalRequest.url === '/users/refresh-token') {
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login' && currentPath !== '/register' && !currentPath.startsWith('/password/reset')) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        // If already refreshing, wait for it to finish and then retry
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        }).then(() => {
+          return api(originalRequest);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Refresh token er endpoint hit kore new tokens (HTTP Only Cookies) niye ashar request
+        await api.post('/users/refresh-token');
+
+        // Tokens asha successful hole queue the pending request gulo clear koro o original request retry dao
+        processQueue(null);
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err);
+        // Refresh fail korle obosshoi abar login korte hobe (unless already on auth pages)
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login' && currentPath !== '/register' && !currentPath.startsWith('/password/reset')) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Default error handling for non-401 errors
     // Full error object re-throw kora hocche, tai component gulo error.response.status check korte parbe
     const message = error.response?.data?.message || error.message || "Something went wrong";
     error.message = message; // message update kora hocche, kinto full error object keep korchi
@@ -30,4 +93,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

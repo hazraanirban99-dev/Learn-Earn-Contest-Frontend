@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useUsers } from '../../context/UserContext';
 import EditUserModal from '../../components/Admin/EditUserModal';
 import AdminLayout from '../../layouts/AdminLayout';
@@ -16,8 +16,11 @@ const ManageUsers = () => {
   const [selectedDomain, setSelectedDomain] = useState('All Domains');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [visibleCount, setVisibleCount] = useState(10);
+  const itemsPerBatch = 10;
+
+  // Infinite scroll sentinel ref
+  const sentinelRef = useRef(null);
 
   const [contests, setContests] = useState([]);
   React.useEffect(() => {
@@ -25,7 +28,7 @@ const ManageUsers = () => {
       try {
         const { data } = await api.get('/admin/contests/admin');
         if (data && data.success) {
-           setContests(data.data.filter(c => c.status === 'COMPLETED').map(c => c.title));
+          setContests(data.data.filter(c => c.status === 'COMPLETED').map(c => c.title));
         }
       } catch (err) {
         console.error("Failed to fetch contests in manage users", err);
@@ -44,7 +47,7 @@ const ManageUsers = () => {
   const suggestions = React.useMemo(() => {
     if (!searchTerm || selectedFilter) return [];
     const lowerSearch = searchTerm.toLowerCase();
-    
+
     const userMatches = users
       .filter(u => u.name.toLowerCase().includes(lowerSearch))
       .map(u => ({ type: 'user', label: u.name, value: u.name, id: u.id }));
@@ -76,11 +79,11 @@ const ManageUsers = () => {
     if (selectedFilter && selectedFilter.type === 'user') {
       return result.filter(u => u.id === selectedFilter.id);
     }
-    
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(user => 
-        user.name.toLowerCase().includes(term) || 
+      result = result.filter(user =>
+        user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term)
       );
     }
@@ -88,13 +91,35 @@ const ManageUsers = () => {
     return result;
   }, [users, searchTerm, selectedFilter, selectedDomain, selectedContest, userContests]);
 
-  const totalPages = React.useMemo(() => {
-    return Math.ceil(filteredUsers.length / itemsPerPage);
-  }, [filteredUsers.length, itemsPerPage]);
+  // Visible users (infinite scroll slice)
+  const visibleUsers = useMemo(() => {
+    return filteredUsers.slice(0, visibleCount);
+  }, [filteredUsers, visibleCount]);
 
-  const currentUsers = React.useMemo(() => {
-    return filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  }, [filteredUsers, currentPage, itemsPerPage]);
+  const hasMore = visibleCount < filteredUsers.length;
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(itemsPerBatch);
+  }, [selectedDomain, selectedContest, searchTerm, selectedFilter]);
+
+  // Infinite scroll with IntersectionObserver
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && hasMore) {
+          setVisibleCount(prev => prev + itemsPerBatch);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore]);
 
   const handleEditClick = React.useCallback((user) => {
     setEditingUser(user);
@@ -110,7 +135,6 @@ const ManageUsers = () => {
     setSelectedFilter(suggestion);
     setSearchTerm(suggestion.label);
     setShowSuggestions(false);
-    setCurrentPage(1);
   };
 
   const clearFilter = () => {
@@ -118,7 +142,6 @@ const ManageUsers = () => {
     setSearchTerm('');
     setSelectedContest('All Contests');
     setSelectedDomain('All Domains');
-    setCurrentPage(1);
   };
 
   const handleDeleteUser = React.useCallback((id) => {
@@ -126,7 +149,7 @@ const ManageUsers = () => {
       <div className="p-1">
         <p className="text-sm font-black text-slate-800 mb-3 uppercase tracking-tight">Delete this participant?</p>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={() => {
               deleteUser(id);
               toast.success("Participant removed from registry.");
@@ -136,7 +159,7 @@ const ManageUsers = () => {
           >
             Confirm
           </button>
-          <button 
+          <button
             onClick={closeToast}
             className="bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 transition-colors"
           >
@@ -158,232 +181,213 @@ const ManageUsers = () => {
   return (
     <AdminLayout>
       <div className="animate-in fade-in duration-500 max-w-[1440px] mx-auto space-y-6 sm:space-y-8 px-2 sm:px-0">
-      <div className="mt-8 relative max-w-4xl mx-auto">
-        <div className="flex items-center bg-gradient-to-r from-green-300/30 to-yellow-300/30 rounded-full px-6 py-4 shadow-sm border border-[#8cc63f]/20 transition-all hover:shadow-md focus-within:shadow-md focus-within:border-[#8cc63f]/40 group">
-          <FiSearch className="text-[#8cc63f] mr-3 group-focus-within:scale-110 transition-transform" size={20} />
-          <input 
-            type="text" 
-            placeholder="Search by scholar name, @username, or contest title..." 
-            className="bg-transparent border-none outline-none w-full text-[15px] text-slate-700 font-bold placeholder:text-gray-400"
-            value={searchTerm}
-            onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setSelectedFilter(null);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
-
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 w-full bg-white border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50">
-               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Most Matched Results</span>
-            </div>
-            {suggestions.map((s, idx) => (
-              <button 
-                key={idx}
-                onMouseDown={() => handleSuggestionClick(s)}
-                className="w-full text-left px-6 py-4 hover:bg-[#f8faea] flex items-center justify-between group border-b border-gray-50 last:border-0"
-              >
-                <div className="flex flex-col">
-                  <span className="text-sm font-black text-slate-800 tracking-tight">{s.label}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest transition-colors group-hover:text-[#5c8a14]">
-                    {s.type === 'contest' ? `Filter by Contest` : `View Scholar Details`}
-                  </span>
-                </div>
-                <div className={`p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${s.type === 'contest' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'bg-[#fbc111]/10 text-[#fbc111]'}`}>
-                  <FiTrendingUp size={14} />
-                </div>
-              </button>
-            ))}
+        <div className="mt-8 relative max-w-4xl mx-auto">
+          <div className="flex items-center bg-gradient-to-r from-green-300/30 to-yellow-300/30 rounded-full px-6 py-4 shadow-sm border border-[#8cc63f]/20 transition-all hover:shadow-md focus-within:shadow-md focus-within:border-[#8cc63f]/40 group">
+            <FiSearch className="text-[#8cc63f] mr-3 group-focus-within:scale-110 transition-transform" size={20} />
+            <input
+              type="text"
+              placeholder="Search by scholar name, @username, or contest title..."
+              className="bg-transparent border-none outline-none w-full text-[15px] text-slate-700 font-bold placeholder:text-gray-400"
+              value={searchTerm}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setSelectedFilter(null);
+              }}
+            />
           </div>
-        )}
-      </div>
 
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mt-10">
-        <div className="space-y-4 max-w-2xl">
-          <span className="bg-[#fcf3d9] text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
-            Registry Management
-          </span>
-          <h1 className="text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-[1.1]">
-            Manage Scholars & Participants
-          </h1>
-          <p className="text-gray-500 font-bold text-sm lg:text-base max-w-xl leading-relaxed">
-            Oversee the academic collective. Review registration data, manage domain assignments, and ensure participant integrity across the atelier.
-          </p>
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 w-full bg-white border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Most Matched Results</span>
+              </div>
+              {suggestions.map((s, idx) => (
+                <button
+                  key={idx}
+                  onMouseDown={() => handleSuggestionClick(s)}
+                  className="w-full text-left px-6 py-4 hover:bg-[#f8faea] flex items-center justify-between group border-b border-gray-50 last:border-0"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-black text-slate-800 tracking-tight">{s.label}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest transition-colors group-hover:text-[#5c8a14]">
+                      {s.type === 'contest' ? `Filter by Contest` : `View Scholar Details`}
+                    </span>
+                  </div>
+                  <div className={`p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${s.type === 'contest' ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'bg-[#fbc111]/10 text-[#fbc111]'}`}>
+                    <FiTrendingUp size={14} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <button 
-          onClick={() => exportToCSV(users, 'Scholar_Registry')}
-          className="bg-[#8cc63f] hover:bg-[#7db534] text-white px-6 py-3.5 rounded-xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#8cc63f]/20 h-fit whitespace-nowrap w-full lg:w-auto"
-        >
-          <FiDownload size={18} />
-          <span>Export User List</span>
-        </button>
-      </div>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mt-10">
+          <div className="space-y-4 max-w-2xl">
+            <span className="bg-[#fcf3d9] text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
+              Registry Management
+            </span>
+            <h1 className="text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-[1.1]">
+              Manage Scholars & Participants
+            </h1>
+            <p className="text-gray-500 font-bold text-sm lg:text-base max-w-xl leading-relaxed">
+              Oversee the academic collective. Review registration data, manage domain assignments, and ensure participant integrity across the atelier.
+            </p>
+          </div>
 
-      <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-           <div className="relative w-full sm:flex-1 max-w-xl">
-             <select 
-               value={selectedContest}
-               onChange={(e) => {
+          <button
+            onClick={() => exportToCSV(users, 'Scholar_Registry')}
+            className="bg-[#8cc63f] hover:bg-[#7db534] text-white px-6 py-3.5 rounded-xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#8cc63f]/20 h-fit whitespace-nowrap w-full lg:w-auto"
+          >
+            <FiDownload size={18} />
+            <span>Export User List</span>
+          </button>
+        </div>
+
+        <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+            <div className="relative w-full sm:flex-1 max-w-xl">
+              <select
+                value={selectedContest}
+                onChange={(e) => {
                   setSelectedContest(e.target.value);
-                  setCurrentPage(1);
-               }}
-               className="appearance-none bg-white border border-[#8cc63f]/30 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#8cc63f]/60 transition-all"
-             >
+                }}
+                className="appearance-none bg-white border border-[#8cc63f]/30 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#8cc63f]/60 transition-all"
+              >
                 <option value="All Contests">All Contests</option>
                 {contests.map(c => <option key={c} value={c}>{c}</option>)}
-             </select>
-             <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#8cc63f]">
+              </select>
+              <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#8cc63f]">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-             </div>
-           </div>
+              </div>
+            </div>
 
-           <div className="relative w-full sm:w-64 shrink-0">
-             <select 
-               value={selectedDomain}
-               onChange={(e) => {
+            <div className="relative w-full sm:w-64 shrink-0">
+              <select
+                value={selectedDomain}
+                onChange={(e) => {
                   setSelectedDomain(e.target.value);
-                  setCurrentPage(1);
-               }}
-               className="appearance-none bg-white border border-[#fbc111]/40 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#fbc111]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#fbc111]/80 transition-all"
-             >
+                }}
+                className="appearance-none bg-white border border-[#fbc111]/40 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#fbc111]/40 w-full shadow-sm cursor-pointer pr-10 hover:border-[#fbc111]/80 transition-all"
+              >
                 <option value="All Domains">All Domains</option>
                 <option value="MERN">MERN</option>
                 <option value="UIUX">UI/UX</option>
                 <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
-             </select>
-             <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#fbc111]">
+              </select>
+              <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-[#fbc111]">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-             </div>
-           </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-[#fcfdf8] rounded-[24px] border border-[#e8efe0] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto w-full scrollbar-hide">
-          <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-full">
-            <thead>
-              <tr className="border-b border-[#e8efe0] uppercase text-[10px] font-black tracking-widest text-[#5c8a14]/70 bg-[#f8faea]">
-                <th className="py-5 px-8">Scholar Name</th>
-                <th className="py-5 px-6">Contact Info</th>
-                <th className="py-5 px-6">Domain Discipline</th>
-                <th className="py-5 px-6">Registration Date</th>
-                <th className="py-5 px-8 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#e8efe0]/60">
-              {currentUsers.length > 0 ? (
-                currentUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-white transition-colors duration-200 group">
-                    <td className="py-5 px-8">
-                      <div className="flex items-center gap-4">
-                        <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-gray-100 shadow-sm" />
-                        <div>
-                          <div className="font-black text-slate-800 text-[15px]">{user.name}</div>
-                          <div className="text-[9px] text-[#fbc111] font-black tracking-widest mt-0.5 uppercase">PARTICIPANT MEMBER</div>
+        <div className="bg-[#fcfdf8] rounded-[24px] border border-[#e8efe0] overflow-hidden shadow-sm">
+          <div className="overflow-x-auto w-full scrollbar-hide">
+            <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-full">
+              <thead>
+                <tr className="border-b border-[#e8efe0] uppercase text-[10px] font-black tracking-widest text-[#5c8a14]/70 bg-[#f8faea]">
+                  <th className="py-5 px-8">Scholar Name</th>
+                  <th className="py-5 px-6">Contact Info</th>
+                  <th className="py-5 px-6">Domain Discipline</th>
+                  <th className="py-5 px-6">Registration Date</th>
+                  <th className="py-5 px-8 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#e8efe0]/60">
+                {visibleUsers.length > 0 ? (
+                  visibleUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-white transition-colors duration-200 group">
+                      <td className="py-5 px-8">
+                        <div className="flex items-center gap-4">
+                          <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-gray-100 shadow-sm" />
+                          <div>
+                            <div className="font-black text-slate-800 text-[15px]">{user.name}</div>
+                            <div className="text-[9px] text-[#fbc111] font-black tracking-widest mt-0.5 uppercase">PARTICIPANT MEMBER</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-5 px-6">
-                      <div className="text-[13px] font-bold text-slate-600 mb-0.5">{user.email}</div>
-                      <div className="text-[12px] text-gray-400 font-medium">{user.phone}</div>
-                    </td>
-                    <td className="py-5 px-6">
-                      <span className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest border uppercase inline-block shadow-sm 
-                        ${(user.domain || '').toUpperCase().includes('UI/UX') ? 'bg-[#f4f8ec] text-[#8cc63f] border-[#8cc63f]/20' : 
-                          (user.domain || '').toUpperCase().includes('MERN') ? 'bg-purple-50 text-purple-500 border-purple-200' : 
-                          (user.domain || '').toUpperCase().includes('DIGITAL MARKETING') ? 'bg-amber-50 text-amber-500 border-amber-200' :
-                          'bg-blue-50 text-blue-500 border-blue-200'
-                        }`}
-                      >
-                        {user.domain}
-                      </span>
-                    </td>
-                    <td className="py-5 px-6">
-                      <div className="text-[13px] font-bold text-slate-600 mb-0.5">
-                        {formatDateDDMMYYYY(user.registrationDate)}
-                      </div>
-                      <div className="text-[11px] text-gray-400 font-bold uppercase">{user.registrationTime}</div>
-                    </td>
-                    <td className="py-5 px-8 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleEditClick(user)}
-                          className="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-500 rounded-xl transition-colors shadow-sm"
-                          title="Edit Profile"
+                      </td>
+                      <td className="py-5 px-6">
+                        <div className="text-[13px] font-bold text-slate-600 mb-0.5">{user.email}</div>
+                        <div className="text-[12px] text-gray-400 font-medium">{user.phone}</div>
+                      </td>
+                      <td className="py-5 px-6">
+                        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest border uppercase inline-block shadow-sm 
+                        ${(user.domain || '').toUpperCase().includes('UI/UX') ? 'bg-[#f4f8ec] text-[#8cc63f] border-[#8cc63f]/20' :
+                            (user.domain || '').toUpperCase().includes('MERN') ? 'bg-purple-50 text-purple-500 border-purple-200' :
+                              (user.domain || '').toUpperCase().includes('DIGITAL MARKETING') ? 'bg-amber-50 text-amber-500 border-amber-200' :
+                                'bg-blue-50 text-blue-500 border-blue-200'
+                          }`}
                         >
-                          <FiEdit2 size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="p-2.5 bg-[#8cc63f]/10 hover:bg-[#8cc63f]/20 text-[#8cc63f] rounded-xl transition-colors shadow-sm"
-                          title="Delete User"
-                        >
-                          <FiTrash2 size={16} />
-                        </button>
-                      </div>
+                          {user.domain}
+                        </span>
+                      </td>
+                      <td className="py-5 px-6">
+                        <div className="text-[13px] font-bold text-slate-600 mb-0.5">
+                          {formatDateDDMMYYYY(user.registrationDate)}
+                        </div>
+                        <div className="text-[11px] text-gray-400 font-bold uppercase">{user.registrationTime}</div>
+                      </td>
+                      <td className="py-5 px-8 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleEditClick(user)}
+                            className="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-500 rounded-xl transition-colors shadow-sm"
+                            title="Edit Profile"
+                          >
+                            <FiEdit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="p-2.5 bg-[#8cc63f]/10 hover:bg-[#8cc63f]/20 text-[#8cc63f] rounded-xl transition-colors shadow-sm"
+                            title="Delete User"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-10 text-center text-gray-400 font-bold">
+                      No participants found matching your criteria.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-10 text-center text-gray-400 font-bold">
-                    No participants found matching your criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Infinite Scroll Sentinel & Footer */}
+          <div ref={sentinelRef} className="py-1" />
+          {hasMore && (
+            <div className="flex items-center justify-center gap-4 px-6 sm:px-8 py-8 bg-[#f8faea]/30 border-t border-[#e8efe0]/60">
+              <div className="w-8 h-8 border-3 text-[#8cc63f] rounded-full spinner-dual"></div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Loading more scholars...</span>
+            </div>
+          )}
+          {!hasMore && filteredUsers.length > 0 && (
+            <div className="flex items-center justify-center px-6 sm:px-8 py-6 bg-[#f8faea]/30 border-t border-[#e8efe0]/60">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">
+                Showing all {filteredUsers.length} participants
+              </span>
+            </div>
+          )}
         </div>
-        
-        {/* Pagination mock */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 sm:px-8 py-4 bg-[#f8faea]/30 border-t border-[#e8efe0]/60 text-center sm:text-left">
-           <span className="text-[10px] sm:text-xs font-bold text-gray-400">Showing <span className="text-slate-700">{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredUsers.length)}</span> of {filteredUsers.length} participants</span>
-           <div className="flex items-center gap-1">
-             <button 
-               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-               disabled={currentPage === 1}
-               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-slate-700 disabled:opacity-30"
-             >
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-             </button>
-             
-             {Array.from({ length: totalPages }).map((_, i) => (
-               <button 
-                 key={i}
-                 onClick={() => setCurrentPage(i + 1)}
-                 className={`w-8 h-8 flex items-center justify-center rounded-lg font-black text-xs transition-all ${currentPage === i + 1 ? 'bg-[#5c8a14] text-white' : 'hover:bg-gray-100 text-slate-600'}`}
-               >
-                 {i + 1}
-               </button>
-             ))}
-
-             <button 
-               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-               disabled={currentPage === totalPages}
-               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-slate-700 disabled:opacity-30"
-             >
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-             </button>
-           </div>
-        </div>
-      </div>
 
 
 
-      {/* Render Modal if active */}
-      {editingUser && (
-        <EditUserModal 
-          user={editingUser} 
-          onClose={() => setEditingUser(null)} 
-          onSave={handleSaveUser} 
-        />
-      )}
+        {/* Render Modal if active */}
+        {editingUser && (
+          <EditUserModal
+            user={editingUser}
+            onClose={() => setEditingUser(null)}
+            onSave={handleSaveUser}
+          />
+        )}
 
       </div>
     </AdminLayout>
