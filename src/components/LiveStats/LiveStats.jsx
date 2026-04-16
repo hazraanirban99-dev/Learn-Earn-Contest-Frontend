@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FiUsers, FiZap, FiAward, FiTrendingUp, FiActivity } from 'react-icons/fi';
+import { useTheme } from '../../context/ThemeContext';
 import { FaTrophy } from 'react-icons/fa';
 
 const useCountUp = (target, duration = 2000, start = false) => {
@@ -27,11 +28,12 @@ const formatNum = (n, suffix = '') => {
 
 const StatCard = ({ icon: Icon, label, value, suffix = '', color, bgColor, delay, shouldAnimate }) => {
     const count = useCountUp(value, 2000 + delay, shouldAnimate);
+    const { isDark } = useTheme();
 
     return (
         <div
-            className={`relative flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-[28px] border border-white/60 shadow-lg backdrop-blur-sm overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
-            style={{ backgroundColor: bgColor, animationDelay: `${delay}ms` }}
+            className={`relative flex flex-col items-center justify-center text-center p-6 sm:p-8 rounded-[28px] border border-white/60 dark:border-gray-700 shadow-lg backdrop-blur-sm overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
+            style={{ backgroundColor: isDark ? '#1f2937' : bgColor, animationDelay: `${delay}ms` }}
         >
             {/* Background glow */}
             <div
@@ -48,7 +50,7 @@ const StatCard = ({ icon: Icon, label, value, suffix = '', color, bgColor, delay
             </div>
 
             {/* Number */}
-            <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-gray-100 leading-none mb-1 tabular-nums">
+            <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-[#fffff0] leading-none mb-1 tabular-nums">
                 {shouldAnimate ? formatNum(count, suffix) : formatNum(value, suffix)}
             </p>
 
@@ -73,8 +75,8 @@ const StatCard = ({ icon: Icon, label, value, suffix = '', color, bgColor, delay
 const TickerItem = ({ icon, text, color }) => (
     <div className="inline-flex items-center gap-2 mx-8 flex-shrink-0">
         <span style={{ color }} className="text-sm">{icon}</span>
-        <span className="text-[12px] font-bold text-slate-600 whitespace-nowrap">{text}</span>
-        <span className="w-1 h-1 rounded-full bg-slate-300 ml-6" />
+        <span className="text-[12px] font-bold text-slate-600 dark:text-[#fffff0] whitespace-nowrap">{text}</span>
+        <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-gray-600 ml-6" />
     </div>
 );
 
@@ -177,11 +179,11 @@ const LiveStats = ({ stats }) => {
                     ))}
                 </div>
 
-                <div className="relative rounded-[20px] border border-[#8cc63f]/20 bg-[#f6fbee]/50 overflow-hidden">
+                <div className="relative rounded-[20px] border border-[#8cc63f]/20 bg-[#f6fbee]/50 dark:bg-gray-800 overflow-hidden">
                     {/* Left fade */}
-                    <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-[#f6fbee] to-transparent pointer-events-none" />
+                    <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-[#f6fbee] dark:from-gray-800 to-transparent pointer-events-none" />
                     {/* Right fade */}
-                    <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-[#f6fbee] to-transparent pointer-events-none" />
+                    <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-[#f6fbee] dark:from-gray-800 to-transparent pointer-events-none" />
 
                     {/* LIVE badge */}
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 bg-[#8cc63f] text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md">

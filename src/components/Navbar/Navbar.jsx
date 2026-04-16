@@ -371,6 +371,14 @@ const Navbar = ({ showAuth = true }) => {
               <div className="hidden lg:flex items-center gap-8">
                 <Link to="/login" className="text-[13px] font-black text-[#fbc111] hover:text-[#e0ad0c] transition-colors uppercase tracking-widest">Login</Link>
                 <Link to="/register" className="bg-[#8cc63f] hover:bg-[#7ab332] text-white text-[12px] font-black px-7 py-3.5 rounded-2xl transition-all shadow-lg uppercase tracking-widest">Sign Up</Link>
+                {/* Theme Toggle Button - Logged Out Desktop */}
+                <button
+                  onClick={toggleTheme}
+                  className="hidden lg:flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all shadow-sm"
+                  title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  {isDark ? <FiSun size={16} className="text-yellow-400" /> : <FiMoon size={16} className="text-slate-600" />}
+                </button>
               </div>
             )
           ) : (

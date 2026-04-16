@@ -10,16 +10,18 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2, FiRefreshCw, FiCheck, FiXCircle, FiChevronLeft } from 'react-icons/fi';
+import { FiSearch, FiBell, FiSettings, FiUser, FiMoreVertical, FiEdit, FiLogOut, FiTrash2, FiRefreshCw, FiCheck, FiXCircle, FiChevronLeft, FiSun, FiMoon } from 'react-icons/fi';
 import { Logo } from '../index';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import api from '../../utils/api';
 
 const Header = ({ onMenuClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user: currentUser } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -178,9 +180,17 @@ const Header = ({ onMenuClick }) => {
           
           <button 
             onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors group"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-400 transition-colors group"
           >
             <FiSettings size={20} className="group-hover:translate-x-0.5 transition-all" />
+          </button>
+          
+          <button
+            onClick={toggleTheme}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-400 dark:text-yellow-400 transition-all shadow-sm"
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {isDark ? <FiSun size={20} className="text-yellow-400" /> : <FiMoon size={20} className="text-slate-600" />}
           </button>
           
           {/* Admin Notifications Bell - Desktop Only */}

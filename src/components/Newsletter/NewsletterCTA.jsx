@@ -88,7 +88,7 @@ const NewsletterCTA = () => {
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
                                             placeholder="Enter your email address"
-                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/40 outline-none text-sm font-semibold text-slate-700 placeholder:text-gray-300 shadow-sm transition-all"
+                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/40 outline-none text-sm font-semibold text-slate-700 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder-gray-500 shadow-sm transition-all"
                                         />
                                     </div>
                                     <button

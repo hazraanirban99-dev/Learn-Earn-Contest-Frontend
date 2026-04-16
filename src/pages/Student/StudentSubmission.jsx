@@ -175,7 +175,7 @@ const StudentSubmission = () => {
                         ) : (
                             <div className="space-y-4">
                                 {pastSubmissions.map((sub, idx) => (
-                                    <div key={sub.id} className="bg-[#f2f8e9]/50 border border-[#8cc63f]/10 rounded-[32px] p-6 lg:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-[#f2f8e9] transition-all relative overflow-hidden">
+                                    <div key={sub.id} className="bg-[#f2f8e9]/50 dark:bg-gray-800 border border-[#8cc63f]/10 dark:border-gray-700 rounded-[32px] p-6 lg:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-[#f2f8e9] dark:hover:bg-gray-700 transition-all relative overflow-hidden">
                                         {/* Left strip indicator for pending ones */}
                                         {sub.status === 'Under Review' && (
                                             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#fbc111]"></div>

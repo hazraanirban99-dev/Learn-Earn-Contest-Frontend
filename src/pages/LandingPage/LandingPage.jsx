@@ -328,7 +328,7 @@ const LandingPage = () => {
                               <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest leading-none mt-1">Chief Executive Officer (CEO) </p>
                            </div>
                         </div>
-                        <p className="text-slate-700 italic font-bold text-lg leading-relaxed opacity-80">
+                        <p className="text-slate-700 dark:text-gray-300 italic font-bold text-lg leading-relaxed opacity-80">
                            "Our mission is to inspire the next generation of architects of the digital landscape."
                         </p>
                      </div>
@@ -366,8 +366,8 @@ const LandingPage = () => {
 
             <div className="relative">
                {/* Gradient Overlays for smooth edges */}
-               <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#f8faf2] to-transparent z-10"></div>
-               <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#f8faf2] to-transparent z-10"></div>
+               <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#f8faf2] dark:from-gray-900 to-transparent z-10"></div>
+               <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#f8faf2] dark:from-gray-900 to-transparent z-10"></div>
 
                <div className="animate-marquee gap-6 px-6 transform-gpu">
                   {[...courses, ...courses].map((course, idx) => (

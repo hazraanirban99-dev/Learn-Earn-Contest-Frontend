@@ -31,10 +31,10 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
     const isTeamContest = contest.projectType === 'Team';
 
     const statusClasses = isOngoing 
-        ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/30' 
+        ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300' 
         : isUpcoming 
-            ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' 
-            : 'text-gray-500 bg-gray-100 dark:bg-gray-700';
+            ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300' 
+            : 'text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-300';
 
     const statusDotColor = isOngoing 
         ? 'bg-emerald-500' 
