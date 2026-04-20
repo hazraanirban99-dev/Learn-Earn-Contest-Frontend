@@ -78,7 +78,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
           </div>
 
           {/* Table Container */}
-          <div className="bg-[#fcf3d9] rounded-[48px] p-4 sm:p-6 md:p-10 mb-8 border border-white/50 shadow-sm">
+          <div className="bg-[#fcf3d9] dark:bg-gray-900 rounded-[48px] p-4 sm:p-6 md:p-10 mb-8 border border-white/50 dark:border-gray-700 shadow-sm transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-separate border-spacing-y-4">
                 <thead>
@@ -110,7 +110,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                                 <div className="pl-2 border-l-2 border-gray-100 dark:border-gray-700 mt-2 space-y-2">
                                     <div className="flex items-center gap-2">
                                        <span title="Leader" className="text-lg">👑</span>
-                                       <span className="text-[12px] font-bold text-slate-700">{user.studentId.teamData?.leader?.name} (Leader)</span>
+                                       <span className="text-[12px] font-bold text-slate-700 dark:text-gray-100">{user.studentId.teamData?.leader?.name} (Leader)</span>
                                        {user.studentId.teamData?.leader?.email && (
                                            <span className="text-[10px] text-gray-400 font-mono">{user.studentId.teamData.leader.email}</span>
                                        )}
@@ -119,7 +119,7 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
                                         user.studentId.teamData.members.map((m, mIdx) => (
                                           <div key={mIdx} className="flex items-center gap-2 ml-7">
                                              <span className="text-base">🤝</span>
-                                             <span className="text-[11px] font-bold text-slate-600">{m.name || "Unknown Member"}</span>
+                                             <span className="text-[11px] font-bold text-slate-600 dark:text-gray-300">{m.name || "Unknown Member"}</span>
                                              {m.email && (
                                                  <span className="text-[10px] text-gray-400 font-mono italic">({m.email})</span>
                                              )}
@@ -185,17 +185,17 @@ const EnrolledParticipantsModal = ({ isOpen, onClose, contestTitle, contestId })
             {/* Pagination Mock */}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 text-center sm:text-left">
               <span className="text-[12px] font-bold text-gray-400">
-                Showing <span className="text-slate-700">{participants.length > 0 ? `1 to ${participants.length}` : '0'}</span> of {participants.length} participants
+                Showing <span className="text-slate-700 dark:text-gray-200">{participants.length > 0 ? `1 to ${participants.length}` : '0'}</span> of {participants.length} participants
               </span>
               <div className="flex items-center gap-2">
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white dark:bg-gray-800 transition-all border border-gray-100/50">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] dark:bg-gray-800 text-gray-400 hover:bg-white dark:hover:bg-gray-700 transition-all border border-gray-100/50 dark:border-gray-700">
                   <FiChevronLeft size={20} />
                 </button>
                 <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#8cc63f] text-white font-black text-sm shadow-md shadow-[#8cc63f]/20">1</button>
                 <div className="flex items-center gap-1">
                    {/* Handle theoretical multiple pages if implemented later */}
                 </div>
-                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] text-gray-400 hover:bg-white dark:bg-gray-800 transition-all border border-gray-100/50">
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#fcf3d9] dark:bg-gray-800 text-gray-400 hover:bg-white dark:hover:bg-gray-700 transition-all border border-gray-100/50 dark:border-gray-700">
                   <FiChevronRight size={20} />
                 </button>
               </div>

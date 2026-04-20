@@ -12,8 +12,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import AdminLayout from '../../layouts/AdminLayout';
 import ApplyContestModal from '../../components/Modals/ApplyContestModal';
 import TeamDetailsModal from '../../components/Modals/TeamDetailsModal';
@@ -23,8 +21,8 @@ import { FiBookOpen, FiDownload, FiCheckCircle, FiClock, FiCalendar, FiDollarSig
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
-
 import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../../components/index';
 
 const getDomainIcon = (domain) => {
     switch (domain?.toLowerCase()) {
@@ -235,14 +233,7 @@ const ContestDetails = () => {
     }, [contest]);
 
     if (loading || authLoading) {
-        return (
-            <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full animate-spin"></div>
-                    <p className="text-slate-500 font-black text-xs uppercase tracking-widest">Loading Contest Atelier...</p>
-                </div>
-            </div>
-        );
+        return <Loader fullPage text="Loading Contest Atelier..." />;
     }
 
     if (!contest) {
@@ -267,13 +258,13 @@ const ContestDetails = () => {
                 <div className="flex-1 lg:w-1/2">
                     {/* Tags */}
                     <div className="flex flex-wrap items-center gap-3 mb-6">
-                        <span className="bg-[#8cc63f] text-slate-900 dark:text-gray-100 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
+                        <span className="bg-[#8cc63f] text-slate-900 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
                             {contest.status}
                         </span>
-                        <span className="bg-[#ecf0e6] text-gray-500 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
+                        <span className="bg-[#ecf0e6] dark:bg-gray-800 text-gray-500 dark:text-gray-300 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-gray-200/50 dark:border-gray-700">
                             {contest.domain}
                         </span>
-                        <span className="bg-[#fbc111] text-slate-900 dark:text-gray-100 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">
+                        <span className="bg-[#fbc111] text-slate-900 font-black text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
                             {contest.rigor || 'Medium'}
                         </span>
                     </div>
@@ -284,7 +275,7 @@ const ContestDetails = () => {
                     </h1>
 
                     {/* Standard Text Formatting */}
-                    <div className="text-gray-500 space-y-6 text-sm lg:text-base leading-relaxed mb-6 font-medium">
+                    <div className="text-gray-500 dark:text-gray-400 space-y-6 text-sm lg:text-base leading-relaxed mb-6 font-medium">
                         <p>
                             {contest.description}
                         </p>
@@ -307,14 +298,14 @@ const ContestDetails = () => {
 
             {/* --- PROJECT SYLLABUS SECTION (Right after Thumbnail) --- */}
             <div className={`max-w-[1440px] mx-auto ${isAdmin ? 'px-0 mb-10' : 'px-6 sm:px-12 lg:px-24 mb-16'}`}>
-                <div className="bg-[#ecf0e6] rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm border border-[#8cc63f]/10">
+                <div className="bg-[#ecf0e6] dark:bg-gray-800 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm border border-[#8cc63f]/10 dark:border-gray-700">
                     <div className="flex items-center gap-6">
-                        <div className="w-14 h-14 bg-[#e1e6d8] rounded-2xl flex items-center justify-center text-2xl text-[#6b8f36] shrink-0">
+                        <div className="w-14 h-14 bg-[#e1e6d8] dark:bg-gray-700 rounded-2xl flex items-center justify-center text-2xl text-[#6b8f36] dark:text-[#8cc63f] shrink-0">
                             <FiBookOpen />
                         </div>
                         <div>
                             <h3 className="text-xl font-black text-slate-800 dark:text-gray-100 mb-1 font-sans">Project Syllabus</h3>
-                            <p className="text-sm font-bold text-gray-500">Comprehensive guidelines, dataset specs, and submission documentation.</p>
+                            <p className="text-sm font-bold text-gray-500 dark:text-gray-400">Comprehensive guidelines, dataset specs, and submission documentation.</p>
                         </div>
                     </div>
                     <button
@@ -381,23 +372,23 @@ const ContestDetails = () => {
                     </div>
 
                     {/* Timeline Widget */}
-                    <div className="bg-[#f2f8e9] p-8 lg:p-10 rounded-[40px] border border-[#8cc63f]/20 shadow-sm flex flex-col">
+                    <div className="bg-[#f2f8e9] dark:bg-gray-800/80 p-8 lg:p-10 rounded-[40px] border border-[#8cc63f]/20 dark:border-gray-700 shadow-sm flex flex-col">
                         <h3 className="text-xl font-black text-slate-800 dark:text-gray-100 mb-8 flex items-center gap-3">
                             <FiCalendar className="text-[#8cc63f]" /> Timeline
                         </h3>
                         <div className="relative pl-6 flex-1 flex flex-col justify-center">
-                            <div className="absolute left-[7px] top-4 bottom-4 w-0.5 bg-gray-300/60 rounded"></div>
+                            <div className="absolute left-[7px] top-4 bottom-4 w-0.5 bg-gray-300/60 dark:bg-gray-700 rounded"></div>
                             <div className="relative mb-10">
-                                <div className="absolute -left-6 top-1 w-4 h-4 bg-[#8cc63f] rounded-full border-[3px] border-[#ecf0e6] shadow-[0_0_8px_rgba(140,198,63,0.3)]"></div>
-                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-2">Start Date</p>
+                                <div className="absolute -left-6 top-1 w-4 h-4 bg-[#8cc63f] rounded-full border-[3px] border-[#f2f8e9] dark:border-gray-800 shadow-[0_0_8px_rgba(140,198,63,0.3)]"></div>
+                                <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 ml-2">Start Date</p>
                                 <h4 className="text-base font-black text-slate-800 dark:text-gray-100 ml-2">{formatDateDDMMYYYY(contest.startDate)}</h4>
-                                <p className="text-xs text-gray-500 font-bold ml-2 mt-1">Registration & Brief release</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-2 mt-1">Registration & Brief release</p>
                             </div>
                             <div className="relative">
                                 <div className="absolute -left-[22.5px] top-1 w-[13px] h-[13px] rounded-full border-2 border-[#fbc111] bg-[#fbc111] z-10 shadow-[0_0_8px_rgba(251,193,17,0.3)]"></div>
-                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-2">End Date</p>
+                                <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 ml-2">End Date</p>
                                 <h4 className="text-base font-black text-slate-800 dark:text-gray-100 ml-2">{formatDateDDMMYYYY(contest.endDate)}</h4>
-                                <p className="text-xs text-gray-500 font-bold ml-2 mt-1">Final submission deadline</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-2 mt-1">Final submission deadline</p>
                             </div>
                         </div>
                     </div>
@@ -503,7 +494,7 @@ const ContestDetails = () => {
                             ].map((rule, idx) => (
                                 <div key={idx} className="flex items-start gap-4">
                                     <FiCheckCircle className="text-[#8cc63f] shrink-0 mt-1" size={20} strokeWidth={2.5} />
-                                    <p className="text-sm text-gray-500 font-medium leading-relaxed">{rule}</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-300 font-medium leading-relaxed">{rule}</p>
                                 </div>
                             ))}
                         </div>
@@ -526,7 +517,7 @@ const ContestDetails = () => {
                                 <h2 className="text-3xl lg:text-4xl font-black text-slate-800 dark:text-gray-100 tracking-tight mb-4">
                                     Related Contests
                                 </h2>
-                                <p className="text-gray-500 font-medium text-sm lg:text-base max-w-xl">
+                                <p className="text-gray-500 dark:text-gray-400 font-medium text-sm lg:text-base max-w-xl">
                                     More opportunities in the <span className="font-bold text-[#8cc63f]">{contest.domain}</span> domain to showcase your skills.
                                 </p>
                             </div>
@@ -586,12 +577,10 @@ const ContestDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30 overflow-x-hidden pt-20">
-            <Navbar />
+        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30 overflow-x-hidden pt-16 sm:pt-20">
             <PageTransition>
                 {ContestContent}
             </PageTransition>
-            <Footer />
         </div>
     );
 };

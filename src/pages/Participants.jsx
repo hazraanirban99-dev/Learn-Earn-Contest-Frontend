@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Navbar from '../components/Navbar/Navbar';
-import Footer from '../components/Footer/Footer';
 import PageTransition from '../components/Common/PageTransition';
 import { FiSearch, FiFilter, FiUser, FiGlobe, FiAward } from 'react-icons/fi';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import { Loader } from '../components/index';
 
 const ParticipantCard = React.memo(({ user }) => {
   return (
@@ -109,8 +108,7 @@ const Participants = () => {
   }, [hasMore, loading, loadingMore, currentPage, fetchParticipants]);
 
   return (
-    <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans pt-32">
-      <Navbar />
+    <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans pt-16 sm:pt-20">
       <PageTransition>
         <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24">
           
@@ -174,12 +172,11 @@ const Participants = () => {
           <div ref={sentinelRef} className="h-10" />
           {loadingMore && (
             <div className="flex justify-center pb-20">
-               <div className="w-8 h-8 border-4 border-[#8cc63f]/20 border-t-[#8cc63f] rounded-full animate-spin"></div>
+               <Loader size="xs" text="Loading more scholars..." />
             </div>
           )}
         </div>
       </PageTransition>
-      <Footer />
     </div>
   );
 };

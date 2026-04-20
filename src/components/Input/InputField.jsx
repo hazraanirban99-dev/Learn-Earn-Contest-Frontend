@@ -19,7 +19,7 @@ const InputField = React.memo(React.forwardRef(({ label, type, name, value, onCh
         <label className="text-[11px] font-bold text-gray-800 dark:text-gray-200 tracking-tight uppercase">{label}</label>
         {labelRight && <button type="button" onClick={onLabelRightClick} className="text-[10px] font-bold text-[#689c19] hover:underline cursor-pointer bg-transparent border-0 p-0">{labelRight}</button>}
       </div>
-      <div className={`flex rounded-lg bg-[#f4f7eb] focus-within:ring-2 focus-within:ring-[#8cc63f] overflow-hidden transition-all relative ${isTextArea ? 'min-h-25 items-start pt-4' : 'h-13 items-center'}`}>
+      <div className={`flex rounded-lg bg-[#f4f7eb] dark:bg-slate-900 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:ring-2 focus-within:ring-[#8cc63f] overflow-hidden transition-all relative ${isTextArea ? 'min-h-25 items-start pt-4' : 'h-13 items-center'}`}>
         {Icon && (
           <div className={`pl-4 pr-3 flex items-center justify-center text-gray-400 pointer-events-none ${isTextArea ? 'mt-0.5' : ''}`}>
             <Icon size={18} />
@@ -34,7 +34,7 @@ const InputField = React.memo(React.forwardRef(({ label, type, name, value, onCh
               value={value}
               onChange={onChange}
               required={required}
-              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium appearance-none ${!Icon ? 'pl-4' : ''} pr-10 cursor-pointer`}
+              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 dark:text-gray-200 focus:text-black dark:focus:text-gray-100 text-base sm:text-sm font-medium appearance-none ${!Icon ? 'pl-4' : ''} pr-10 cursor-pointer`}
             >
               <option value="" disabled hidden>{placeholder || "Select an option"}</option>
               {options && options.map((opt) => (
@@ -55,7 +55,7 @@ const InputField = React.memo(React.forwardRef(({ label, type, name, value, onCh
             onChange={onChange}
             placeholder={placeholder}
             required={required}
-            className={`flex-1 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 resize-none pr-4 min-h-22.5 pt-1`}
+            className={`flex-1 outline-none bg-transparent w-full text-gray-600 dark:text-gray-200 focus:text-black dark:focus:text-gray-100 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none pr-4 min-h-22.5 pt-1`}
           />
         ) : (
           <div className="flex-1 flex items-center pr-4 relative">
@@ -67,7 +67,7 @@ const InputField = React.memo(React.forwardRef(({ label, type, name, value, onCh
               onChange={onChange}
               placeholder={placeholder}
               required={required}
-              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400`}
+              className={`flex-1 py-3 outline-none bg-transparent w-full text-gray-600 dark:text-gray-200 focus:text-black dark:focus:text-gray-100 text-base sm:text-sm font-medium ${!Icon ? 'pl-4' : ''} placeholder:text-gray-400 dark:placeholder:text-gray-500`}
               {...props}
             />
             {isPassword && (

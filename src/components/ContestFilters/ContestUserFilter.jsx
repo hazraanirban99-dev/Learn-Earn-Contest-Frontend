@@ -156,9 +156,9 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-white dark:bg-gray-800 hover:shadow-sm"
+              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:shadow-sm"
             >
-              {years.map(y => <option key={y}>{y}</option>)}
+              {years.map(y => <option key={y} className="bg-white dark:bg-gray-800">{y}</option>)}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
           </div>
@@ -169,9 +169,9 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full bg-[#f1f8e8] border-2 border-transparent hover:border-[#8cc63f]/20 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-white dark:bg-gray-800 hover:shadow-sm"
+              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/30 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:shadow-sm"
             >
-              {months.map(m => <option key={m}>{m}</option>)}
+              {months.map(m => <option key={m} className="bg-white dark:bg-gray-800">{m}</option>)}
             </select>
             <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#8cc63f] transition-colors" />
           </div>
@@ -182,14 +182,14 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
             <select 
               value={selectedDomain}
               onChange={(e) => setSelectedDomain(e.target.value)}
-              className="w-full bg-[#fcf3d9]/50 border-2 border-transparent hover:border-[#fbc111]/30 focus:border-[#fbc111]/50 focus:bg-[#fcf3d9]/80 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all shadow-sm"
+              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#fbc111]/30 focus:border-[#fbc111]/50 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-gray-100 outline-none appearance-none cursor-pointer transition-all shadow-sm"
             >
-              <option value="ALL">All Domains</option>
-              <option value="MERN">MERN</option>
-              <option value="UIUX">UI/UX</option>
-              <option value="DIGITAL MARKETING">Digital Marketing</option>
+              <option value="ALL" className="bg-white dark:bg-gray-800">All Domains</option>
+              <option value="MERN" className="bg-white dark:bg-gray-800">MERN</option>
+              <option value="UIUX" className="bg-white dark:bg-gray-800">UI/UX</option>
+              <option value="DIGITAL MARKETING" className="bg-white dark:bg-gray-800">Digital Marketing</option>
             </select>
-            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-[#fbc111] transition-colors" />
+            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-gray-300 pointer-events-none group-hover:text-[#fbc111] transition-colors" />
           </div>
         </div>
       </div>

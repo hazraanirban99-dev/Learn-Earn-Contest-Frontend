@@ -71,7 +71,7 @@ const AuthForm = ({ type }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (isForgotPassword) {
       if (!formData.email) {
         toast.error("Please enter your email address");
@@ -112,12 +112,12 @@ const AuthForm = ({ type }) => {
         toast.error("Please accept the Terms of Service.");
         return;
       }
-      
+
       setLoading(true);
       try {
         // Backend e registration data pathano hoche
         const { data } = await api.post('/users/register', formData);
-        
+
         if (data.success) {
           toast.success("Account created successfully! Please log in.");
           navigate('/login');
@@ -139,12 +139,18 @@ const AuthForm = ({ type }) => {
         if (data.success) {
           toast.success(`Welcome back ${data.data.user.name}!`);
           login(data.data.user);
-          
+
+          const locationState = location.state;
           const searchParams = new URLSearchParams(location.search);
           const redirectUrl = searchParams.get('redirect');
 
-          if (redirectUrl) {
-             navigate(redirectUrl);
+          if (data.data.user.role === 'admin' && (locationState?.returnTo || redirectUrl)) {
+            toast.error("You are not authorized to perform student actions.");
+            navigate('/admin/dashboard');
+          } else if (locationState?.returnTo) {
+            navigate(locationState.returnTo, { state: locationState });
+          } else if (redirectUrl) {
+            navigate(redirectUrl);
           } else {
             // Role base redirection
             if (data.data.user.role === 'admin') {
@@ -167,21 +173,21 @@ const AuthForm = ({ type }) => {
     <div className={`w-full ${isRegister ? 'max-w-120' : 'max-w-[420px]'}`}>
       {/* Header Area */}
       <div className="flex flex-col items-center mb-10 mt-4">
-        <Logo 
-          size="lg" 
-          className="mb-10" 
-          imgClassName="bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center p-0.5" 
+        <Logo
+          size="lg"
+          className="mb-10"
+          imgClassName="bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center p-0.5"
         />
-        
+
         <div className="text-center">
           <h2 className={`font-black text-black dark:text-gray-100 mb-1.5 tracking-tight leading-tight uppercase ${isRegister ? 'text-[32px]' : 'text-[34px]'}`}>
             {isForgotPassword ? 'Reset Password' : isRegister ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-gray-500 text-[15px] font-bold opacity-70">
-            {isForgotPassword 
-              ? 'Enter your email to receive a recovery link.' 
-              : isRegister 
-                ? 'Start your journey toward academic mastery today.' 
+            {isForgotPassword
+              ? 'Enter your email to receive a recovery link.'
+              : isRegister
+                ? 'Start your journey toward academic mastery today.'
                 : 'Please enter your details to continue.'}
           </p>
         </div>
@@ -290,7 +296,7 @@ const AuthForm = ({ type }) => {
               onChange={handleChange}
               className="w-4.5 h-4.5 rounded border border-gray-300 text-[#8cc63f] focus:ring-[#8cc63f] accent-[#8cc63f] cursor-pointer bg-white dark:bg-gray-800"
             />
-            <label htmlFor={isRegister ? "terms" : "keepLoggedIn"} className="text-sm text-gray-600 font-semibold cursor-pointer flex-1 uppercase tracking-tight">
+            <label htmlFor={isRegister ? "terms" : "keepLoggedIn"} className="text-sm text-gray-600 dark:text-gray-200 font-semibold cursor-pointer flex-1 uppercase tracking-tight">
               {isRegister ? (
                 <>I agree to the <a href="#terms" className="text-[#6aa315] font-semibold hover:underline">Terms of Service</a> and <a href="#privacy" className="text-[#6ca518] font-semibold hover:underline">Privacy Policy</a>.</>
               ) : (
@@ -322,16 +328,13 @@ const AuthForm = ({ type }) => {
 
       {!isForgotPassword && (
         <>
-          {/* Divider */}
-          <div className="relative my-10 lg:my-12">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100 dark:border-gray-700"></div>
-            </div>
-            <div className="relative flex justify-center text-[10px] font-black tracking-[0.2em] text-gray-300">
-              <span className="bg-[#e5faa7] dark:bg-gray-800 lg:bg-white dark:bg-gray-800 dark:lg:bg-gray-800 px-5 uppercase">
-                {isRegister ? 'OR REGISTER WITH' : 'OR CONTINUE WITH'}
-              </span>
-            </div>
+          {/* Divider with Lines on Both Sides */}
+          <div className="flex items-center my-10 lg:my-12">
+            <div className="flex-1 border-t border-gray-100 dark:border-gray-700"></div>
+            <span className="px-4 text-[10px] font-black tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase">
+              {isRegister ? 'OR REGISTER WITH' : 'OR CONTINUE WITH'}
+            </span>
+            <div className="flex-1 border-t border-gray-100 dark:border-gray-700"></div>
           </div>
 
           {/* Social Sign In */}

@@ -8,6 +8,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
+import { LayoutProvider } from './context/LayoutContext';
 import { Navbar, Footer, ScrollToTop, Loader } from './components';
 
 // React.lazy diye pages load kora hocche — prottekta page alada alada chunk e thakbe.
@@ -46,43 +47,51 @@ function App() {
     <Router>
       <ScrollToTop />
       <UserProvider>
-        <Suspense fallback={<FallbackLoader />}>
-          <Routes>
-            {/* Public Routes — Login na korleo dekhano jabe */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/participants" element={<Participants />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/password/reset/:token" element={<ResetPassword />} />
+        <LayoutProvider>
+          <Navbar />
+        <div className="min-h-screen flex flex-col">
+          <main className="flex-grow">
+            <Suspense fallback={<FallbackLoader />}>
+              <Routes>
+                {/* Public Routes — Login na korleo dekhano jabe */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/participants" element={<Participants />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/password/reset/:token" element={<ResetPassword />} />
 
-            {/* Protected Admin Routes — Sudhu admin role e login thakle dekhabe, nahole redirect */}
-            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/contests" element={<ManageContests />} />
-              <Route path="/admin/contests/create" element={<CreateContest />} />
-              <Route path="/admin/submissions" element={<ReviewSubmissions />} />
-              <Route path="/admin/winners" element={<DeclareWinners />} />
-              <Route path="/admin/users" element={<ManageUsers />} />
-              <Route path="/admin/reports" element={<ContestReports />} />
-              <Route path="/admin/participants" element={<ParticipantsDirectory />} />
-              {/* Redirect old dashboard path to the new admin path */}
-              <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
-            </Route>
+                {/* Protected Admin Routes — Sudhu admin role e login thakle dekhabe, nahole redirect */}
+                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/contests" element={<ManageContests />} />
+                  <Route path="/admin/contests/create" element={<CreateContest />} />
+                  <Route path="/admin/submissions" element={<ReviewSubmissions />} />
+                  <Route path="/admin/winners" element={<DeclareWinners />} />
+                  <Route path="/admin/users" element={<ManageUsers />} />
+                  <Route path="/admin/reports" element={<ContestReports />} />
+                  <Route path="/admin/participants" element={<ParticipantsDirectory />} />
+                  {/* Redirect old dashboard path to the new admin path */}
+                  <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+                </Route>
 
-            {/* Shared Protected Routes — Accessible by both Students and Admins */}
-            <Route element={<ProtectedRoute allowedRoles={['student', 'admin']} />}>
-              <Route path="/student/contests/:id" element={<ContestDetails />} />
-            </Route>
+                {/* Shared Protected Routes — Accessible by both Students and Admins */}
+                <Route element={<ProtectedRoute allowedRoles={['student', 'admin']} />}>
+                  <Route path="/student/contests/:id" element={<ContestDetails />} />
+                </Route>
 
-            {/* Protected Student Routes — Sudhu student role e login thakle access pabe */}
-            <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-              <Route path="/student/dashboard" element={<StudentDashboard />} />
-              <Route path="/student/contests" element={<AllContests />} />
-              <Route path="/student/submissions" element={<StudentSubmission />} />
-              <Route path="/student/leaderboard/:id" element={<Leaderboard />} />
-            </Route>
-          </Routes>
-        </Suspense>
+                {/* Protected Student Routes — Sudhu student role e login thakle access pabe */}
+                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+                  <Route path="/student/dashboard" element={<StudentDashboard />} />
+                  <Route path="/student/contests" element={<AllContests />} />
+                  <Route path="/student/submissions" element={<StudentSubmission />} />
+                  <Route path="/student/leaderboard/:id" element={<Leaderboard />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </main>
+          <Footer />
+        </div>
+        </LayoutProvider>
       </UserProvider>
     </Router>
   );

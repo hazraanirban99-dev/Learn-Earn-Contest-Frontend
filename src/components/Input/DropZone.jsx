@@ -26,7 +26,7 @@ const DropZone = React.memo(({ label, accept, icon: Icon, hint, note, file, onFi
   const iconBg = accentColor === '#fbc111' ? 'bg-yellow-50 text-[#fbc111]' : 'bg-green-50 text-[#8cc63f]';
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5 w-full">
       <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
         <span style={{ color: accentColor }}>
           <Icon size={13} />
@@ -40,8 +40,12 @@ const DropZone = React.memo(({ label, accept, icon: Icon, hint, note, file, onFi
         onClick={() => inputRef.current?.click()}
         className={`border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all min-h-[140px] group
           ${isDragging
-            ? accentColor === '#fbc111' ? 'border-[#fbc111] bg-yellow-50/60' : 'border-[#8cc63f] bg-[#8cc63f]/5'
-            : `${accentColor === '#fbc111' ? 'bg-yellow-50/40 border-[#fbc111]/40' : 'bg-[#f4f9ed] border-[#8cc63f]/40'} ${borderColor}`
+            ? accentColor === '#fbc111' 
+              ? 'border-[#fbc111] bg-[#fbc111]/10 dark:bg-[#fbc111]/20' 
+              : 'border-[#8cc63f] bg-[#8cc63f]/10 dark:bg-[#8cc63f]/20'
+            : `${accentColor === '#fbc111' 
+                ? 'bg-[#fbc111]/5 border-[#fbc111]/30 dark:bg-gray-900/40 dark:border-[#fbc111]/20' 
+                : 'bg-[#8cc63f]/5 border-[#8cc63f]/30 dark:bg-gray-900/40 dark:border-[#8cc63f]/20'} ${borderColor}`
           }`}
       >
         <input
@@ -68,7 +72,7 @@ const DropZone = React.memo(({ label, accept, icon: Icon, hint, note, file, onFi
               <FiUploadCloud size={20} />
             </div>
             <div className="text-center">
-              <p className="text-xs font-black text-slate-700 uppercase tracking-tight">{hint}</p>
+              <p className="text-xs font-black text-slate-700 dark:text-gray-100 uppercase tracking-tight">{hint}</p>
               <p className="text-[10px] text-gray-400 font-bold mt-0.5">{note}</p>
             </div>
           </>

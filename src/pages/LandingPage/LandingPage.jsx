@@ -9,11 +9,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useCarousel } from '../../hooks/useCarousel';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight, FiCheck, FiMail, FiPhone, FiMapPin, FiArrowRight } from 'react-icons/fi';
 import { FaGraduationCap, FaNetworkWired, FaCertificate, FaRocket, FaTrophy, FaEnvelope } from 'react-icons/fa';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../../components/index';
 import Ratings from '../../components/Ratings/Ratings';
 import LiveStats from '../../components/LiveStats/LiveStats';
 import NewsletterCTA from '../../components/Newsletter/NewsletterCTA';
@@ -111,6 +112,32 @@ const LandingPage = () => {
    const [liveLoading, setLiveLoading] = useState(true);
    const [error, setError] = useState(null);
 
+   const { user } = useAuth();
+   const navigate = useNavigate();
+
+   const handleCategoryClick = (domain) => {
+      if (!user) {
+         navigate('/login', { state: { returnTo: '/student/contests', filterDomain: domain } });
+      } else if (user.role === 'admin') {
+         toast.error("You are not authorized to perform this action right now");
+         navigate('/admin/dashboard');
+      } else {
+         navigate('/student/contests', { state: { filterDomain: domain } });
+      }
+   };
+
+   const handleContestClick = (contestId) => {
+      if (!contestId) return;
+      if (!user) {
+         navigate('/login', { state: { returnTo: `/student/contests/${contestId}` } });
+      } else if (user.role === 'admin') {
+         toast.error("You are not authorized to perform this action right now");
+         navigate('/admin/dashboard');
+      } else {
+         navigate(`/student/contests/${contestId}`);
+      }
+   };
+
    // --- CAROUSEL LOGIC VIA CUSTOM HOOKS ---
    const { currentIndex: heroIndex, setIndex: setHeroIndex } = useCarousel(heroImages.length, 2500);
    const { currentIndex, next: handleNext, prev: handlePrev } = useCarousel(contests.length > 0 ? contests.length : 1, 3000);
@@ -199,7 +226,7 @@ const LandingPage = () => {
    };
 
    return (
-      <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 overflow-x-hidden selection:bg-[#8cc63f]/30">
+      <div className="min-h-screen pt-16 sm:pt-20 bg-[#f8faf2] dark:bg-gray-900 overflow-x-hidden selection:bg-[#8cc63f]/30">
          <style dangerouslySetInnerHTML={{
             __html: `
         @keyframes marquee {
@@ -216,9 +243,6 @@ const LandingPage = () => {
           animation-play-state: paused;
         }
       `}} />
-         <Navbar showAuth={true} />
-         {/* Navbar Spacer for Landing Page */}
-         <div className="h-16 sm:h-20 w-full bg-[#f8faf2] dark:bg-gray-900"></div>
          <HeroCarousel contests={liveContests} loading={liveLoading} />
          
          {/* Typing Animation Section */}
@@ -489,19 +513,19 @@ const LandingPage = () => {
                         title: 'MERN', 
                         desc: 'Click to view all MERN contests.', 
                         image: catMern, 
-                        domain: 'MERN STACK' 
+                        domain: 'MERN' 
                      },
                      { 
                         title: 'UI/UX DESIGN', 
                         desc: 'Click to view all UI/UX DESIGN contests.', 
                         image: catUiux, 
-                        domain: 'DESIGNING' 
+                        domain: 'UI/UX' 
                      },
                      { 
                         title: 'DIGITAL MARKETING', 
                         desc: 'Click to view all DIGITAL MARKETING contests.', 
                         image: catMarketing, 
-                        domain: 'MARKETING' 
+                        domain: 'Digital Marketing' 
                      }
                   ].map((cat, idx) => (
                      <div 
@@ -523,12 +547,12 @@ const LandingPage = () => {
                            {cat.desc}
                         </p>
                         
-                        <Link 
-                           to="/login"
+                        <button 
+                           onClick={() => handleCategoryClick(cat.domain)}
                            className="flex items-center gap-2 text-[#8cc63f] font-black text-[10px] uppercase tracking-widest hover:gap-3 transition-all"
                         >
                            Explore Now <FiArrowRight className="text-lg" />
-                        </Link>
+                        </button>
                      </div>
                   ))}
                </div>
@@ -562,9 +586,8 @@ const LandingPage = () => {
 
             {loading ? (
                <div className="flex flex-col items-center justify-center py-24 space-y-4">
-               <div className="w-12 h-12 border-4 rounded-full spinner-dual"></div>
-               <p className="text-[#a68945] text-[10px] font-black uppercase tracking-widest animate-pulse">Fetching Contests...</p>
-            </div>
+                  <Loader size="sm" text="Fetching Contests..." />
+               </div>
             ) : error ? (
                <div className="text-center py-24">
                   <p className="text-red-500 font-bold mb-4">{error}</p>
@@ -591,8 +614,11 @@ const LandingPage = () => {
                   </div>
 
                   {/* CENTER CARD (ACTIVE) */}
-                  <div className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y">
-                     <div className="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative group">
+                  <div 
+                     onClick={() => handleContestClick(contests[currentIndex]?.id)}
+                     className="relative w-full max-w-[90%] md:max-w-[300px] lg:max-w-[330px] transform-gpu scale-100 z-30 transition-all duration-1000 px-4 select-none touch-pan-y cursor-pointer group"
+                  >
+                     <div className="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-[48px] shadow-2xl border-[8px] border-transparent bg-clip-padding relative h-[380px] md:h-[420px] flex flex-col items-center justify-between">
                         {/* Mixed border effect */}
                         <div className="absolute -inset-[8px] rounded-[48px] bg-gradient-to-tr from-[#8cc63f] via-[#fbc111] to-[#8cc63f] -z-10 opacity-70"></div>
                         <div className="bg-white dark:bg-gray-800 rounded-[40px] absolute inset-0 -z-10"></div>
@@ -642,8 +668,6 @@ const LandingPage = () => {
          <LiveStats />
          <NewsletterCTA />
          </PageTransition>
-
-         <Footer />
       </div>
    );
 };

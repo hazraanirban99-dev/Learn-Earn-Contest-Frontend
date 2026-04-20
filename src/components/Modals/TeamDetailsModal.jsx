@@ -12,6 +12,7 @@ import { FiX, FiUsers, FiUser, FiShield, FiAlertTriangle, FiArrowRight, FiCheckC
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../index';
 
 const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
     const { user } = useAuth();
@@ -151,9 +152,8 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
 
                 <div className="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     {loading ? (
-                        <div className="py-12 text-center">
-                            <div className="animate-spin w-8 h-8 border-4 border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full mx-auto mb-4" />
-                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Team Intel...</p>
+                        <div className="py-12 flex justify-center text-center">
+                            <Loader size="sm" text="Loading Team Intel..." />
                         </div>
                     ) : team ? (
                         <div className="space-y-6">
@@ -207,7 +207,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                                 {m.user?.name?.[0] || '?'}
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-[11px] md:text-xs font-black text-slate-800 dark:text-gray-100 truncate">{m.user?.name}</p>
+                                                <p className="text-[11px] md:text-xs font-black text-slate-800 dark:text-[#8cc63f] truncate">{m.user?.name}</p>
                                                 <p className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Teammate / Scholar</p>
                                             </div>
                                             <span className={`sm:hidden text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded ${m.status === 'ACCEPTED' ? 'text-[#8cc63f] bg-[#8cc63f]/10' : 'text-amber-500 bg-amber-50'}`}>
@@ -255,7 +255,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                             />
                                             {isSearching && (
                                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                                    <div className="w-4 h-4 border-2 border-gray-300 border-t-[#8cc63f] rounded-full animate-spin"></div>
+                                                    <Loader size="xs" text={false} />
                                                 </div>
                                             )}
                                         </div>

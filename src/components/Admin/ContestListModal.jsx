@@ -59,12 +59,12 @@ const ContestListModal = ({ isOpen, onClose, title, contests, loading }) => {
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
                       <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${
-                        contest.status === 'ONGOING' ? 'bg-green-50 text-green-600 border-green-100' :
-                        contest.status === 'UPCOMING' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                        contest.status === 'ONGOING' ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-100 dark:border-green-800/30' :
+                        contest.status === 'UPCOMING' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800/30' :
                         'bg-gray-50 dark:bg-gray-800 text-gray-500 border-gray-100 dark:border-gray-700'
                       }`}>
                         {contest.status}
-                      </span>
+</span>
                       <FiArrowRight className="text-gray-200 text-xl group-hover:text-[#8cc63f] group-hover:translate-x-1 transition-all" />
                     </div>
                     

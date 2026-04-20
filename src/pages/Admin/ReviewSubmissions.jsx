@@ -49,7 +49,7 @@ export default function ReviewSubmissions() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-10">
+      <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-10 pt-2 md:pt-4">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-4">
           <div className="space-y-2">
             <h4 className="text-[#fbc111] text-[10px] sm:text-[12px] font-black tracking-[0.2em] uppercase">Scholastic Atelier</h4>
@@ -66,7 +66,7 @@ export default function ReviewSubmissions() {
               placeholder="Search participants by name..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-[#8cc63f]/20 rounded-xl pl-12 pr-4 py-2.5 text-sm font-semibold outline-none transition-all"
+              className="w-full bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-[#8cc63f]/20 rounded-xl pl-12 pr-4 py-2.5 text-sm font-semibold text-slate-800 dark:text-gray-100 outline-none transition-all shadow-inner"
             />
           </div>
           <div className="flex items-center gap-6 px-4">
@@ -81,24 +81,24 @@ export default function ReviewSubmissions() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-[32px] overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
           {participants.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50/ dark:bg-gray-800/ border-b border-gray-50 dark:border-gray-700">
+                  <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700">
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Participant</th>
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
                     <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                   {filteredParticipants.map((p) => {
                     const isTeam = p.studentId?.participationType === 'Team';
                     const teamData = p.studentId?.teamData;
                     
                     return (
-                    <tr key={p.id} className="group hover:bg-[#f8faf2]/50 transition-colors">
+                    <tr key={p.id} className="group hover:bg-[#f8faf2]/50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-800 last:border-0">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
                           <img src={p.avatar} className="w-10 h-10 rounded-xl object-cover shadow-sm" alt="avatar" />
@@ -125,11 +125,11 @@ export default function ReviewSubmissions() {
                       <td className="px-8 py-5 text-center">
                         <div className="flex justify-center">
                           {p.status === 'REVIEWED' ? (
-                            <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full">
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
                               <FiCheckCircle size={10} /><span className="text-[9px] font-black uppercase tracking-wider">Score: {p.score}</span>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full">
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-[#fbc111] rounded-full">
                               <FiClock size={10} /><span className="text-[9px] font-black uppercase tracking-wider">Pending</span>
                             </div>
                           )}

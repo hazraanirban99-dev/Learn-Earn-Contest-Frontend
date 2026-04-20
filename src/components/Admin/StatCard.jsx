@@ -23,10 +23,16 @@ const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTre
   };
 
   const getTrendColor = (t) => {
-    if (t.includes('+') || t.includes('UP') || t === 'LIVE') return 'text-green-600 bg-green-50';
-    if (t === 'URGENT') return 'text-red-600 bg-red-50';
-    if (t === 'SCHEDULED') return 'text-blue-600 bg-blue-50';
-    return 'text-amber-600 bg-amber-50';
+    if (t.includes('+') || t.includes('UP') || t === 'LIVE') {
+      return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-[#8cc63f]';
+    }
+    if (t === 'URGENT') {
+      return 'text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400';
+    }
+    if (t === 'SCHEDULED') {
+      return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
+    }
+    return 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 dark:text-[#fbc111]';
   };
 
   const handleClick = (e) => {
@@ -44,8 +50,8 @@ const StatCard = ({ title, value, icon: Icon, color, accentColor, trend, showTre
     >
       {/* Top Header Section */}
       <div className="flex justify-between items-start mb-2">
-        <div className={`p-3 rounded-xl ${color} shadow-sm border border-white/50 group-hover:scale-110 transition-transform`}>
-          <Icon className={`text-xl ${accentColor}`} />
+        <div className={`p-3 rounded-xl ${color} dark:bg-opacity-10 shadow-sm border border-white/50 dark:border-gray-700 group-hover:scale-110 transition-transform`}>
+          <Icon className={`text-xl ${accentColor} dark:text-gray-100`} />
         </div>
         {trend && showTrend && (
           <span className={`text-[10px] font-black px-2.5 py-1.5 rounded-full ${getTrendColor(trend)} border border-white shadow-sm flex items-center gap-1`}>

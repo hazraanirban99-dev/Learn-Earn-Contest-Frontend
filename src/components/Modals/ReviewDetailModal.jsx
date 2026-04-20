@@ -27,9 +27,9 @@ const METRIC_LABELS = {
 const LinkRow = ({ label, icon: Icon, value, copyKey, copiedLink, onCopy }) => (
   <div className="space-y-1.5">
     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">{label}</label>
-    <div className="flex bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-3 rounded-2xl items-center gap-3 shadow-sm">
+    <div className="flex bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-3 rounded-2xl items-center gap-3 shadow-sm">
       <Icon className="text-gray-400 flex-shrink-0" size={14} />
-      <span className="text-xs font-bold text-slate-600 truncate flex-1 min-w-0">{value}</span>
+      <span className="text-xs font-bold text-slate-600 dark:text-gray-300 truncate flex-1 min-w-0">{value}</span>
       <button
         onClick={() => onCopy(value, copyKey)}
         className="shrink-0 text-[#8cc63f] hover:text-[#7ab332] text-[10px] font-black uppercase tracking-widest transition-colors"
@@ -116,7 +116,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
           {/* Modal Header */}
           <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-[32px] sm:rounded-t-[40px]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0 bg-slate-100 flex items-center justify-center text-[13px] font-black text-slate-500 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0 bg-slate-100 dark:bg-gray-900 flex items-center justify-center text-[13px] font-black text-slate-500 overflow-hidden">
                 {participant.avatar?.url || (typeof participant.avatar === 'string' && participant.avatar) ? (
                   <img
                     src={participant.avatar?.url || participant.avatar}
@@ -140,25 +140,23 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
             <button onClick={() => { onClose(); setIsFullscreen(false); }} className="p-2.5 hover:bg-gray-100 rounded-2xl text-gray-400 transition-colors flex-shrink-0 ml-4">
               <FiX size={20} />
             </button>
-          </div>
-
-          {/* Team Members List (If Team) */}
+          </div>          {/* Team Members List (If Team) */}
           {participant.teamData && (
-            <div className="px-5 sm:px-8 py-3 bg-[#fcf3d9]/30 border-b border-[#fcf3d9]/50 flex flex-wrap gap-4 items-center">
+            <div className="px-5 sm:px-8 py-3 bg-[#fcf3d9]/30 dark:bg-amber-900/10 border-b border-[#fcf3d9]/50 dark:border-amber-900/20 flex flex-wrap gap-4 items-center transition-colors">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Squad Registry:</span>
               
               {/* Leader */}
-              <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-1.5 rounded-xl border border-[#fcf3d9] dark:border-amber-900/30">
                 <span className="text-xs">👑</span>
-                <span className="text-xs font-bold text-slate-700">{participant.teamData.leader?.name} (Leader)</span>
+                <span className="text-xs font-bold text-slate-700 dark:text-gray-100">{participant.teamData.leader?.name} (Leader)</span>
               </div>
-
+ 
               {/* Teammates */}
               {participant.teamData.members?.map((m, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-[#fcf3d9]">
+                <div key={idx} className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-1.5 rounded-xl border border-[#fcf3d9] dark:border-amber-900/30">
                   <span className="text-xs">🤝</span>
-                  <span className="text-xs font-bold text-slate-600">{m.name}</span>
-                  <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-sm ${m.status === 'ACCEPTED' ? 'text-green-500 bg-green-50' : 'text-amber-500 bg-amber-50'}`}>
+                  <span className="text-xs font-bold text-slate-600 dark:text-gray-300">{m.name}</span>
+                  <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-sm ${m.status === 'ACCEPTED' ? 'text-green-500 bg-green-50 dark:bg-green-900/20' : 'text-amber-500 bg-amber-50 dark:bg-amber-900/20'}`}>
                     {m.status}
                   </span>
                 </div>
@@ -190,8 +188,8 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                       </div>
                     </div>
                   ) : (
-                    <div className="relative w-48 sm:w-64 aspect-video rounded-[20px] flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm border border-slate-200/50">
-                      <div className="w-12 h-12 rounded-2xl bg-white/ dark:bg-gray-800/ flex items-center justify-center shadow-sm">
+                    <div className="relative w-48 sm:w-64 aspect-video rounded-[20px] flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-900 dark:to-gray-800 shadow-sm border border-slate-200/50 dark:border-gray-800">
+                      <div className="w-12 h-12 rounded-2xl bg-white dark:bg-gray-900 flex items-center justify-center shadow-sm">
                         <FiCode className="text-slate-400" size={24} />
                       </div>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">No preview</p>
@@ -240,16 +238,16 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                   </div>
 
                   {/* PDF Download */}
-                  <div className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-3 sm:p-4 mt-2 shadow-sm group">
+                  <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-3 sm:p-4 mt-2 shadow-sm group">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2 bg-red-50 rounded-xl flex-shrink-0">
-                        <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-xl flex-shrink-0">
+                        <svg className="w-4 h-4 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Document</p>
-                        <p className="text-xs font-bold text-slate-700 truncate">Project-Detailed-Plan.pdf</p>
+                        <p className="text-xs font-bold text-slate-700 dark:text-gray-200 truncate">Project-Detailed-Plan.pdf</p>
                       </div>
                     </div>
                     <a
@@ -271,7 +269,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                     <h3 className="font-black text-[#fbc111] text-[13px] uppercase tracking-widest">Narrative Evaluation</h3>
                   </div>
                   <textarea
-                    className="w-full h-36 bg-gray-50 dark:bg-gray-800 rounded-[20px] p-5 text-sm font-semibold text-slate-700 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 transition-all"
+                    className="w-full h-36 bg-gray-50 dark:bg-slate-950 rounded-[20px] p-5 text-sm font-semibold text-slate-700 dark:text-gray-100 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 dark:placeholder:text-gray-600 transition-all shadow-inner"
                     placeholder="Type your detailed feedback here..."
                     value={reviewDraft}
                     onChange={(e) => setReviewDraft(e.target.value)}
@@ -280,7 +278,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
               </div>
 
               {/* Right Column — Scoring Panel */}
-              <div className="w-full lg:w-[340px] xl:w-[360px] flex-shrink-0 flex flex-col gap-5 bg-slate-50 dark:bg-gray-800 rounded-[28px] p-5 sm:p-7 border border-gray-100 dark:border-gray-700">
+              <div className="w-full lg:w-[340px] xl:w-[360px] flex-shrink-0 flex flex-col gap-5 bg-slate-50 dark:bg-gray-900 rounded-[28px] p-5 sm:p-7 border border-gray-100 dark:border-gray-800 shadow-sm transition-colors">
 
                 {/* Header + Toggle */}
                 <div className="flex items-center justify-between flex-wrap gap-3">
@@ -309,8 +307,8 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                   {Object.entries(metrics).map(([key, value]) => (
                     <div key={key} className="space-y-1.5">
                       <div className="flex justify-between items-center px-0.5">
-                        <span className="text-[11px] font-bold text-slate-600">{METRIC_LABELS[key]}</span>
-                        <span className="text-xs font-black text-[#8cc63f]">{value}<span className="text-gray-300 font-bold">/10</span></span>
+                        <span className="text-[11px] font-bold text-slate-600 dark:text-gray-300">{METRIC_LABELS[key]}</span>
+                        <span className="text-xs font-black text-[#8cc63f]">{value}<span className="text-gray-300 dark:text-gray-600 font-bold">/10</span></span>
                       </div>
                       <input
                         type="range" min="0" max="10" value={value}

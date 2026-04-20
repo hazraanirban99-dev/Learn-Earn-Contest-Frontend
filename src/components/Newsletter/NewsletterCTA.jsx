@@ -26,12 +26,12 @@ const NewsletterCTA = () => {
         <section className="w-full py-16 sm:py-24 px-6 sm:px-12 bg-[#f8faf2] dark:bg-gray-900 overflow-hidden">
             <div className="max-w-[900px] mx-auto">
                 <div className="relative rounded-[40px] overflow-hidden shadow-2xl shadow-[#8cc63f]/10 border border-[#8cc63f]/10">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#edfad8] via-[#f4fce8] to-[#fffef5]" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#edfad8] via-[#f4fce8] to-[#fffef5] dark:from-gray-800 dark:via-gray-900 dark:to-gray-950" />
 
                     {/* ── Decorative blobs ── */}
                     <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#8cc63f]/10 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-[#fbc111]/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-white/ dark:bg-gray-800/ blur-2xl rounded-full pointer-events-none" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-white/20 dark:bg-gray-800/20 blur-2xl rounded-full pointer-events-none" />
 
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 p-8 sm:p-12 lg:p-14">
 
@@ -54,7 +54,7 @@ const NewsletterCTA = () => {
                         {/* ── Right: Text + Form ── */}
                         <div className="flex-1 text-center lg:text-left w-full">
                             {/* Eyebrow */}
-                            <div className="inline-flex items-center gap-2 bg-white/ dark:bg-gray-800/ border border-[#8cc63f]/20 rounded-full px-4 py-1.5 mb-4 shadow-sm backdrop-blur-sm">
+                            <div className="inline-flex items-center gap-2 bg-white/ dark:bg-gray-800/40 border border-[#8cc63f]/20 rounded-full px-4 py-1.5 mb-4 shadow-sm backdrop-blur-sm">
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#8cc63f] animate-pulse" />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-[#5c8a14]">Stay Updated</span>
                             </div>
@@ -63,7 +63,7 @@ const NewsletterCTA = () => {
                                 Ready to Showcase Your{' '}
                                 <span className="text-[#8cc63f]">Brilliance?</span>
                             </h2>
-                            <p className="text-gray-500 text-sm sm:text-base font-semibold mb-7 max-w-md mx-auto lg:mx-0 leading-relaxed">
+                            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base font-semibold mb-7 max-w-md mx-auto lg:mx-0 leading-relaxed">
                                 Join the Desun ecosystem — get notified about new contests, deadlines, and winner announcements straight to your inbox.
                             </p>
 
@@ -110,7 +110,7 @@ const NewsletterCTA = () => {
 
                             {/* Trust line */}
                             {!submitted && (
-                                <p className="text-[10px] text-gray-400 font-semibold mt-3 flex items-center justify-center lg:justify-start gap-1.5">
+                                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-3 flex items-center justify-center lg:justify-start gap-1.5">
                                     <FiCheck size={10} className="text-[#8cc63f]" />
                                     No spam. Unsubscribe anytime.
                                 </p>

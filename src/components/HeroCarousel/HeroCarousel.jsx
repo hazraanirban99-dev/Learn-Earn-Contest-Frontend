@@ -7,12 +7,15 @@
 // ============================================================
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../index';
 
 const HeroCarousel = React.memo(({ contests, loading }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [heroIndex, setHeroIndex] = useState(0);
 
   // Auto-slide effect
@@ -23,6 +26,18 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
     }, 4000);
     return () => clearInterval(timer);
   }, [contests]);
+
+  const handleSlideClick = (contestId) => {
+    if (!contestId) return;
+    if (!user) {
+      navigate('/login', { state: { returnTo: `/student/contests/${contestId}` } });
+    } else if (user.role === 'admin') {
+      toast.error("You are not authorized to perform this action right now");
+      navigate('/admin/dashboard');
+    } else {
+      navigate(`/student/contests/${contestId}`);
+    }
+  };
 
   return (
     <section className="w-full">
@@ -53,7 +68,7 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
         `}} />
         {loading ? (
           <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
-            <div className="w-12 h-12 border-4 rounded-full spinner-dual"></div>
+            <Loader size="md" text="" />
           </div>
         ) : (
           <>
@@ -64,7 +79,8 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
               return (
                 <div
                   key={contest.id || idx}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  onClick={() => handleSlideClick(contest.id)}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out cursor-pointer ${idx === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
                     }`}
                 >
                   {/* Thumbnail from Backend */}
@@ -113,15 +129,14 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
 
                     {/* Optional Button */}
                     {contest.buttonText && (
-                      <Link
-                        to={isJoinNow ? (user ? `/student/contests/${contest.id}` : `/login?redirect=/student/contests/${contest.id}`) : `/student/contests/${contest.id}`}
+                      <div
                         className={`${isJoinNow
                             ? 'bg-[#8cc63f]/20 hover:bg-[#8cc63f]/30 text-[#8cc63f] border border-[#8cc63f]/40 backdrop-blur-sm shadow-emerald-500/10'
                             : 'bg-[#8cc63f] hover:bg-[#7ab332] text-white shadow-[#8cc63f]/30'
                           } px-8 sm:px-10 py-3.5 sm:py-4 rounded-[20px] font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 w-max flex items-center gap-2 shadow-xl`}
                       >
                         {contest.buttonText} <FiArrowRight size={14} sm:size={16} />
-                      </Link>
+                      </div>
                     )}
                   </div>
                 </div>

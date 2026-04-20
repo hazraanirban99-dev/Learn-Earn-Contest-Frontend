@@ -10,8 +10,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import ContestCard from '../../components/Cards/ContestCard';
 import Ratings from '../../components/Ratings/Ratings';
@@ -123,8 +121,7 @@ const StudentDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30 pt-20">
-      <Navbar />
+    <div className="min-h-screen pt-16 sm:pt-20 bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30">
       <PageTransition>
         <HeroCarousel contests={heroContests} loading={loading} showSearchBar={false} />
 
@@ -257,7 +254,6 @@ const StudentDashboard = () => {
         </section>
         <Ratings />
       </PageTransition>
-      <Footer />
     </div>
   );
 };

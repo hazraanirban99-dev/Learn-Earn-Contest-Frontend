@@ -11,8 +11,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import SubmitContestModal from '../../components/Modals/SubmitContestModal';
 import { FiFileText, FiAward, FiClock, FiCheckCircle, FiMoreHorizontal, FiCode, FiLayout, FiTrendingUp, FiMessageSquare, FiX } from 'react-icons/fi';
 import ContestCard from '../../components/Cards/ContestCard';
@@ -108,7 +106,6 @@ const StudentSubmission = () => {
 
     return (
         <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans selection:bg-[#8cc63f]/30">
-            <Navbar />
             <PageTransition>
                 {/* ── PAGE HEADER ─────────────────────────────────────── */}
                 <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pt-32 pb-8">
@@ -175,7 +172,7 @@ const StudentSubmission = () => {
                         ) : (
                             <div className="space-y-4">
                                 {pastSubmissions.map((sub, idx) => (
-                                    <div key={sub.id} className="bg-[#f2f8e9]/50 dark:bg-gray-800 border border-[#8cc63f]/10 dark:border-gray-700 rounded-[32px] p-6 lg:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-[#f2f8e9] dark:hover:bg-gray-700 transition-all relative overflow-hidden">
+                                    <div key={sub.id} className="bg-[#f2f8e9]/50 dark:bg-gray-800 border border-[#8cc63f]/10 dark:border-gray-700/50 rounded-[32px] p-6 lg:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-[#f2f8e9] dark:hover:bg-gray-700/50 transition-all relative overflow-hidden group">
                                         {/* Left strip indicator for pending ones */}
                                         {sub.status === 'Under Review' && (
                                             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#fbc111]"></div>
@@ -194,7 +191,7 @@ const StudentSubmission = () => {
                                                     {sub.teamName && (
                                                         <>
                                                             <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                            <span className="text-[10px] text-purple-600 font-black uppercase tracking-wider">TEAM: {sub.teamName}</span>
+                                                            <span className="text-[10px] text-purple-600 dark:text-[#8cc63f] font-black uppercase tracking-wider">TEAM: {sub.teamName}</span>
                                                         </>
                                                     )}
                                                 </div>
@@ -202,10 +199,12 @@ const StudentSubmission = () => {
                                         </div>
 
                                         <div className="flex flex-wrap items-center gap-4">
-                                            <div className="flex items-center gap-2 bg-gray-100/80 px-4 py-2 rounded-xl">
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">STATUS:</span>
+                                            <div className="flex items-center gap-2 bg-gray-100/80 dark:bg-gray-700/40 px-4 py-2 rounded-xl">
+                                                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">STATUS:</span>
                                                 <span className={`text-[11px] font-black ${
-                                                    sub.status === 'Evaluated' ? 'text-[#4a7010]' : 'text-[#d9a50e]'
+                                                    sub.status === 'Evaluated' 
+                                                        ? 'text-[#4a7010] dark:text-[#8cc63f]' 
+                                                        : 'text-[#d9a50e] dark:text-[#fbc111]'
                                                 }`}>
                                                     {sub.status}
                                                 </span>
@@ -234,7 +233,7 @@ const StudentSubmission = () => {
                                                     )}
                                                     <button
                                                         onClick={() => navigate(`/student/leaderboard/${sub.contestId}`)}
-                                                        className="px-4 py-2 text-xs font-black text-[#4a7010] hover:underline transition-all"
+                                                        className="px-4 py-2 text-xs font-black text-[#4a7010] dark:text-[#8cc63f] hover:underline transition-all"
                                                     >
                                                         Full Leaderboard
                                                     </button>
@@ -255,7 +254,6 @@ const StudentSubmission = () => {
                 </div>
             </PageTransition>
 
-            <Footer />
             <SubmitContestModal 
                 isOpen={isSubmitModalOpen}
                 onClose={() => setIsSubmitModalOpen(false)}
@@ -295,12 +293,12 @@ const StudentSubmission = () => {
                         </div>
 
                         {/* Message Body (SMS Style) */}
-                        <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4 bg-slate-50 dark:bg-gray-800">
+                        <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4 bg-slate-50 dark:bg-gray-900/50">
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl rounded-tr-none shadow-sm border border-slate-100 dark:border-gray-700 relative">
-                                <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                                <p className="text-slate-700 dark:text-gray-200 text-sm leading-relaxed whitespace-pre-wrap font-medium">
                                     {pastSubmissions.find(s => s.id === activeFeedbackId)?.feedback}
                                 </p>
-                                <span className="text-[10px] text-slate-400 font-bold block mt-2 text-right">
+                                <span className="text-[10px] text-slate-400 dark:text-gray-500 font-bold block mt-2 text-right">
                                     {pastSubmissions.find(s => s.id === activeFeedbackId)?.date}
                                 </span>
                             </div>

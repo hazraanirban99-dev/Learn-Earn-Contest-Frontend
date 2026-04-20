@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Navbar, Footer, InputField, Button, Logo } from '../../components';
+import { InputField, Button, Logo } from '../../components';
 import { FiLock, FiArrowRight } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
@@ -56,8 +56,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-linear-to-r from-[#fbc111] to-[#8cc63f] overflow-x-hidden">
-            <Navbar />
+        <div className="min-h-screen flex flex-col bg-linear-to-r from-[#fbc111] to-[#8cc63f] overflow-x-hidden pt-16 sm:pt-20">
             <PageTransition>
                 <main className="flex-1 flex items-center justify-center pt-24 px-4 py-6 md:py-10 lg:py-14">
                 <div className="w-full max-w-[1000px] flex flex-col lg:flex-row bg-white dark:bg-gray-800 font-sans text-gray-800 dark:text-gray-200 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
@@ -141,8 +140,6 @@ const ResetPassword = () => {
                 </div>
                 </main>
             </PageTransition>
-            
-            <Footer />
         </div>
     );
 };

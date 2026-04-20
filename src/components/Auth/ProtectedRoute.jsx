@@ -9,16 +9,13 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../index';
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111]"></div>
-      </div>
-    );
+    return <Loader fullPage={true} text="" />;
   }
 
   // Check if user is logged in

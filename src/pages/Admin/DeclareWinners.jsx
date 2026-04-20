@@ -68,7 +68,7 @@ export default function DeclareWinners() {
       <div className="flex flex-col gap-6 sm:gap-8 max-w-[1440px] mx-auto pb-10 animate-in fade-in duration-500 px-2 sm:px-0">
         
         {/* Integrated Header & Filter Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 bg-white dark:bg-gray-800 p-6 sm:p-7 rounded-[40px] shadow-sm border border-[#e8efe0] mt-4 relative overflow-hidden group">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6 bg-white dark:bg-gray-900 p-6 sm:p-7 rounded-[40px] shadow-sm border border-[#e8efe0] dark:border-gray-700 mt-4 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#8cc63f]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
           
           {/* Left Column: Declare Winners Info (50%) */}
@@ -97,7 +97,7 @@ export default function DeclareWinners() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full mt-4">
           {topWinners.length > 0 ? (
             topWinners.sort((a,b) => a.rank - b.rank).map((winner, idx) => (
-              <div key={idx} className="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-[#e8efe0] relative overflow-hidden flex flex-col items-center text-center hover:shadow-lg transition-all duration-500 group border-b-4" style={{borderColor: winner.rank === 1 ? '#fbc111' : winner.rank === 2 ? '#8cc63f' : '#dca51a'}}>
+              <div key={idx} className="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-[#e8efe0] dark:border-gray-700 relative overflow-hidden flex flex-col items-center text-center hover:shadow-lg transition-all duration-500 group border-b-4" style={{borderColor: winner.rank === 1 ? '#fbc111' : winner.rank === 2 ? '#8cc63f' : '#dca51a'}}>
                 
                 {/* Background Decoration */}
                 <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full blur-2xl opacity-10 pointer-events-none group-hover:scale-150 transition-transform duration-1000 ${winner.rank === 1 ? 'bg-[#fbc111]' : winner.rank === 2 ? 'bg-[#8cc63f]' : 'bg-[#dca51a]'}`}></div>
@@ -136,7 +136,7 @@ export default function DeclareWinners() {
               </div>
             ))
           ) : (
-            <div className="col-span-full bg-white dark:bg-gray-800 rounded-[40px] p-20 border-2 border-dashed border-[#e8efe0] flex flex-col items-center justify-center text-gray-400 font-bold">
+            <div className="col-span-full bg-white dark:bg-gray-900 rounded-[40px] p-20 border-2 border-dashed border-[#e8efe0] dark:border-gray-700 flex flex-col items-center justify-center text-gray-400 font-bold">
                <FiInfo size={40} className="mb-4 opacity-20" />
                <p>Select a contest with evaluated participants to announce winners</p>
             </div>
@@ -146,12 +146,12 @@ export default function DeclareWinners() {
         {/* Full Leaderboard Table Section */}
         <div className="bg-white dark:bg-gray-800 rounded-[32px] border border-[#e8efe0] shadow-sm overflow-hidden mt-6">
           {/* Section Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-between p-6 sm:p-8 border-b border-[#e8efe0] gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between p-6 sm:p-8 border-b border-[#e8efe0] dark:border-gray-700 gap-4">
             <h2 className="text-xl font-black text-slate-900 dark:text-gray-100 tracking-tight">Full Leaderboard</h2>
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button 
                 onClick={() => exportToCSV(rankedParticipants, `Full_Leaderboard_${formatDateDDMMYYYY(new Date())}`)}
-                className="flex-1 sm:flex-none justify-center px-4 py-2 bg-[#f8faf6] hover:bg-[#e8efe0] text-[#5c8a14] text-xs font-black tracking-widest uppercase rounded-xl transition-colors flex items-center gap-2"
+                className="flex-1 sm:flex-none justify-center px-4 py-2 bg-[#f8faf6] dark:bg-gray-700 hover:bg-[#e8efe0] dark:hover:bg-gray-600 text-[#5c8a14] dark:text-[#8cc63f] text-xs font-black tracking-widest uppercase rounded-xl transition-colors flex items-center gap-2 shadow-sm"
               >
                  <FiDownload size={14} /> Export CSV
               </button>
@@ -161,7 +161,7 @@ export default function DeclareWinners() {
           <div className="overflow-x-auto w-full scrollbar-hide">
             <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-full">
               <thead>
-                <tr className="uppercase text-[9px] font-black tracking-[0.15em] text-gray-400 bg-[#fefdfa] border-b border-gray-100 dark:border-gray-700">
+                <tr className="uppercase text-[9px] font-black tracking-[0.15em] text-gray-400 bg-[#fefdfa] dark:bg-gray-800/80 border-b border-gray-100 dark:border-gray-700">
                   <th className="py-5 px-8 w-20 text-center">Rank</th>
                   <th className="py-5 px-6">Participant</th>
                   <th className="py-5 px-8 text-right">Final Marks</th>
@@ -169,7 +169,7 @@ export default function DeclareWinners() {
               </thead>
               <tbody className="divide-y divide-[#e8efe0]/60">
                 {visibleLeaderboard.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-[#f8faf6]/50 transition-colors duration-200">
+                  <tr key={idx} className="hover:bg-[#f8faf6]/50 dark:hover:bg-gray-700/50 transition-colors duration-200">
                     <td className="py-5 px-8 font-black text-gray-400 text-sm text-center">#{item.rank}</td>
                     <td className="py-5 px-6">
                       <div className="flex items-center gap-4">
@@ -193,10 +193,10 @@ export default function DeclareWinners() {
           </div>
 
           {hasMore && (
-            <div className="p-6 flex justify-center bg-[#fafdf8] border-t border-[#e8efe0]/60">
+            <div className="p-6 flex justify-center bg-[#fafdf8] dark:bg-gray-800/20 border-t border-[#e8efe0]/60 dark:border-gray-700">
               <button 
                 onClick={() => setVisibleCount(leaderboard.length)}
-                className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[#5c8a14] transition-colors"
+                className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[#5c8a14] dark:hover:text-[#8cc63f] transition-colors"
               >
                 Load All Remaining Participants
               </button>
@@ -205,7 +205,7 @@ export default function DeclareWinners() {
         </div>
 
         {/* Finalize Section */}
-        <div className="bg-[#f0f4e8] rounded-[32px] p-6 lg:p-10 border border-[#e8efe0] flex flex-col md:flex-row items-center justify-between gap-8 mt-4 shadow-sm relative overflow-hidden group">
+        <div className="bg-[#f0f4e8] dark:bg-gray-900/40 rounded-[32px] p-6 lg:p-10 border border-[#e8efe0] dark:border-gray-700 flex flex-col md:flex-row items-center justify-between gap-8 mt-4 shadow-sm relative overflow-hidden group">
           <div className="absolute -right-32 -bottom-32 w-96 h-96 bg-[#8cc63f] rounded-full opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
           
           <div className="space-y-3 z-10 flex-1 text-center md:text-left">

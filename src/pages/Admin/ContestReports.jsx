@@ -19,15 +19,16 @@ import StatusUpdateMenu from '../../components/Admin/StatusUpdateMenu';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { Loader } from '../../components/index';
 
 // Table Row Component - Memoized for performance
 const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
   const getStatusStyle = (status) => {
     switch (status) {
       case 'UPCOMING':
-        return 'bg-[#fcf3d9] text-[#dca51a] border-[#fce7a8]/50';
+        return 'bg-[#fcf3d9] dark:bg-[#fcf3d9]/10 text-[#dca51a] border-[#fce7a8]/50 dark:border-[#dca51a]/20';
       case 'ONGOING':
-        return 'bg-[#f4f8ec] text-[#8cc63f] border-[#e2edd3]/50';
+        return 'bg-[#f4f8ec] dark:bg-[#f4f8ec]/10 text-[#8cc63f] border-[#e2edd3]/50 dark:border-[#8cc63f]/20';
       case 'COMPLETED':
         return 'bg-gray-100 text-gray-400 border-gray-200 dark:border-gray-700';
       default:
@@ -37,15 +38,15 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
 
   const getDomainStyle = (domain) => {
     const d = domain.toLowerCase();
-    if (d.includes('mern') || d.includes('dev')) return 'bg-blue-50 text-blue-500 border-blue-200';
-    if (d.includes('ui') || d.includes('ux')) return 'bg-violet-50 text-violet-600 border-violet-200';
-    if (d.includes('marketing') || d.includes('digital')) return 'bg-orange-50 text-orange-500 border-orange-200';
-    if (d.includes('analytics')) return 'bg-teal-50 text-teal-600 border-teal-200';
+    if (d.includes('mern') || d.includes('dev')) return 'bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 border-blue-200 dark:border-blue-800/40';
+    if (d.includes('ui') || d.includes('ux')) return 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800/40';
+    if (d.includes('marketing') || d.includes('digital')) return 'bg-orange-50 dark:bg-orange-900/20 text-orange-500 dark:text-orange-400 border-orange-200 dark:border-orange-800/40';
+    if (d.includes('analytics')) return 'bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800/40';
     return 'bg-gray-50 dark:bg-gray-800 text-gray-500 border-gray-200 dark:border-gray-700';
   };
 
   return (
-    <tr className="hover:bg-white dark:bg-gray-800 transition-colors duration-200 group border-b border-[#e8efe0]/60">
+    <tr className="hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 group border-b border-[#e8efe0]/60 dark:border-gray-700">
       <td className="py-6 px-10">
         <span className="text-[14px] font-black text-gray-300">
           {index < 9 ? `0${index + 1}` : index + 1}
@@ -202,19 +203,21 @@ const ContestReports = () => {
             <div className="flex items-center gap-4 w-full sm:w-auto">
               {/* Domain Filter Dropdown */}
               <div className="relative flex-1 sm:flex-none flex items-center bg-[#fbc111] rounded-2xl px-6 py-1 shadow-md border border-[#fbc111]/20 hover:shadow-lg transition-all group">
-                <label className="text-[11px] font-black text-slate-900 dark:text-gray-100/40 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
+                <label className="text-[11px] font-black text-slate-900 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
                 <select
                   value={selectedDomain}
                   onChange={(e) => {
                     setSelectedDomain(e.target.value);
                   }}
-                  className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 dark:text-gray-100 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
+                  className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
                 >
                   {domains.map(domain => (
-                    <option key={domain} value={domain}>{domain}</option>
+                    <option key={domain} value={domain} className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">
+                      {domain}
+                    </option>
                   ))}
                 </select>
-                <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900 dark:text-gray-100/30">
+                <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900">
                   <FiFilter size={16} strokeWidth={3} />
                 </div>
               </div>
@@ -223,11 +226,11 @@ const ContestReports = () => {
         </div>
 
         {/* --- Main Table Container --- */}
-        <div className="bg-[#fbfcfa] rounded-[48px] border border-[#e8efe0] overflow-hidden shadow-2xl shadow-[#8cc63f]/5">
+        <div className="bg-[#fbfcfa] dark:bg-gray-900 rounded-[48px] border border-[#e8efe0] dark:border-gray-700 overflow-hidden shadow-2xl shadow-[#8cc63f]/5">
           <div className="overflow-x-auto w-full scrollbar-hide">
             <table className="w-full text-left border-collapse min-w-[1000px]">
               <thead>
-                <tr className="bg-[#f8faea]/50 border-b border-[#e8efe0]">
+                <tr className="bg-[#f8faea]/50 dark:bg-gray-800/50 border-b border-[#e8efe0] dark:border-gray-700">
                   <th className="py-7 px-10 text-[11px] font-black tracking-widest text-slate-400 uppercase">#</th>
                   <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Contest Name</th>
                   <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Domain</th>
@@ -239,11 +242,8 @@ const ContestReports = () => {
               <tbody className="divide-y divide-gray-50/50">
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="py-32 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 text-[#8cc63f] rounded-full spinner-dual"></div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Loading contests...</span>
-                      </div>
+                    <td colSpan="6" className="py-24 text-center">
+                      <Loader size="sm" text="Loading contests..." />
                     </td>
                   </tr>
                 ) : visibleContests.length > 0 ? (
@@ -269,13 +269,12 @@ const ContestReports = () => {
           {/* --- Infinite Scroll Sentinel & Footer --- */}
           <div ref={sentinelRef} className="py-1" />
           {hasMore && !loading && (
-            <div className="bg-[#f8faea]/40 px-10 py-8 border-t border-[#e8efe0] flex items-center justify-center gap-4">
-              <div className="w-8 h-8 border-3 text-[#8cc63f] rounded-full spinner-dual"></div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Loading more contests...</span>
+            <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-8 border-t border-[#e8efe0] dark:border-gray-700 flex flex-col items-center justify-center gap-4">
+              <Loader size="xs" text="Loading more contests..." />
             </div>
           )}
           {!hasMore && filteredContests.length > 0 && !loading && (
-            <div className="bg-[#f8faea]/40 px-10 py-6 border-t border-[#e8efe0] flex items-center justify-center">
+            <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-6 border-t border-[#e8efe0] dark:border-gray-700 flex items-center justify-center">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">
                 Showing all {filteredContests.length} contests
               </span>

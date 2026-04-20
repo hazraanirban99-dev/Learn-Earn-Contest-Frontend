@@ -6,6 +6,7 @@ import { FiSearch, FiFilter, FiEdit2, FiTrash2, FiTrendingUp, FiCheckCircle, FiS
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import { Loader } from '../../components/index';
 
 const ManageUsers = () => {
   const { users, updateUser, deleteUser } = useUsers();
@@ -180,8 +181,8 @@ const ManageUsers = () => {
   return (
     <AdminLayout>
       <div className="animate-in fade-in duration-500 max-w-[1440px] mx-auto space-y-6 sm:space-y-8 px-2 sm:px-0">
-        <div className="mt-8 relative max-w-4xl mx-auto">
-          <div className="flex items-center bg-gradient-to-r from-green-300/30 to-yellow-300/30 rounded-full px-6 py-4 shadow-sm border border-[#8cc63f]/20 transition-all hover:shadow-md focus-within:shadow-md focus-within:border-[#8cc63f]/40 group">
+        <div className="relative max-w-4xl mx-auto">
+          <div className="flex items-center bg-gradient-to-r from-green-300/30 to-yellow-300/30 dark:from-green-900/20 dark:to-yellow-900/20 rounded-full px-6 py-4 shadow-sm border border-[#8cc63f]/20 dark:border-gray-700 transition-all hover:shadow-md focus-within:shadow-md focus-within:border-[#8cc63f]/40 group">
             <FiSearch className="text-[#8cc63f] mr-3 group-focus-within:scale-110 transition-transform" size={20} />
             <input
               type="text"
@@ -199,14 +200,14 @@ const ManageUsers = () => {
 
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 border border-[#8cc63f]/10 mt-2 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="px-6 py-3 bg-[#f8faea]/30 border-b border-gray-50 dark:border-gray-700">
+              <div className="px-6 py-3 bg-[#f8faea]/30 dark:bg-gray-800/10 border-b border-gray-50 dark:border-gray-700">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Most Matched Results</span>
               </div>
               {suggestions.map((s, idx) => (
                 <button
                   key={idx}
                   onMouseDown={() => handleSuggestionClick(s)}
-                  className="w-full text-left px-6 py-4 hover:bg-[#f8faea] flex items-center justify-between group border-b border-gray-50 dark:border-gray-700 last:border-0"
+                  className="w-full text-left px-6 py-4 hover:bg-[#f8faea] dark:hover:bg-gray-700/50 flex items-center justify-between group border-b border-gray-50 dark:border-gray-700 last:border-0"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-slate-800 dark:text-gray-100 tracking-tight">{s.label}</span>
@@ -223,9 +224,9 @@ const ManageUsers = () => {
           )}
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mt-10">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mt-6">
           <div className="space-y-4 max-w-2xl">
-            <span className="bg-[#fcf3d9] text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
+            <span className="bg-[#fcf3d9] dark:bg-[#fcf3d9]/10 text-[#dca51a] text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm">
               Registry Management
             </span>
             <h1 className="text-4xl lg:text-5xl font-black text-slate-800 dark:text-gray-100 tracking-tight leading-[1.1]">
@@ -237,7 +238,7 @@ const ManageUsers = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 p-4 rounded-2xl border border-[#e8efe0]">
+        <div className="flex flex-col md:flex-row flex-wrap items-stretch md:items-center justify-between gap-4 bg-[#f8faea]/60 dark:bg-gray-800/40 p-4 rounded-2xl border border-[#e8efe0] dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
             <div className="relative w-full sm:flex-1 max-w-xl">
               <select
@@ -275,11 +276,11 @@ const ManageUsers = () => {
           </div>
         </div>
 
-        <div className="bg-[#fcfdf8] rounded-[24px] border border-[#e8efe0] overflow-hidden shadow-sm">
+        <div className="bg-[#fcfdf8] dark:bg-gray-900 rounded-[24px] border border-[#e8efe0] dark:border-gray-700 overflow-hidden shadow-sm">
           <div className="overflow-x-auto w-full scrollbar-hide">
             <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-full">
               <thead>
-                <tr className="border-b border-[#e8efe0] uppercase text-[10px] font-black tracking-widest text-[#5c8a14]/70 bg-[#f8faea]">
+                <tr className="border-b border-[#e8efe0] dark:border-gray-700 uppercase text-[10px] font-black tracking-widest text-[#5c8a14]/70 bg-[#f8faea] dark:bg-gray-800/50">
                   <th className="py-5 px-8">Scholar Name</th>
                   <th className="py-5 px-6">Contact Info</th>
                   <th className="py-5 px-6">Domain Discipline</th>
@@ -290,7 +291,7 @@ const ManageUsers = () => {
               <tbody className="divide-y divide-[#e8efe0]/60">
                 {visibleUsers.length > 0 ? (
                   visibleUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-white dark:bg-gray-800 transition-colors duration-200 group">
+                    <tr key={user.id} className="hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 group border-b border-gray-100 dark:border-gray-700">
                       <td className="py-5 px-8">
                         <div className="flex items-center gap-4">
                           <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-gray-100 shadow-sm" />
@@ -301,22 +302,22 @@ const ManageUsers = () => {
                         </div>
                       </td>
                       <td className="py-5 px-6">
-                        <div className="text-[13px] font-bold text-slate-600 mb-0.5">{user.email}</div>
+                        <div className="text-[13px] font-bold text-slate-600 dark:text-gray-300 mb-0.5">{user.email}</div>
                         <div className="text-[12px] text-gray-400 font-medium">{user.phone}</div>
                       </td>
                       <td className="py-5 px-6">
                         <span className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest border uppercase inline-block shadow-sm 
-                        ${(user.domain || '').toUpperCase().includes('UI/UX') ? 'bg-[#f4f8ec] text-[#8cc63f] border-[#8cc63f]/20' :
-                            (user.domain || '').toUpperCase().includes('MERN') ? 'bg-purple-50 text-purple-500 border-purple-200' :
-                              (user.domain || '').toUpperCase().includes('DIGITAL MARKETING') ? 'bg-amber-50 text-amber-500 border-amber-200' :
-                                'bg-blue-50 text-blue-500 border-blue-200'
+                        ${(user.domain || '').toUpperCase().includes('UI/UX') ? 'bg-[#f4f8ec] dark:bg-[#f4f8ec]/5 text-[#8cc63f] border-[#8cc63f]/20' :
+                            (user.domain || '').toUpperCase().includes('MERN') ? 'bg-purple-50 dark:bg-purple-900/10 text-purple-500 border-purple-200 dark:border-purple-800' :
+                              (user.domain || '').toUpperCase().includes('DIGITAL MARKETING') ? 'bg-amber-50 dark:bg-amber-900/10 text-amber-500 border-amber-200 dark:border-amber-800' :
+                                'bg-blue-50 dark:bg-blue-900/10 text-blue-500 border-blue-200 dark:border-blue-800'
                           }`}
                         >
                           {user.domain}
                         </span>
                       </td>
                       <td className="py-5 px-6">
-                        <div className="text-[13px] font-bold text-slate-600 mb-0.5">
+                        <div className="text-[13px] font-bold text-slate-600 dark:text-gray-300 mb-0.5">
                           {formatDateDDMMYYYY(user.registrationDate)}
                         </div>
                         <div className="text-[11px] text-gray-400 font-bold uppercase">{user.registrationTime}</div>
@@ -325,14 +326,14 @@ const ManageUsers = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEditClick(user)}
-                            className="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-500 rounded-xl transition-colors shadow-sm"
+                            className="p-2.5 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-500 rounded-xl transition-colors shadow-sm"
                             title="Edit Profile"
                           >
                             <FiEdit2 size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="p-2.5 bg-[#8cc63f]/10 hover:bg-[#8cc63f]/20 text-[#8cc63f] rounded-xl transition-colors shadow-sm"
+                            className="p-2.5 bg-[#8cc63f]/10 dark:bg-[#8cc63f]/5 hover:bg-[#8cc63f]/20 dark:hover:bg-[#8cc63f]/15 text-[#8cc63f] rounded-xl transition-colors shadow-sm"
                             title="Delete User"
                           >
                             <FiTrash2 size={16} />
@@ -355,13 +356,12 @@ const ManageUsers = () => {
           {/* Infinite Scroll Sentinel & Footer */}
           <div ref={sentinelRef} className="py-1" />
           {hasMore && (
-            <div className="flex items-center justify-center gap-4 px-6 sm:px-8 py-8 bg-[#f8faea]/30 border-t border-[#e8efe0]/60">
-              <div className="w-8 h-8 border-3 text-[#8cc63f] rounded-full spinner-dual"></div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 animate-pulse">Loading more scholars...</span>
+            <div className="flex items-center justify-center gap-4 px-6 sm:px-8 py-8 bg-[#f8faea]/30 dark:bg-gray-800/20 border-t border-[#e8efe0]/60 dark:border-gray-700">
+              <Loader size="xs" text="Loading more scholars..." />
             </div>
           )}
           {!hasMore && filteredUsers.length > 0 && (
-            <div className="flex items-center justify-center px-6 sm:px-8 py-6 bg-[#f8faea]/30 border-t border-[#e8efe0]/60">
+            <div className="flex items-center justify-center px-6 sm:px-8 py-6 bg-[#f8faea]/30 dark:bg-gray-800/20 border-t border-[#e8efe0]/60 dark:border-gray-700">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">
                 Showing all {filteredUsers.length} participants
               </span>

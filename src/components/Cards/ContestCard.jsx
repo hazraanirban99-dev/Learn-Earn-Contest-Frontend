@@ -31,10 +31,10 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
     const isTeamContest = contest.projectType === 'Team';
 
     const statusClasses = isOngoing 
-        ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300' 
+        ? 'text-emerald-500 bg-emerald-50 dark:bg-gray-800 dark:text-emerald-400 border border-emerald-100 dark:border-gray-700' 
         : isUpcoming 
-            ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300' 
-            : 'text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-300';
+            ? 'text-blue-500 bg-blue-50 dark:bg-gray-800 dark:text-blue-400 border border-blue-100 dark:border-gray-700' 
+            : 'text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700';
 
     const statusDotColor = isOngoing 
         ? 'bg-emerald-500' 
@@ -85,11 +85,11 @@ const ContestCard = React.memo(({ contest, index, variant = 'dashboard', onActio
             {/* Card Header (Domain Text Badge & Prize) */}
             <div className={`flex items-start mb-6 ${!contest.thumbnail ? 'justify-between w-full' : ''}`}>
                 <div className="flex gap-2 flex-wrap">
-                    <div className="text-[#d4a017] bg-[#fbc111]/15 px-3 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-lg border border-[#fbc111]/20">
+                    <div className="text-[#d4a017] bg-[#fbc111]/15 dark:bg-[#fbc111]/10 dark:text-gray-100 px-3 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-lg border border-[#fbc111]/20">
                         {contest.domain || 'General'}
                     </div>
                     {contest.prize && (
-                        <div className="text-[#5c8a14] bg-[#8cc63f]/15 px-3 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-lg border border-[#8cc63f]/20 flex items-center gap-2">
+                        <div className="text-[#5c8a14] bg-[#8cc63f]/15 dark:bg-[#8cc63f]/10 dark:text-[#8cc63f] px-3 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-lg border border-[#8cc63f]/20 flex items-center gap-2">
                             <FaGift size={12} className="shrink-0" />
                             <div className="flex items-center gap-1">
                                 <span>Prize Money : </span>

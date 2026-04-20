@@ -26,13 +26,13 @@ const EditUserModal = ({ user, onClose, onSave }) => {
       <div className="bg-white dark:bg-gray-800 w-full max-w-[700px] rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative animate-in zoom-in-95 duration-300 max-h-[95vh] md:max-h-[85vh] overflow-y-auto">
         
         {/* Left Sidebar Info */}
-        <div className="bg-[#f2f7e7] w-full md:w-[260px] p-8 flex flex-col justify-between hidden md:flex shrink-0">
+        <div className="bg-[#f2f7e7] dark:bg-gray-900/50 w-full md:w-[260px] p-8 flex flex-col justify-between hidden md:flex shrink-0 border-r border-transparent dark:border-gray-800">
           <div>
             <div className="bg-white dark:bg-gray-800 w-10 h-10 rounded-xl flex items-center justify-center text-[#8cc63f] mb-6 shadow-sm border border-gray-100/50">
               <FiEdit3 size={20} />
             </div>
             <h3 className="text-2xl font-black text-slate-800 dark:text-gray-100 tracking-tight leading-none mb-4">Edit Profile</h3>
-            <p className="text-sm font-bold text-gray-500/80 leading-relaxed max-w-[200px]">
+            <p className="text-sm font-bold text-gray-500/80 dark:text-gray-400 leading-relaxed max-w-[200px]">
               "Refining the details of our future innovators."
             </p>
           </div>
@@ -75,7 +75,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                 name="name"
                 value={formData.name} 
                 onChange={handleChange}
-                className="w-full bg-[#f8faea]/50 border border-[#e8efe0] px-4 py-3 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
+                className="w-full bg-[#f8faea]/50 dark:bg-gray-800 border border-[#e8efe0] dark:border-gray-700 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
               />
             </div>
             
@@ -86,12 +86,12 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                   name="domain"
                   value={formData.domain}
                   onChange={handleChange}
-                  className="w-full bg-[#f8faea]/50 border border-[#e8efe0] px-4 py-3 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all appearance-none pr-10"
+                  className="w-full bg-[#f8faea]/50 dark:bg-gray-800 border border-[#e8efe0] dark:border-gray-700 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all appearance-none pr-10"
                 >
-                  <option value="UI/UX Design">UI/UX Design</option>
-                  <option value="Development">Development</option>
-                  <option value="Marketing">Marketing</option>
-                  <option value="Strategy">Strategy</option>
+                  <option value="UI/UX Design" className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">UI/UX Design</option>
+                  <option value="Development" className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">Development</option>
+                  <option value="Marketing" className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">Marketing</option>
+                  <option value="Strategy" className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">Strategy</option>
                 </select>
                 <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-gray-400">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -106,7 +106,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                 name="email"
                 value={formData.email} 
                 onChange={handleChange}
-                className="w-full bg-[#f8faea]/50 border border-[#e8efe0] px-4 py-3 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
+                className="w-full bg-[#f8faea]/50 dark:bg-gray-800 border border-[#e8efe0] dark:border-gray-700 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
               />
             </div>
 
@@ -117,7 +117,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                 name="phone"
                 value={formData.phone} 
                 onChange={handleChange}
-                className="w-full bg-[#f8faea]/50 border border-[#e8efe0] px-4 py-3 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
+                className="w-full bg-[#f8faea]/50 dark:bg-gray-800 border border-[#e8efe0] dark:border-gray-700 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all"
               />
             </div>
 
@@ -129,7 +129,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
                   name="registrationDate"
                   value={formData.registrationDate} 
                   onChange={handleChange}
-                  className="w-full bg-[#f8faea]/50 border border-[#e8efe0] px-4 py-3 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all pr-10"
+                  className="w-full bg-[#f8faea]/50 dark:bg-gray-800 border border-[#e8efe0] dark:border-gray-700 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20 focus:border-[#8cc63f] transition-all pr-10"
                 />
                 <FiCalendar className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
               </div>

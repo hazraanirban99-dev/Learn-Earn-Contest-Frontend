@@ -8,8 +8,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
+import { useLocation } from 'react-router-dom';
 import HeroCarousel from '../../components/HeroCarousel/HeroCarousel';
 import ContestCard from '../../components/Cards/ContestCard';
 import { toast } from 'react-toastify';
@@ -20,13 +19,14 @@ import { useAuth } from '../../context/AuthContext';
 import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe, FiCheckCircle, FiPlusCircle } from 'react-icons/fi';
 
 const AllContests = () => {
+   const location = useLocation();
    const [loading, setLoading] = useState(true);
    const [allContests, setAllContests] = useState([]);
    const [carouselData, setCarouselData] = useState([]);
 
    // Filter states & Infinite Scroll
    const [searchQuery, setSearchQuery] = useState('');
-   const [selectedDomains, setSelectedDomains] = useState([]);
+   const [selectedDomains, setSelectedDomains] = useState(location.state?.filterDomain ? [location.state.filterDomain] : []);
    const [selectedStatuses, setSelectedStatuses] = useState([]);
    const [selectedEnrollment, setSelectedEnrollment] = useState([]);
    const [visibleCount, setVisibleCount] = useState(6);
@@ -227,15 +227,14 @@ const AllContests = () => {
                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   )}
                </div>
-               <span className={`text-sm font-bold truncate ${selected.includes(val) ? 'text-slate-800 dark:text-gray-100' : 'text-gray-500 group-hover:text-slate-700'}`}>{val}</span>
+               <span className={`text-sm font-bold truncate ${selected.includes(val) ? 'text-slate-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-300 group-hover:text-slate-700 dark:group-hover:text-gray-100'}`}>{val}</span>
             </div>
          ))}
       </div>
    );
 
    return (
-      <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans pt-20">
-         <Navbar />
+      <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 font-sans pt-16 sm:pt-20">
          <PageTransition>
             <HeroCarousel contests={carouselData} loading={loading} />
             <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 mt-8">
@@ -291,7 +290,7 @@ const AllContests = () => {
                <div className="relative" ref={enrollmentRef}>
                   <button 
                       onClick={() => setIsEnrollmentOpen(!isEnrollmentOpen)}
-                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedEnrollment.length > 0 ? 'bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-600 text-slate-800 dark:text-gray-200'}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${selectedEnrollment.length > 0 ? 'bg-[#6366f1] border-[#6366f1] text-white shadow-lg shadow-[#6366f1]/20' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-600 text-slate-800 dark:text-gray-200'}`}
                   >
                      <FiCheckCircle size={14} className="shrink-0" />
                      <span className="truncate">My Status {selectedEnrollment.length > 0 && `(${selectedEnrollment.length})`}</span>
@@ -360,7 +359,6 @@ const AllContests = () => {
                </div>
             </section>
          </PageTransition>
-         <Footer />
       </div>
    );
 };

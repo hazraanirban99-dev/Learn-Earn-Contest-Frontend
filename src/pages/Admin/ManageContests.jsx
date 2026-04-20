@@ -245,7 +245,7 @@ const ManageContests = () => {
               <select
                 value={domainFilter}
                 onChange={(e) => setDomainFilter(e.target.value)}
-                className="bg-white dark:bg-gray-800 border-2 border-[#fbc111] focus:border-[#fbc111] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#8cc63f] outline-none w-1/2 sm:w-48 shadow-sm cursor-pointer appearance-none transition-all"
+                className="bg-white dark:bg-gray-800 border-2 border-[#fbc111] focus:border-[#fbc111] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#8cc63f] outline-none w-1/2 sm:w-48 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
               >
                 <option value="ALL">All Domains</option>
                 <option value="MERN">MERN</option>
@@ -255,7 +255,7 @@ const ManageContests = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f] focus:border-[#8cc63f] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#fbc111] outline-none w-1/2 sm:w-40 shadow-sm cursor-pointer appearance-none transition-all"
+                className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f] focus:border-[#8cc63f] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#fbc111] outline-none w-1/2 sm:w-40 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
               >
                 <option value="ALL">All Status</option>
                 <option value="ONGOING">Ongoing</option>
@@ -267,12 +267,12 @@ const ManageContests = () => {
 
           <div className="space-y-6 mt-4">
             {currentContests.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 rounded-[40px] p-10 text-center text-gray-400 font-bold uppercase tracking-widest text-sm shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-900 rounded-[40px] p-10 text-center text-gray-400 font-bold uppercase tracking-widest text-sm shadow-sm border border-gray-100 dark:border-gray-700">
                 No contests match your selected filters.
               </div>
             ) : (
               currentContests.map((contest) => (
-                <div key={contest._id} className="bg-white dark:bg-gray-800 p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all flex flex-col lg:flex-row gap-8 group">
+                <div key={contest._id} className="bg-white dark:bg-gray-900 p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all flex flex-col lg:flex-row gap-8 group border border-transparent dark:border-gray-800">
                   <div className="relative w-full lg:w-[360px] h-[220px] rounded-[24px] overflow-hidden shrink-0">
                     <img src={contest.thumbnail.url} alt={contest.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     <div className="absolute top-4 left-4"><span className={`${getStatusColor(contest.status)} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md`}>{contest.status}</span></div>
@@ -284,7 +284,7 @@ const ManageContests = () => {
                         <h5 className="text-[#fbc111] font-black text-[10px] uppercase tracking-widest mb-2 sm:mb-3">{contest.domain}</h5>
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-gray-100 tracking-tight leading-tight break-words">{contest.title}</h2>
                       </div>
-                      <div className="inline-flex items-center shrink-0 gap-2 text-[#a68945] bg-[#fcf3d9]/50 border border-[#fbc111]/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl w-fit shadow-sm backdrop-blur-sm self-start">
+                      <div className="inline-flex items-center shrink-0 gap-2 text-[#a68945] bg-[#fcf3d9]/50 dark:bg-[#fcf3d9]/10 border border-[#fbc111]/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl w-fit shadow-sm backdrop-blur-sm self-start">
                         <FiCalendar size={14} className="text-[#fbc111] shrink-0" />
                         <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider whitespace-nowrap">Deadline: {formatDateDDMMYYYY(contest.endDate)}</span>
                       </div>
@@ -293,21 +293,21 @@ const ManageContests = () => {
                     {/* Awards Highlight Section */}
                     <div className="flex flex-wrap gap-4 my-4">
                       {contest.cashPrize > 0 && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg">
-                          <FiAward className="text-green-600" size={14} />
-                          <span className="text-[11px] font-black text-green-700 uppercase tracking-wider">Cash Prize: ₹{contest.cashPrize}</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <FiAward className="text-green-600 dark:text-[#8cc63f]" size={14} />
+                          <span className="text-[11px] font-black text-green-700 dark:text-[#8cc63f] uppercase tracking-wider">Cash Prize: ₹{contest.cashPrize}</span>
                         </div>
                       )}
                       {contest.expertCertificate === 'Yes' && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg">
-                          <FiAward className="text-green-600" size={14} />
-                          <span className="text-[11px] font-black text-green-700 uppercase tracking-wider">Expert Certificate</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <FiAward className="text-green-600 dark:text-[#8cc63f]" size={14} />
+                          <span className="text-[11px] font-black text-green-700 dark:text-[#8cc63f] uppercase tracking-wider">Expert Certificate</span>
                         </div>
                       )}
                       {contest.internshipOffer === 'Yes' && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg">
-                          <FiAward className="text-green-600" size={14} />
-                          <span className="text-[11px] font-black text-green-700 uppercase tracking-wider">Internship Offer</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <FiAward className="text-green-600 dark:text-[#8cc63f]" size={14} />
+                          <span className="text-[11px] font-black text-green-700 dark:text-[#8cc63f] uppercase tracking-wider">Internship Offer</span>
                         </div>
                       )}
                     </div>
@@ -316,14 +316,14 @@ const ManageContests = () => {
                       <div className="flex items-center gap-2 w-full sm:w-auto">
                         <button
                           onClick={() => { const newParams = new URLSearchParams(searchParams); newParams.set('edit', contest._id); setSearchParams(newParams); }}
-                          className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-[#f1f8e8] text-gray-400 hover:text-[#8cc63f] flex items-center justify-center transition-all border border-transparent hover:border-[#8cc63f]/20 gap-2 sm:gap-0"
+                          className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-[#f1f8e8] dark:hover:bg-[#8cc63f]/20 text-gray-400 hover:text-[#8cc63f] flex items-center justify-center transition-all border border-transparent hover:border-[#8cc63f]/20 gap-2 sm:gap-0"
                         >
                           <FiEdit2 size={18} />
                           <span className="sm:hidden text-[10px] font-black uppercase">Edit</span>
                         </button>
                         <button
                           onClick={() => handleDelete(contest._id)}
-                          className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all border border-transparent hover:border-red-500/20 gap-2 sm:gap-0"
+                          className="flex-1 sm:w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all border border-transparent hover:border-red-500/20 gap-2 sm:gap-0"
                         >
                           <FiTrash2 size={18} />
                           <span className="sm:hidden text-[10px] font-black uppercase">Delete</span>
@@ -353,7 +353,7 @@ const ManageContests = () => {
                     onClick={() => setCurrentPage(page)}
                     className={`w-10 h-10 rounded-xl font-black text-sm transition-all shadow-sm flex items-center justify-center ${currentPage === page
                         ? 'bg-[#8cc63f] text-white border-2 border-[#8cc63f] scale-[1.15]'
-                        : 'bg-white dark:bg-gray-800 text-gray-500 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/50 hover:text-[#8cc63f]'
+                        : 'bg-white dark:bg-gray-900 text-gray-500 border-2 border-gray-100 dark:border-gray-700 hover:border-[#8cc63f]/50 hover:text-[#8cc63f]'
                       }`}
                   >
                     {page}

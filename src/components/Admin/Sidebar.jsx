@@ -9,11 +9,11 @@
 
 import React from 'react';
 import { Logo } from '../index';
-import { 
-  FiGrid, 
-  FiClipboard, 
-  FiMessageSquare, 
-  FiAward, 
+import {
+  FiGrid,
+  FiClipboard,
+  FiMessageSquare,
+  FiAward,
   FiUsers,
   FiPieChart,
   FiDatabase
@@ -39,20 +39,19 @@ const Sidebar = ({ onClose }) => {
   ];
 
   const renderNavItem = (item, idx) => {
-    const isActive = location.pathname === item.path || 
-                    (location.pathname.startsWith('/admin/contests') && item.path === '/admin/contests');
-                    
+    const isActive = location.pathname === item.path ||
+      (location.pathname.startsWith('/admin/contests') && item.path === '/admin/contests');
+
     return (
       <button
         key={idx}
         onClick={() => {
-          if(item.path !== '#') {
-             navigate(item.path);
+          if (item.path !== '#') {
+            navigate(item.path);
           }
         }}
-        className={`flex items-center justify-between group transition-all relative py-1.5 ${
-          isActive ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-slate-900 dark:text-gray-100'
-        }`}
+        className={`flex items-center justify-between group transition-all relative py-1.5 ${isActive ? 'text-[#8cc63f]' : 'text-gray-400 hover:text-slate-900 dark:text-gray-100'
+          }`}
       >
         <div className="flex items-center gap-4.5">
           <item.icon size={22} className={`transition-all duration-300 ${isActive ? 'text-[#8cc63f] scale-110' : 'text-gray-400 group-hover:text-[#8cc63f]'}`} />
@@ -72,7 +71,7 @@ const Sidebar = ({ onClose }) => {
   return (
     <aside className="w-[280px] lg:w-[300px] h-screen bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col py-10 px-8 sticky top-0 overflow-y-auto relative shadow-2xl lg:shadow-none">
       {/* Mobile Close Button */}
-      <button 
+      <button
         onClick={onClose}
         className="absolute top-2 left-2 p-3 text-gray-400 lg:hidden transition-all z-10 hover:text-slate-900 dark:text-gray-100"
       >

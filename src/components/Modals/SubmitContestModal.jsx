@@ -154,7 +154,7 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                     <div className="p-6 md:p-8 shrink-0 relative border-b border-gray-100 dark:border-gray-700">
                         <button 
                             onClick={onClose}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-slate-800 dark:text-gray-100 transition-colors p-2 rounded-full hover:bg-gray-100 z-20"
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-400 hover:text-slate-800 dark:text-gray-100 transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 z-20"
                         >
                             <FiX size={24} />
                         </button>
@@ -219,10 +219,10 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                         accentColor="#fbc111"
                                     />
                                 </div>
-                                <div className="col-span-1 md:col-span-2 flex items-center gap-2 bg-[#fcf3d9]/50 border border-[#fbc111]/30 px-3 py-2.5 rounded-xl">
+                                <div className="col-span-1 md:col-span-2 flex items-center gap-2 bg-[#fcf3d9]/50 dark:bg-yellow-900/10 border border-[#fbc111]/30 dark:border-[#fbc111]/20 px-3 py-2.5 rounded-xl">
                                     <span className="text-[13px] leading-none mb-[2px]">📌</span>
-                                    <p className="text-[10px] text-gray-600 font-medium leading-tight">
-                                        <span className="font-bold text-[#a68945]">Note:</span> Rename your file as <span className="font-mono font-bold text-[#4a7010]">YOUR_NAME_SOLO</span> or <span className="font-mono font-bold text-[#4a7010]">YOUR_TEAM_NAME_YOUR_NAME</span> for team only.
+                                    <p className="text-[10px] text-gray-600 dark:text-gray-300 font-medium leading-tight">
+                                        <span className="font-bold text-[#a68945] dark:text-[#fbc111]">Note:</span> Rename your file as <span className="font-mono font-bold text-[#4a7010] dark:text-[#8cc63f]">YOUR_NAME_SOLO</span> or <span className="font-mono font-bold text-[#4a7010] dark:text-[#8cc63f]">YOUR_TEAM_NAME_YOUR_NAME</span> for team only.
                                     </p>
                                 </div>
                             </div>
@@ -255,10 +255,10 @@ const SubmitContestModal = ({ isOpen, onClose, contest, onSuccess }) => {
                                     icon={FiLink2}
                                     borderColor="border-[#8cc63f]/50 focus-within:border-[#8cc63f]"
                                 />
-                                <div className="flex items-center gap-2 bg-[#fcf3d9]/50 border border-[#fbc111]/30 px-3 py-2.5 rounded-xl !mt-3">
+                                <div className="flex items-center gap-2 bg-[#fcf3d9]/50 dark:bg-yellow-900/10 border border-[#fbc111]/30 dark:border-[#fbc111]/20 px-3 py-2.5 rounded-xl !mt-3">
                                     <span className="text-[13px] leading-none mb-[2px]">📌</span>
-                                    <p className="text-[10px] text-gray-600 font-medium leading-tight">
-                                        <span className="font-bold text-[#a68945]">Note:</span> Make sure link is accessible or public.
+                                    <p className="text-[10px] text-gray-600 dark:text-gray-300 font-medium leading-tight">
+                                        <span className="font-bold text-[#a68945] dark:text-[#fbc111]">Note:</span> Make sure link is accessible or public.
                                     </p>
                                 </div>
                             </div>

@@ -32,7 +32,7 @@ export const LaunchCard = () => {
       </div>
       <button
         onClick={() => navigate('/admin/contests/create')}
-        className="w-full bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white dark:bg-gray-800 hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30"
+        className="w-full bg-[#fbc111] dark:bg-[#fbc111] text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-white dark:hover:bg-gray-800 hover:text-[#8cc63f] transition-all shadow-xl active:scale-95 border-b-4 border-yellow-600/30"
       >
         Create New Contest
       </button>

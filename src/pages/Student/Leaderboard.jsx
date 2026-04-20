@@ -14,10 +14,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FiAward, FiArrowLeft, FiUser, FiUsers, FiStar, FiRefreshCw } from 'react-icons/fi';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
+import { Loader } from '../../components/index';
 
 // Helper: Get initials from name
 const getInitials = (name) => {
@@ -112,23 +111,14 @@ const Leaderboard = () => {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 border-4 border-[#8cc63f]/20 border-t-[#8cc63f] rounded-full animate-spin" />
-                    <p className="text-[#8cc63f] font-black text-xs uppercase tracking-widest">Loading Leaderboard...</p>
-                </div>
-            </div>
-        );
+        return <Loader fullPage text="Loading Leaderboard..." />;
     }
 
     const top3 = leaderboard.slice(0, 3);
     const rest = leaderboard.slice(3);
 
     return (
-        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 selection:bg-[#8cc63f]/20 pt-20">
-            <Navbar />
-
+        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 selection:bg-[#8cc63f]/20 pt-16 sm:pt-20">
             <PageTransition>
                 <section className="max-w-6xl mx-auto px-6 py-12 lg:py-20">
 
@@ -200,7 +190,7 @@ const Leaderboard = () => {
                                                     {info.isTeam ? (
                                                         <div className="flex flex-wrap justify-center gap-1 mb-3">
                                                             {info.members.map((m, i) => (
-                                                                <span key={i} className="text-[9px] bg-[#8cc63f]/10 text-[#5c8a14] px-2 py-0.5 rounded-full font-black uppercase tracking-widest">
+                                                                <span key={i} className="text-[9px] bg-[#8cc63f]/10 text-[#8cc63f] px-2 py-0.5 rounded-full font-black uppercase tracking-widest">
                                                                     {toTitleCase(m.name)}
                                                                 </span>
                                                             ))}
@@ -286,7 +276,7 @@ const Leaderboard = () => {
                                                                     {info.members.map((m, i) => (
                                                                         <div key={i} className="flex items-center gap-1.5">
                                                                             <span className="text-[9px] text-[#fbc111] font-black">{i === 0 ? '👑' : '·'}</span>
-                                                                            <span className="text-[11px] font-bold text-slate-700 leading-tight">
+                                                                            <span className="text-[11px] font-bold text-slate-700 dark:text-[#8cc63f] leading-tight">
                                                                                 {toTitleCase(m.name)}
                                                                             </span>
                                                                         </div>
@@ -315,7 +305,6 @@ const Leaderboard = () => {
                 </section>
             </PageTransition>
 
-            <Footer />
         </div>
     );
 };

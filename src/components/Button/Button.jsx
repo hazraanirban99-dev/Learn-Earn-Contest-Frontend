@@ -7,6 +7,7 @@
 // ============================================================
 
 import React from 'react';
+import Loader from '../Common/Loader';
 
 const Button = ({ text, onClick, variant = 'primary', disabled, type = 'button', icon: Icon, className = "", isLoading = false, loadingText = "Loading..." }) => {
   const baseStyle = "flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full";
@@ -35,7 +36,7 @@ const Button = ({ text, onClick, variant = 'primary', disabled, type = 'button',
       
       {isLoading ? (
         <>
-          <div className="w-5 h-5 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111] rounded-full animate-spin" />
+          <Loader size="xs" text={false} />
           {loadingText}
         </>
       ) : (

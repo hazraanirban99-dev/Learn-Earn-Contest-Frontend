@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../index';
 
 const EnrollmentChart = ({ view = 'Monthly' }) => {
   const { user } = useAuth();
@@ -58,8 +59,8 @@ const EnrollmentChart = ({ view = 'Monthly' }) => {
       </div>
 
       {loading ? (
-        <div className="h-[240px] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-[3px] border-transparent border-t-[#8cc63f] border-b-[#fbc111]" />
+        <div className="h-[240px] flex flex-col items-center justify-center text-center">
+          <Loader size="sm" text="Loading Chart..." />
         </div>
       ) : (
         <>

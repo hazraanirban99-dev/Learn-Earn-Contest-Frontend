@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiEdit2, FiCheckCircle, FiFileText, FiMapPin, FiMail, FiPhone, FiBookOpen, FiLoader } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import { Logo, InputField, Button } from '../index';
+import { Logo, InputField, Button, Loader } from '../index';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 
@@ -132,7 +132,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-2 text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-full transition-colors"
                     >
                         <FiX size={20} />
                     </button>
@@ -186,7 +186,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     {/* Personal Info Section */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2 text-slate-700 dark:text-gray-300">
                                 <FiUser size={16} />
                                 <h4 className="font-bold text-sm tracking-wide">Personal Info</h4>
                             </div>
@@ -216,9 +216,9 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
                                 <div className="flex flex-col gap-1.5 w-full mb-4">
                                     <label className="text-[11px] font-bold text-gray-800 dark:text-gray-200 tracking-tight uppercase">Gender</label>
-                                    <div className="flex items-center gap-4 bg-[#f4f7eb] rounded-lg px-4 h-13">
+                                    <div className="flex items-center gap-4 bg-[#f4f7eb] dark:bg-gray-800/60 rounded-lg px-4 h-13">
                                         {['Male', 'Female', 'Other'].map(g => (
-                                            <label key={g} className="flex items-center gap-1.5 cursor-pointer text-[12px] font-bold text-slate-600 hover:text-slate-900 dark:text-gray-100 transition-colors">
+                                            <label key={g} className="flex items-center gap-1.5 cursor-pointer text-[12px] font-bold text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white transition-colors">
                                                 <input
                                                     type="radio"
                                                     name="gender"
@@ -239,7 +239,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     {/* Contact Details Section */}
                     <div>
                         <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2 text-slate-700 dark:text-gray-300">
                                 <FiFileText size={16} />
                                 <h4 className="font-bold text-sm tracking-wide">Contact Details</h4>
                             </div>
@@ -263,8 +263,8 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                             <FiCheckCircle size={10} /> Verified
                                         </span>
                                     </div>
-                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4">
-                                        <span className="text-[12px] font-bold text-gray-400 select-none truncate">{formData.email}</span>
+                                    <div className="relative flex items-center h-[52px] rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700 px-4">
+                                        <span className="text-[12px] font-bold text-gray-400 dark:text-gray-300 select-none truncate">{formData.email}</span>
                                     </div>
                                 </div>
                             </div>
@@ -284,10 +284,10 @@ const ProfileModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Footer Section */}
-                <div className="bg-[#f8faf2] dark:bg-gray-900 px-6 py-6 flex items-center justify-end gap-6 shrink-0 relative z-20 shadow-[0_-10px_20px_rgba(240,244,230,0.5)]">
+                <div className="bg-[#f8faf2] dark:bg-gray-900/80 px-6 py-6 flex items-center justify-end gap-6 shrink-0 relative z-20 shadow-[0_-10px_20px_rgba(240,244,230,0.5)] dark:shadow-[0_-10px_20px_rgba(15,23,42,0.5)] border-t border-gray-100/50 dark:border-gray-700/50">
                     <button
                         onClick={onClose}
-                        className="text-[#5c8a14] font-black text-xs uppercase tracking-widest hover:text-slate-800 dark:text-gray-100 transition-colors"
+                        className="text-[#5c8a14] dark:text-[#8cc63f] font-black text-xs uppercase tracking-widest hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                         Cancel
                     </button>
@@ -298,7 +298,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     >
                         {isSaving ? (
                             <>
-                                <FiLoader className="animate-spin" size={14} />
+                                <Loader size="xs" text={false} />
                                 <span>Saving...</span>
                             </>
                         ) : (
