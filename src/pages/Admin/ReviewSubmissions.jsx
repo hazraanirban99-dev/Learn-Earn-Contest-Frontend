@@ -126,7 +126,7 @@ export default function ReviewSubmissions() {
                         <div className="flex justify-center">
                           {p.status === 'REVIEWED' ? (
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
-                              <FiCheckCircle size={10} /><span className="text-[9px] font-black uppercase tracking-wider">Score: {p.score}</span>
+                              <FiCheckCircle size={14} /><span className="text-xs font-black uppercase tracking-wider">Score: {p.score}</span>
                             </div>
                           ) : (
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-[#fbc111] rounded-full">

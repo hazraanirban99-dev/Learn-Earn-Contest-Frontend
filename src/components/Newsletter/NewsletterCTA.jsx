@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiMail, FiArrowRight, FiCheck } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import api from '../../utils/api';
 
 const NewsletterCTA = () => {
     const [email, setEmail] = useState('');
@@ -15,11 +16,18 @@ const NewsletterCTA = () => {
             return;
         }
         setLoading(true);
-        await new Promise(r => setTimeout(r, 800)); // Simulate network request delay
-        
-        setSubmitted(true);
-        setLoading(false);
-        toast.success('You\'re on the list! 🎉');
+        try {
+            const { data } = await api.post('/newsletter/subscribe', { email });
+            if (data.success) {
+                setSubmitted(true);
+                toast.success(data.message || 'You\'re on the list! 🎉');
+            }
+        } catch (error) {
+            console.error("Newsletter subscription error:", error);
+            toast.error(error.response?.data?.message || 'Failed to subscribe. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

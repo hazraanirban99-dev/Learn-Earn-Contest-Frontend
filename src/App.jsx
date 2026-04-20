@@ -10,6 +10,9 @@ import { ProtectedRoute } from './components/Auth';
 import { UserProvider } from './context/UserContext';
 import { LayoutProvider } from './context/LayoutContext';
 import { Navbar, Footer, ScrollToTop, Loader } from './components';
+import { useTheme } from './context/ThemeContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // React.lazy diye pages load kora hocche — prottekta page alada alada chunk e thakbe.
 // Eite initial load fast hoy karon sob page ekbar e download hoy na.
@@ -43,9 +46,16 @@ const FallbackLoader = () => (
 );
 
 function App() {
+  const { isDarkMode } = useTheme();
+
   return (
     <Router>
       <ScrollToTop />
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        theme={isDarkMode ? "dark" : "colored"} 
+      />
       <UserProvider>
         <LayoutProvider>
           <Navbar />

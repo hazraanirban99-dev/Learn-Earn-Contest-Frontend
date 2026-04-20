@@ -137,6 +137,10 @@ const AuthForm = ({ type }) => {
         });
 
         if (data.success) {
+          // Save token to localStorage so mobile browsers can use it via Authorization header
+          const token = data.data?.accessToken || data.data?.token;
+          if (token) localStorage.setItem('accessToken', token);
+
           toast.success(`Welcome back ${data.data.user.name}!`);
           login(data.data.user);
 

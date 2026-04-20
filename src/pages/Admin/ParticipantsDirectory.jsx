@@ -28,8 +28,22 @@ const ParticipantRow = React.memo(({ user, index }) => {
       </td>
       <td className="py-6 px-4">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-700 shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[1px]">
-            <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+          <div className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-700 shadow-sm overflow-hidden bg-gradient-to-tr from-[#8cc63f]/20 to-[#fbc111]/20 p-[1px] flex items-center justify-center">
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://ui-avatars.com/api/?name=${user.name?.replace(' ', '+')}&background=random`;
+                }}
+              />
+            ) : (
+              <div className="w-full h-full rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-[10px] font-black text-gray-400 uppercase">
+                {user.name?.charAt(0) || 'U'}
+              </div>
+            )}
           </div>
           <span className="font-black text-slate-800 dark:text-gray-100 text-[15px] tracking-tight">
             {user.name}

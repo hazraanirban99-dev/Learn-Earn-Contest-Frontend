@@ -132,7 +132,7 @@ const ContestUserFilter = ({ onSelectionChange, showParticipant = true }) => {
                 studentId: s.studentId,
                 name: s.studentId?.name,
                 email: s.studentId?.email,
-                avatar: s.studentId?.avatar || 'https://i.pravatar.cc/150',
+                avatar: (typeof s.studentId?.avatar === 'string' ? s.studentId.avatar : s.studentId?.avatar?.url) || `https://ui-avatars.com/api/?name=${(s.studentId?.name || 'User').replace(' ', '+')}&background=random`,
                 score: s.score,
                 status: s.status,
                 projectUrl: s.projectUrl,

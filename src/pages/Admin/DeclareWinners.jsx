@@ -16,11 +16,15 @@ import { toast } from 'react-toastify';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import ContestUserFilter from '../../components/ContestFilters/ContestUserFilter';
 import { exportToCSV } from '../../utils/exportUtils';
+import api from '../../utils/api';
 
 export default function DeclareWinners() {
   const [participants, setParticipants] = useState([]);
   const [stats, setStats] = useState({ totalEvaluated: 0 });
   const [visibleCount, setVisibleCount] = useState(5);
+  const [selectedContestId, setSelectedContestId] = useState(null);
+  const [selectedContestStr, setSelectedContestStr] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   // Dense Ranking Logic: Somano score thakle rank repeat hobe (Tied ranks support kore)
   const rankedParticipants = useMemo(() => {
@@ -48,7 +52,11 @@ export default function DeclareWinners() {
   const hasMore = visibleCount < leaderboard.length;
 
   const handleFilterChange = React.useCallback((selection) => {
-    if (selection.contestData) {
+    if (selection) {
+      setSelectedContestId(selection.contestId);
+      setSelectedContestStr(selection.contest);
+    }
+    if (selection?.contestData) {
       setParticipants(selection.contestData.participants || []);
       setStats({ totalEvaluated: selection.contestData.participants?.length || 0 });
       setVisibleCount(5);
@@ -111,7 +119,21 @@ export default function DeclareWinners() {
                 <div className="relative mb-4">
                    <div className={`absolute -inset-1 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity ${winner.rank === 1 ? 'bg-[#fbc111]' : winner.rank === 2 ? 'bg-[#8cc63f]' : 'bg-[#dca51a]'}`}></div>
                    <div className={`relative p-1 rounded-full border-2 ${winner.rank === 1 ? 'border-[#fbc111]' : winner.rank === 2 ? 'border-[#8cc63f]' : 'border-[#dca51a]'}`}>
-                      <img src={winner.avatar} alt={winner.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover shadow-inner" />
+                      {winner.avatar ? (
+                        <img 
+                          src={winner.avatar} 
+                          alt={winner.name} 
+                          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover shadow-inner" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${winner.name?.replace(' ', '+')}&background=random`;
+                          }}
+                        />
+                      ) : (
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-lg font-black text-gray-400">
+                          {winner.name?.charAt(0) || 'W'}
+                        </div>
+                      )}
                       <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-white text-[9px] font-black border-2 border-white shadow-md ${winner.rank === 1 ? 'bg-[#fbc111]' : winner.rank === 2 ? 'bg-[#8cc63f]' : 'bg-[#dca51a]'}`}>
                          {winner.rank}{getRankSuffix(winner.rank)}
                       </div>
@@ -173,7 +195,23 @@ export default function DeclareWinners() {
                     <td className="py-5 px-8 font-black text-gray-400 text-sm text-center">#{item.rank}</td>
                     <td className="py-5 px-6">
                       <div className="flex items-center gap-4">
-                        <img src={item.avatar} alt={item.name} className="w-10 h-10 rounded-full object-cover bg-gray-100 shadow-sm" />
+                      <div className="relative">
+                        {item.avatar ? (
+                          <img 
+                            src={item.avatar} 
+                            alt={item.name} 
+                            className="w-10 h-10 rounded-full object-cover bg-gray-100 shadow-sm" 
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = `https://ui-avatars.com/api/?name=${item.name?.replace(' ', '+')}&background=random`;
+                            }}
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-xs font-black text-gray-400">
+                            {item.name?.charAt(0) || 'P'}
+                          </div>
+                        )}
+                      </div>
                         <div>
                           <div className="font-black text-slate-800 dark:text-gray-100 text-sm">{item.name}</div>
                           <div className="text-[11px] font-bold text-gray-400 mt-0.5">{item.school}</div>
@@ -215,43 +253,45 @@ export default function DeclareWinners() {
              </p>
           </div>
 
-          <div className="flex flex-col items-center z-10 w-full md:w-auto shrink-0">
+           <div className="flex flex-col items-center z-10 w-full md:w-auto shrink-0">
              <button 
+                disabled={isSending || !selectedContestId}
                 onClick={async () => {
                   try {
-                    // Collect recipient emails from ranked participants (especially top 3 winners)
-                    const winnerEmails = topWinners.filter(p => p.email).map(p => p.email);
-                    const otherEmails = leaderboard.filter(p => p.email).map(p => p.email);
-                    
-                    const allEmails = [...new Set([...winnerEmails, ...otherEmails])];
-
-                    if (allEmails.length === 0) {
-                      toast.warning("No email addresses found for participants!");
-                      return;
+                    if (!selectedContestId) {
+                       toast.warning("Please select a contest filter first!");
+                       return;
                     }
-
-                    // 2. Mailto link create kora hoche (Client er default mail app open hobe)
-                    const subject = encodeURIComponent(`Contest Results Announced: ${selectedContest || 'Scholastic Atelier'} 🏆`);
-                    const body = encodeURIComponent(`Dear Participant,\n\nThe results for the contest have been declared! Please check your dashboard for your final rank and scores.\n\nBest Regards,\nAdmin Team\nDesun Academy`);
                     
-                    const mailtoLink = `mailto:${allEmails.join(',')}?subject=${subject}&body=${body}`;
+                    setIsSending(true);
                     
-                    window.location.href = mailtoLink;
+                    const { data } = await api.post('/admin/contests/notify-winners', {
+                       contestId: selectedContestId
+                    });
                     
-                    toast.success("Opening Mail Client with participants' emails!");
+                    toast.success(data.message || `Emails sent successfully to ${data.data?.emailCount} participants!`);
                   } catch (err) {
-                    toast.error("Failed to generate mail link.");
+                    console.error("Failed to send notifications:", err);
+                    toast.error(err.response?.data?.message || "Failed to trigger email notification API.");
+                  } finally {
+                    setIsSending(false);
                   }
                 }}
-                className="bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px]"
+                className={`bg-[#5c8a14] hover:bg-[#4d7310] text-white px-8 py-5 rounded-[24px] font-black tracking-wide text-sm flex items-center justify-center gap-3 transition-all transform shadow-xl shadow-[#5c8a14]/30 w-full md:w-auto h-full min-w-[200px] ${isSending || !selectedContestId ? 'opacity-50 cursor-not-allowed hover:-translate-y-0' : 'hover:-translate-y-0.5'}`}
               >
                <div className="flex flex-col items-center">
-                 <span>Finalize Winners &</span>
-                 <span>Send Notifications</span>
+                 <span>{isSending ? 'Sending Emails...' : 'Finalize Winners &'}</span>
+                 {!isSending && <span>Send Notifications</span>}
                </div>
-               <FiSend size={20} className="ml-2" />
+               {isSending ? (
+                  <svg className="animate-spin ml-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+               ) : (
+                  <FiSend size={20} className="ml-2" />
+               )}
              </button>
-             <span className="text-[8px] font-black tracking-[0.2em] text-gray-400 uppercase mt-4">This opens your default mail client</span>
+             <span className="text-[8px] font-bold tracking-[0.2em] text-gray-400 uppercase mt-4">
+               {isSending ? "Handled via Nodemailer Backend" : "Powered by Mailtrap Email System"}
+             </span>
           </div>
         </div>
 

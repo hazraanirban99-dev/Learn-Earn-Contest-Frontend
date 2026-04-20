@@ -42,8 +42,8 @@ const Loader = ({ fullPage = false, text = 'Loading...', size = 'md' }) => {
   const spinnerClass = spinnerSizes[size] || spinnerSizes.md;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-md">
-      <div className="flex flex-col items-center justify-center gap-5">
+    <div className={`${fullPage || size !== 'xs' ? 'fixed' : 'absolute'} inset-0 w-screen h-screen z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-md overflow-hidden`}>
+      <div className="flex flex-col items-center justify-center gap-5 w-full max-w-[100vw] px-4">
 
         {/* ── Spinner ring + Logo ── */}
         <div className={`relative flex items-center justify-center ${spinnerClass}`}>
@@ -107,7 +107,7 @@ const Loader = ({ fullPage = false, text = 'Loading...', size = 'md' }) => {
 
         {/* ── Text label + bouncing dots ── */}
         {text && (
-          <div className="flex flex-col items-center gap-2 mt-1">
+          <div className="flex flex-col items-center gap-2 mt-1 text-center">
             <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[#fbc111] animate-pulse drop-shadow">
               {text}
             </span>

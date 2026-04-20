@@ -13,9 +13,9 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
   const menuRef = useRef(null);
 
   const statuses = [
-    { id: 'UPCOMING', label: 'Mark as Upcoming', icon: FiClock, color: 'text-amber-500', bg: 'hover:bg-amber-50' },
-    { id: 'ONGOING', label: 'Mark as Ongoing', icon: FiPlay, color: 'text-[#8cc63f]', bg: 'hover:bg-green-50' },
-    { id: 'COMPLETED', label: 'Mark as Completed', icon: FiCheckCircle, color: 'text-gray-500', bg: 'hover:bg-gray-50 dark:bg-gray-800' },
+    { id: 'UPCOMING', label: 'Mark as Upcoming', icon: FiClock, color: 'text-amber-500', bg: 'hover:bg-amber-50 dark:hover:bg-amber-900/20' },
+    { id: 'ONGOING', label: 'Mark as Ongoing', icon: FiPlay, color: 'text-[#8cc63f]', bg: 'hover:bg-green-50 dark:hover:bg-[#8cc63f]/10' },
+    { id: 'COMPLETED', label: 'Mark as Completed', icon: FiCheckCircle, color: 'text-gray-500', bg: 'hover:bg-gray-50 dark:hover:bg-gray-700' },
   ];
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-slate-600"
+        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors text-gray-400 hover:text-slate-600 dark:hover:text-gray-200"
       >
         <FiMoreVertical size={20} />
       </button>
@@ -53,7 +53,7 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
               title={status.label}
             >
               <status.icon className={`${status.color} group-hover/item:scale-110 transition-transform`} size={16} />
-              <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${currentStatus === status.id ? 'text-gray-400' : 'text-slate-700'}`}>
+              <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${currentStatus === status.id ? 'text-gray-400' : 'text-slate-700 dark:text-gray-300'}`}>
                 {status.id}
               </span>
             </button>

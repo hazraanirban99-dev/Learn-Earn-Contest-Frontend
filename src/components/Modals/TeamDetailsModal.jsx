@@ -264,7 +264,7 @@ const TeamDetailsModal = ({ isOpen, onClose, contestId, contestTitle }) => {
                                     {searchResults.length > 0 && (
                                         <div className="max-h-40 overflow-y-auto rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-50 bg-white dark:bg-gray-800 shadow-inner">
                                             {searchResults.map(m => (
-                                                <div key={m._id} className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 hover:bg-slate-50 dark:bg-gray-800 transition-colors">
+                                                <div key={m._id} className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 hover:bg-slate-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0">
                                                     <div className="flex items-center gap-3 w-full min-w-0">
                                                         <div className="w-8 h-8 rounded-full bg-[#fbc111] flex items-center justify-center text-[10px] font-black text-slate-800 dark:text-gray-100 shrink-0">
                                                             {m.name?.[0] || '?'}

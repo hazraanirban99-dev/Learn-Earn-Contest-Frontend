@@ -55,6 +55,9 @@ export const AuthProvider = ({ children }) => {
         toast.success('Logged out successfully! See you soon.');
       }
 
+      // Clear token from localStorage (mobile auth fallback)
+      localStorage.removeItem('accessToken');
+
       // User state clear koro
       setUser(null);
     } catch (error) {

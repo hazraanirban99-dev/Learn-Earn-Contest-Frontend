@@ -37,13 +37,27 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+// REQUEST INTERCEPTOR — Token localStorage theke niye sob request e inject kora hocche.
+// Mobile browsers often block cross-origin httpOnly cookies, so we send the token
+// via Authorization header as a reliable fallback that works on ALL devices.
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token && !config.headers['Authorization']) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 api.interceptors.response.use(
   (response) => response, // Success hole sudhu response pass thru koro
   async (error) => {
     const originalRequest = error.config;
 
-    // // Check if error is 401 (Unauthorized) and we haven't retried this request yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Check if error is 401 (Unauthorized), we haven't retried this request yet, and it's NOT the login request!
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/users/login') {
       if (originalRequest.url === '/users/refresh-token') {
         const currentPath = window.location.pathname;
         if (currentPath !== '/login' && currentPath !== '/register' && !currentPath.startsWith('/password/reset')) {

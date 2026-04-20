@@ -45,7 +45,7 @@ const ContestDetails = () => {
     const [withdrawLoading, setWithdrawLoading] = React.useState(false);
     const [teamData, setTeamData] = React.useState(null); // holds entire team object
     const [enrollmentStatus, setEnrollmentStatus] = React.useState('REGISTERED'); // Solo participant status
-    
+
     // Derived states for real-time sync with AuthContext
     const hasApplied = user?.enrolledContests?.some(cid => cid.toString() === id?.toString()) || false;
     const hasSubmitted = user?.submittedContests?.some(cid => cid.toString() === id?.toString()) || false;
@@ -120,7 +120,14 @@ const ContestDetails = () => {
 
     const handleDownload = () => {
         if (contest?.syllabus?.url) {
-            window.open(contest.syllabus.url, '_blank');
+            let url = contest.syllabus.url;
+
+            // If it's a Cloudinary URL, append fl_attachment to force download/proper header
+            if (url.includes('cloudinary.com') && !url.includes('fl_attachment')) {
+                url = url.replace('/upload/', '/upload/fl_attachment/');
+            }
+
+            window.open(url, '_blank');
         } else {
             toast.info("No syllabus available for this contest.");
         }
@@ -145,7 +152,7 @@ const ContestDetails = () => {
                     updateUser(userRes.data.data);
                 }
                 toast.success("Withdrawn from contest successfully.");
-                
+
                 // Update local contest data to show updated participantsCount
                 setContest(prev => ({
                     ...prev,
@@ -165,13 +172,13 @@ const ContestDetails = () => {
             <div className="p-1">
                 <p className="text-xs font-black uppercase tracking-wider mb-3 text-slate-800 dark:text-gray-100">Withdraw from this contest?</p>
                 <div className="flex gap-2">
-                    <button 
+                    <button
                         onClick={() => handleWithdrawAction(confirmToast)}
                         className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors cursor-pointer"
                     >
                         Confirm
                     </button>
-                    <button 
+                    <button
                         onClick={() => toast.dismiss(confirmToast)}
                         className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors cursor-pointer"
                     >
@@ -220,10 +227,14 @@ const ContestDetails = () => {
 
         const timer = setInterval(() => {
             const newTime = calculateTimeLeft();
-            
+
             // Auto-switch status if countdown ends for UPCOMING
-            if (newTime.expired && contest.status === 'UPCOMING') {
-                setContest(prev => ({ ...prev, status: 'ONGOING' }));
+            if (newTime.expired) {
+                if (contest.status === 'UPCOMING') {
+                    setContest(prev => ({ ...prev, status: 'ONGOING' }));
+                } else if (contest.status === 'ONGOING') {
+                    setContest(prev => ({ ...prev, status: 'COMPLETED' }));
+                }
             } else {
                 setTimeLeft(newTime);
             }
@@ -308,12 +319,14 @@ const ContestDetails = () => {
                             <p className="text-sm font-bold text-gray-500 dark:text-gray-400">Comprehensive guidelines, dataset specs, and submission documentation.</p>
                         </div>
                     </div>
-                    <button
-                        onClick={handleDownload}
+                    <a
+                        href={contest?.syllabus?.url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="bg-[#8cc63f] hover:bg-[#7ab332] cursor-pointer text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:shadow-[#8cc63f]/30 active:scale-95 flex items-center gap-2 shrink-0 w-full md:w-auto justify-center"
                     >
-                        Download PDF <FiDownload size={14} />
-                    </button>
+                        View Syllabus PDF <FiDownload size={14} />
+                    </a>
                 </div>
             </div>
 
@@ -425,7 +438,7 @@ const ContestDetails = () => {
                                     </p>
                                 )}
 
-                                <button 
+                                <button
                                     onClick={() => setIsTeamModalOpen(true)}
                                     className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-lg shadow-purple-600/20 active:scale-95 flex items-center justify-center gap-2 cursor-pointer transition-all"
                                 >
@@ -443,10 +456,10 @@ const ContestDetails = () => {
                                         * Awaiting Admin Approval - Submission Locked
                                     </p>
                                 )}
-                                
+
                                 {/* Unsubscribe Option (Only if not submitted) */}
                                 {!hasSubmitted && (
-                                    <button 
+                                    <button
                                         onClick={handleWithdraw}
                                         disabled={withdrawLoading}
                                         className="w-full bg-slate-50 dark:bg-gray-800 hover:bg-red-50 text-slate-400 hover:text-red-500 font-black text-[10px] uppercase tracking-[0.2em] transition-all py-3.5 px-4 rounded-xl border border-slate-100 dark:border-gray-700 hover:border-red-100 flex items-center justify-center gap-2 group shadow-sm active:scale-95 mt-4"
@@ -457,7 +470,7 @@ const ContestDetails = () => {
                                 )}
                             </div>
                         ) : (
-                            <button 
+                            <button
                                 onClick={() => {
                                     if (contest?.status === 'UPCOMING') {
                                         toast.warning("🔔 It's an upcoming contest. Please wait and apply when it gets active!", {
@@ -467,8 +480,16 @@ const ContestDetails = () => {
                                         });
                                         return;
                                     }
+                                    if (contest?.status === 'COMPLETED') {
+                                        toast.error("🚫 This contest is already completed. Registration is closed.", {
+                                            position: "top-right",
+                                            autoClose: 4000,
+                                            theme: "colored",
+                                        });
+                                        return;
+                                    }
                                     setIsApplyModalOpen(true);
-                                }} 
+                                }}
                                 className="bg-[#fbc111] hover:bg-[#8cc63f] cursor-pointer text-white px-6 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all shadow-xl shadow-[#fbc111]/30 hover:shadow-[#8cc63f]/30 active:scale-95 w-full mb-6"
                             >
                                 Apply for this Contest
@@ -522,16 +543,16 @@ const ContestDetails = () => {
                                 </p>
                             </div>
                             <Link to="/student/contests" className="hidden md:flex text-[#8cc63f] hover:text-[#7ab332] font-black text-sm uppercase tracking-widest items-center gap-2 transition-colors">
-                                View All 
+                                View All
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                             {relatedContests.map((contest, index) => (
-                                <ContestCard 
-                                    key={contest.id} 
-                                    contest={contest} 
-                                    index={index} 
-                                    variant="all" 
+                                <ContestCard
+                                    key={contest.id}
+                                    contest={contest}
+                                    index={index}
+                                    variant="all"
                                 />
                             ))}
                         </div>
@@ -557,7 +578,7 @@ const ContestDetails = () => {
                     setIsApplyModalOpen(false);
                 }}
             />
-            <TeamDetailsModal 
+            <TeamDetailsModal
                 isOpen={isTeamModalOpen}
                 onClose={() => setIsTeamModalOpen(false)}
                 contestId={id}

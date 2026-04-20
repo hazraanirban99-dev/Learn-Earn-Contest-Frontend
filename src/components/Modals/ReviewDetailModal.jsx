@@ -111,10 +111,10 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div className="min-h-screen flex items-start justify-center p-3 sm:p-6 py-8">
-        <div className="bg-white dark:bg-gray-800 w-full max-w-6xl rounded-[32px] sm:rounded-[40px] shadow-2xl relative flex flex-col">
+        <div className="bg-white dark:bg-slate-900 w-full max-w-6xl rounded-[32px] sm:rounded-[40px] shadow-2xl relative flex flex-col">
 
           {/* Modal Header */}
-          <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-[32px] sm:rounded-t-[40px]">
+          <div className="flex items-center justify-between px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-[32px] sm:rounded-t-[40px]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm flex-shrink-0 bg-slate-100 dark:bg-gray-900 flex items-center justify-center text-[13px] font-black text-slate-500 overflow-hidden">
                 {participant.avatar?.url || (typeof participant.avatar === 'string' && participant.avatar) ? (
@@ -232,9 +232,9 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                       onCopy={copyToClipboard}
                     />
                   )}
-                  <div className="p-3 bg-blue-50/50 rounded-2xl flex items-center gap-3 border border-blue-100/50">
-                    <FiExternalLink className="text-blue-400" size={14} />
-                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Primary Asset</span>
+                  <div className="p-3 bg-blue-50/50 dark:bg-blue-900/20 rounded-2xl flex items-center gap-3 border border-blue-100/50 dark:border-blue-900/30">
+                    <FiExternalLink className="text-blue-400 dark:text-blue-300" size={14} />
+                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-300 uppercase tracking-widest leading-none">Primary Asset</span>
                   </div>
 
                   {/* PDF Download */}
@@ -254,7 +254,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                       href={participant.projectPdf}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center gap-2 px-3 py-2 ${participant.projectPdf ? 'bg-[#8cc63f] hover:bg-[#7eb533]' : 'bg-gray-200 cursor-not-allowed'} text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex-shrink-0 ml-3`}
+                      className={`flex items-center gap-2 px-3 py-2 ${participant.projectPdf ? 'bg-[#8cc63f] hover:bg-[#7eb533] text-white' : 'bg-gray-200 dark:bg-slate-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'} rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex-shrink-0 ml-3`}
                     >
                       <FiDownload size={12} />
                       <span className="hidden sm:inline">{participant.projectPdf ? 'Download' : 'No PDF'}</span>
@@ -269,7 +269,7 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                     <h3 className="font-black text-[#fbc111] text-[13px] uppercase tracking-widest">Narrative Evaluation</h3>
                   </div>
                   <textarea
-                    className="w-full h-36 bg-gray-50 dark:bg-slate-950 rounded-[20px] p-5 text-sm font-semibold text-slate-700 dark:text-gray-100 border-2 border-transparent focus:border-[#fbc111]/20 outline-none resize-none placeholder:text-gray-300 dark:placeholder:text-gray-600 transition-all shadow-inner"
+                    className="w-full h-36 bg-gray-50 dark:!bg-[#1e3a8a] rounded-[20px] p-5 text-sm font-semibold text-slate-700 dark:!text-[#fffff0] border-2 border-transparent focus:border-[#fbc111]/20 dark:focus:!border-blue-400 focus:outline-none resize-none placeholder:text-gray-400 dark:placeholder:!text-blue-200/60 transition-all shadow-inner"
                     placeholder="Type your detailed feedback here..."
                     value={reviewDraft}
                     onChange={(e) => setReviewDraft(e.target.value)}
@@ -324,15 +324,15 @@ const ReviewDetailModal = ({ isOpen, onClose, participant, onReviewSubmit }) => 
                   <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${scoreMode === 'performance' ? 'text-[#8cc63f]' : 'text-[#fbc111]'}`}>
                     {scoreMode === 'performance' ? 'Calculated Average' : 'Custom Score'}
                   </label>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center justify-center gap-2 py-2">
                     <input
                       type="number" step="0.1" min="0" max="10"
                       readOnly={scoreMode === 'performance'}
                       value={finalScore}
                       onChange={(e) => setCustomScore(parseFloat(e.target.value))}
-                      className="bg-transparent text-4xl font-black text-slate-800 dark:text-gray-100 w-20 text-center outline-none"
+                      className="bg-transparent text-4xl sm:text-5xl font-black text-slate-800 dark:text-gray-100 w-20 sm:w-24 text-center outline-none"
                     />
-                    <span className="text-xl font-bold text-gray-300">/ 10</span>
+                    <span className="text-2xl font-bold text-gray-300 dark:text-gray-600">/ 10</span>
                   </div>
                 </div>
 

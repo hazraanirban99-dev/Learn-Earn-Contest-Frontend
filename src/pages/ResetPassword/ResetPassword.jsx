@@ -62,31 +62,31 @@ const ResetPassword = () => {
                 <div className="w-full max-w-[1000px] flex flex-col lg:flex-row bg-white dark:bg-gray-800 font-sans text-gray-800 dark:text-gray-200 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                     
                     {/* Left Panel - Branding */}
-                    <div className="flex flex-1 bg-linear-to-br from-[#f0f9e1] via-[#f7fcea] to-white p-8 md:p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
+                    <div className="flex flex-1 bg-linear-to-br from-[#f0f9e1] via-[#f7fcea] to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-8 md:p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
                         <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full border-48 border-[#8cc63f]/5"></div>
                         
                         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left">
                             <div className="text-[#fbc111] font-bold text-lg tracking-tight mb-8 lg:mb-12 uppercase">Desun Academy</div>
-                            <h1 className="text-[32px] md:text-[40px] lg:text-[48px] font-black leading-[1.05] tracking-tight text-black max-w-md">
+                            <h1 className="text-[32px] md:text-[40px] lg:text-[48px] font-black leading-[1.05] tracking-tight text-black dark:text-slate-100 max-w-md">
                                 Secure Your <br />
                                 <span className="text-[#8cc63f]">Mastery</span>
                             </h1>
-                            <p className="text-gray-600 text-[14px] mt-4 max-w-sm leading-relaxed font-semibold opacity-90">
+                            <p className="text-gray-600 dark:text-gray-300 text-[14px] mt-4 max-w-sm leading-relaxed font-semibold opacity-90">
                                 Your security is our priority. Please create a strong new password for your account.
                             </p>
                         </div>
                     </div>
 
                     {/* Right Panel - Form */}
-                    <div className="flex-1 p-6 md:p-12 lg:p-16 flex flex-col items-center justify-center bg-white dark:bg-gray-800">
+                    <div className="flex-1 p-6 md:p-12 lg:p-16 flex flex-col items-center justify-center bg-white dark:bg-slate-900">
                         <div className="w-full max-w-[380px]">
                             <div className="flex flex-col items-center mb-10">
                                 <Logo size="lg" className="mb-8" />
                                 <div className="text-center">
-                                    <h2 className="font-black text-black mb-1.5 tracking-tight leading-tight uppercase text-[28px]">
+                                    <h2 className="font-black text-black dark:text-slate-100 mb-1.5 tracking-tight leading-tight uppercase text-[28px]">
                                         Set New Password
                                     </h2>
-                                    <p className="text-gray-500 text-[14px] font-bold opacity-70">
+                                    <p className="text-gray-500 dark:text-gray-400 text-[14px] font-bold opacity-70">
                                         Enter your new credentials below.
                                     </p>
                                 </div>
@@ -103,7 +103,7 @@ const ResetPassword = () => {
                                         icon={FiLock}
                                         required
                                     />
-                                    <p className="text-[9.5px] sm:whitespace-nowrap text-black font-semibold mt-2 leading-tight px-1">
+                                    <p className="text-[9.5px] sm:whitespace-nowrap text-black dark:text-slate-300 font-semibold mt-2 leading-tight px-1">
                                         <span className="text-[#8cc63f] font-black mr-1">Note:</span> Min 8 chars, 1 uppercase, 1 number, 1 special char (@$!%*?&#).
                                     </p>
                                 </div>
@@ -121,7 +121,7 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={() => navigate('/login')}
-                                        className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all tracking-wider text-[16px]"
+                                        className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 font-bold rounded-xl transition-all tracking-wider text-[16px]"
                                     >
                                         Cancel
                                     </button>

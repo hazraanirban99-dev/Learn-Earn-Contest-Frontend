@@ -46,7 +46,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
         return (
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto mt-2">
                 {searchResults.map(m => (
-                    <div key={m._id} className="p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                    <div key={m._id} className="p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#8cc63f] to-[#7ab332] text-white flex items-center justify-center font-black text-[10px] md:text-xs overflow-hidden shadow-inner shrink-0">
                                 {m.avatar?.url ? (
@@ -278,7 +278,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                         <div className="bg-red-50 border border-red-100 rounded-2xl p-6 mb-6">
                                             <FiUsers className="mx-auto text-red-500 mb-4" size={40} />
                                             <h3 className="text-sm font-black text-red-600 uppercase tracking-widest mb-2">Its a team project select your team</h3>
-                                            <p className="text-[10px] font-bold text-gray-400">Please verify if you are already part of a squad or create a new one.</p>
+                                            <p className="text-[10px] font-bold text-slate-600 dark:text-gray-300">Please verify if you are already part of a squad or create a new one.</p>
                                         </div>
                                         <button
                                             onClick={checkStatus}
@@ -426,7 +426,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                     {/* Fixed Footer */}
                     <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0">
                         {!isTeamContest && (
-                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] dark:bg-gray-900 rounded-2xl cursor-pointer hover:bg-[#ecf0e6] transition-colors mb-4 md:mb-6">
+                            <label className="flex items-start gap-4 p-4 bg-[#f8faf2] dark:bg-gray-900 rounded-2xl cursor-pointer hover:bg-[#ecf0e6] dark:hover:bg-gray-700/50 transition-colors mb-4 md:mb-6">
                                 <input
                                     type="checkbox"
                                     checked={agreed}
