@@ -78,6 +78,26 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
           .animate-fade-status {
             animation: fade-status 2s ease-in-out infinite;
           }
+          .carousel-dot {
+            height: 8px;
+            border-radius: 9999px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .carousel-dot.active {
+            width: 40px;
+            background-color: #fbc111;
+            box-shadow: 0 0 15px rgba(251, 193, 17, 0.5);
+          }
+          .carousel-dot.inactive {
+            width: 8px;
+            background-color: rgba(140, 198, 63, 0.6);
+            box-shadow: none;
+          }
+          .carousel-dot.inactive:hover {
+            background-color: #8cc63f;
+          }
         `}} />
         {loading ? (
           <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
@@ -163,13 +183,13 @@ const HeroCarousel = React.memo(({ contests, loading }) => {
             </AnimatePresence>
             {/* Dots indicator */}
             {contests.length > 1 && (
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
                 {contests.map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setHeroIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-500 shadow-sm ${idx === heroIndex ? 'w-10 bg-[#fbc111] shadow-[0_0_15px_rgba(251,193,17,0.4)]' : 'w-2 bg-[#8cc63f]/60 hover:bg-[#8cc63f]'
-                      }`}
+                    onClick={(e) => { e.stopPropagation(); setHeroIndex(idx); }}
+                    aria-label={`Go to slide ${idx + 1}`}
+                    className={`carousel-dot ${idx === heroIndex ? 'active' : 'inactive'}`}
                   />
                 ))}
               </div>

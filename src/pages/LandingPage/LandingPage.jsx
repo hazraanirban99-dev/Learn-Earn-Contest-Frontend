@@ -262,6 +262,26 @@ const LandingPage = () => {
         .animate-marquee:hover {
           animation-play-state: paused;
         }
+        .carousel-dot {
+          height: 8px;
+          border-radius: 9999px;
+          transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                      background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                      box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .carousel-dot.active {
+          width: 40px;
+          background-color: #fbc111;
+          box-shadow: 0 0 15px rgba(251, 193, 17, 0.5);
+        }
+        .carousel-dot.inactive {
+          width: 8px;
+          background-color: rgba(140, 198, 63, 0.6);
+          box-shadow: none;
+        }
+        .carousel-dot.inactive:hover {
+          background-color: #8cc63f;
+        }
       `}} />
          <HeroCarousel contests={liveContests} loading={liveLoading} />
 
@@ -333,16 +353,14 @@ const LandingPage = () => {
                         </AnimatePresence>
                         </div>
 
-                        {/* Right-to-Left Sliding Dots */}
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-2.5 bg-black/5 backdrop-blur-md rounded-full border border-white/20 z-10">
+                        {/* Sliding Dots — same animation as HeroCarousel */}
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-6 py-2.5 bg-black/5 backdrop-blur-md rounded-full border border-white/20 z-10">
                            {heroImages.map((_, i) => (
                               <button
                                  key={i}
-                                 onClick={() => setHeroIndex(i)}
-                                 className={`h-2.5 rounded-full transition-all duration-500 ${i === heroIndex
-                                       ? 'w-6 bg-[#fbc111] shadow-[0_0_12px_rgba(251,193,17,0.5)]'
-                                       : 'w-2.5 bg-[#8cc63f] hover:bg-[#a3d957]'
-                                    }`}
+                                 onClick={(e) => { e.stopPropagation(); setHeroIndex(i); }}
+                                 aria-label={`Go to slide ${i + 1}`}
+                                 className={`carousel-dot ${i === heroIndex ? 'active' : 'inactive'}`}
                               />
                            ))}
                         </div>
