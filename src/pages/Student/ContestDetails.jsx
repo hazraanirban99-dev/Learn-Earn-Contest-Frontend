@@ -208,11 +208,24 @@ const ContestDetails = () => {
             const rawDate = contest.status === 'UPCOMING' ? contest.startDate : contest.endDate;
             if (!rawDate) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
 
-            // Robust UTC parsing: ensure 'Z' suffix and use absolute timestamps (ms since epoch)
-            const targetDate = new Date(rawDate);
-            const now = new Date();
+            // THE FINAL REVELATION FIX (Visual Sync):
+            // MongoDB stores dates in UTC (e.g., 18:00Z). However, if the contest was created 
+            // with 18:00 IST in mind, the 5.5-hour offset makes it look like it's in the distant future.
+            // By extracting the UTC numbers (18:00) and creating a LOCAL Date object from them,
+            // we "shift" the time back to what the user visually expects.
+            const d = new Date(rawDate);
+            const target = new Date(
+                d.getUTCFullYear(),
+                d.getUTCMonth(),
+                d.getUTCDate(),
+                d.getUTCHours(),
+                d.getUTCMinutes(),
+                d.getUTCSeconds()
+            ).getTime();
             
-            const difference = targetDate.getTime() - now.getTime();
+            const now = new Date().getTime();
+            const difference = target - now;
+
             let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
 
             if (difference > 0) {
