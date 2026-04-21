@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../Common/Logo';
-import { FiMenu, FiX, FiBell, FiSettings, FiRefreshCw, FiCheck, FiXCircle, FiUser, FiLogOut, FiTrash2, FiEdit, FiHome, FiAward, FiFolder, FiMoreVertical, FiSun, FiMoon, FiGrid, FiMessageSquare, FiUsers, FiPieChart, FiDatabase } from 'react-icons/fi';
+import { FiMenu, FiX, FiBell, FiSettings, FiRefreshCw, FiCheck, FiXCircle, FiUser, FiLogOut, FiTrash2, FiEdit, FiHome, FiAward, FiFolder, FiMoreVertical, FiSun, FiMoon, FiGrid, FiMessageSquare, FiUsers, FiPieChart, FiDatabase, FiChevronLeft } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -28,6 +28,7 @@ const Navbar = ({ showAuth = true }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showNotifInProfile, setShowNotifInProfile] = useState(false);
 
   const notifRef = useRef(null);
   const profileDropdownRef = useRef(null);
@@ -232,13 +233,15 @@ const Navbar = ({ showAuth = true }) => {
                   {user?.role === 'admin' && (
                     <div className="hidden lg:flex items-center gap-4 border-r border-gray-100 dark:border-gray-700 pr-6 mr-2">
                       {/* Refresh */}
-                      <button
-                        onClick={handleRefresh}
-                        className="p-2 text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all group"
-                        title="Refresh System"
-                      >
-                        <FiRefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
-                      </button>
+                      {user.role === 'admin' && (
+                        <button
+                          onClick={handleRefresh}
+                          className="p-2 text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all group"
+                          title="Refresh System"
+                        >
+                          <FiRefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
+                        </button>
+                      )}
 
                       {/* Notifications */}
                       <div className="relative" ref={notifRef}>
@@ -326,40 +329,106 @@ const Navbar = ({ showAuth = true }) => {
                     </button>
 
                     {isProfileOpen && (
-                      <div className="absolute top-full right-0 mt-3 w-60 sm:w-64 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="p-5 border-b border-gray-50 dark:border-gray-700 bg-gray-50/ dark:bg-gray-800/0 dark:bg-gray-700/50 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8cc63f] to-[#7ab332] flex items-center justify-center text-white shadow-lg shrink-0 overflow-hidden">
-                            {user.avatar?.url ? (
-                              <img src={user.avatar.url} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                              <FiUser size={20} />
-                            )}
+                      <div className="absolute top-full right-0 mt-3 w-[280px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in slide-in-from-top-2 duration-300">
+                        {showNotifInProfile ? (
+                          <div className="flex flex-col max-h-[400px]">
+                            <div className="p-4 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/ dark:bg-gray-800/50">
+                              <button 
+                                onClick={() => setShowNotifInProfile(false)}
+                                className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f] flex items-center gap-1 hover:scale-105 transition-transform"
+                              >
+                                <FiChevronLeft size={16} /> Back
+                              </button>
+                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Notifications</span>
+                            </div>
+                            <div className="overflow-y-auto p-2 space-y-2">
+                                {notifications.length === 0 ? (
+                                    <div className="py-10 text-center">
+                                        <FiBell className="mx-auto text-gray-200 mb-3" size={28} />
+                                        <p className="text-[10px] font-black uppercase text-gray-400 italic">All caught up!</p>
+                                    </div>
+                                ) : (
+                                    notifications.map(notif => (
+                                        <div key={notif._id} className="p-4 rounded-2xl bg-gray-50/ dark:bg-gray-700/50 border border-gray-50 dark:border-gray-600">
+                                            <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-3">
+                                                {notif.type === 'TEAM_INVITE' ? (
+                                                    <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                                ) : notif.message}
+                                            </p>
+                                            {notif.type === 'TEAM_INVITE' ? (
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleNotificationAction(notif._id, 'ACCEPTED', notif.type)} className="flex-1 bg-[#8cc63f] text-white py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[#8cc63f]/10">Accept</button>
+                                                    <button onClick={() => handleNotificationAction(notif._id, 'DECLINED', notif.type)} className="flex-1 bg-red-50 text-red-500 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Deny</button>
+                                                </div>
+                                            ) : (
+                                                <button 
+                                                  onClick={() => handleNotificationAction(notif._id, 'OK', notif.type)}
+                                                  className="w-full bg-slate-800 text-white py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-colors shadow-lg"
+                                                >
+                                                  OK, Understood
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                           </div>
-                          <div className="overflow-hidden">
-                            <p className="text-[11px] font-black uppercase tracking-widest text-slate-800 dark:text-gray-100 truncate">{user.name}</p>
-                            <p className={`text-[9px] font-bold mt-0.5 uppercase tracking-tight ${user.role === 'admin' ? 'text-[#8cc63f]' : 'text-[#fbc111]'}`}>
-                              Active {user.role === 'admin' ? 'Admin' : 'Student'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="p-2 space-y-1">
-                          <Link to={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition-colors" onClick={() => setIsProfileOpen(false)}>
-                            <FiEdit size={16} /> Dashboard
-                          </Link>
-                          {user.role === 'student' && (
-                            <button onClick={() => setIsProfileModalOpen(true)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition-colors">
-                              <FiUser size={16} /> View Profile
-                            </button>
-                          )}
-                          {user.role === 'student' && (
-                            <button onClick={handleDeleteAccount} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-xs font-bold transition-colors">
-                              <FiTrash2 size={16} /> Delete Account
-                            </button>
-                          )}
-                          <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50/50 dark:hover:bg-yellow-900/20 rounded-xl text-xs font-bold transition-colors border-t border-gray-50 dark:border-gray-700 mt-1 pt-3">
-                            <FiLogOut size={16} /> Logout Account
-                          </button>
-                        </div>
+                        ) : (
+                          <>
+                            <div className="p-5 border-b border-gray-50 dark:border-gray-700 bg-gray-50/ dark:bg-gray-800/0 dark:bg-gray-700/50 flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8cc63f] to-[#7ab332] flex items-center justify-center text-white shadow-lg shrink-0 overflow-hidden">
+                                {user.avatar?.url ? (
+                                  <img src={user.avatar.url} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                  <FiUser size={20} />
+                                )}
+                              </div>
+                              <div className="overflow-hidden">
+                                <p className="text-[11px] font-black uppercase tracking-widest text-slate-800 dark:text-gray-100 truncate">{user.name}</p>
+                                <p className={`text-[9px] font-bold mt-0.5 uppercase tracking-tight ${user.role === 'admin' ? 'text-[#8cc63f]' : 'text-[#fbc111]'}`}>
+                                  Active {user.role === 'admin' ? 'Admin' : 'Student'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="p-2 space-y-1">
+                              <Link to={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-gray-300 hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all group" onClick={() => setIsProfileOpen(false)}>
+                                <FiGrid size={16} className="text-gray-400 group-hover:text-[#8cc63f] transition-colors" /> Dashboard
+                              </Link>
+                              
+                              <button onClick={() => { setIsProfileModalOpen(true); setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-gray-300 hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all group">
+                                <FiUser size={16} className="text-gray-400 group-hover:text-[#8cc63f] transition-colors" /> View Profile
+                              </button>
+
+                              {user.role === 'student' && (
+                                <button 
+                                  onClick={() => setShowNotifInProfile(true)}
+                                  className="w-full flex items-center justify-between gap-3 px-4 py-3 text-slate-600 dark:text-gray-300 hover:bg-[#fbc111]/5 dark:hover:bg-[#fbc111]/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all group"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <FiBell size={16} className="text-gray-400 group-hover:text-[#fbc111] transition-colors" /> Notification
+                                  </div>
+                                  {notifications.length > 0 && (
+                                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                      {notifications.length}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+
+                              <div className="h-px bg-gray-50 dark:bg-gray-700 my-1 mx-2" />
+
+                              {user.role === 'student' && (
+                                <button onClick={() => { handleDeleteAccount(); setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-xs font-black uppercase tracking-widest transition-all group">
+                                  <FiTrash2 size={16} className="text-red-400 group-hover:text-red-600" /> Delete Account
+                                </button>
+                              )}
+
+                              <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[#fbc111] hover:text-[#e0ad0c] hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-xl text-xs font-black uppercase tracking-widest transition-all group">
+                                <FiLogOut size={16} className="group-hover:rotate-12 transition-transform" /> Logout Account
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -510,20 +579,41 @@ const Navbar = ({ showAuth = true }) => {
                     </Link>
 
                     {/* Common Account Actions (For both Student & Admin on Mobile) */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-3">
+                      <button 
+                        onClick={() => { navigate(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'); setIsMobileMenuOpen(false); }}
+                        className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all"
+                      >
+                        <FiGrid size={20} className="text-[#8cc63f]" /> Dashboard
+                      </button>
+
                       {user.role === 'student' && (
-                        <div className="flex flex-col gap-2 mb-4">
-                          <button onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-4 text-slate-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
-                            <FiUser size={16} /> View Profile
-                          </button>
-                          <button onClick={() => { handleDeleteAccount(); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-4 text-red-400 bg-red-50/30 dark:bg-red-900/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
-                            <FiTrash2 size={16} /> Delete Account
-                          </button>
-                        </div>
+                        <button onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+                          <FiUser size={20} className="text-slate-400" /> View Profile
+                        </button>
+                      )}
+
+                      {user.role === 'student' && (
+                        <button onClick={() => setShowNotifInProfile(true)} className="w-full flex items-center justify-between gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+                          <div className="flex items-center gap-4">
+                            <FiBell size={20} className="text-slate-400" /> Notification
+                          </div>
+                          {notifications.length > 0 && (
+                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                          )}
+                        </button>
+                      )}
+
+                      <div className="h-px bg-gray-100 dark:bg-gray-700 my-1 mx-2" />
+                      
+                      {user.role === 'student' && (
+                        <button onClick={() => { handleDeleteAccount(); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-red-500 bg-red-50/50 dark:bg-red-900/20 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+                          <FiTrash2 size={20} /> Delete Account
+                        </button>
                       )}
                       
                       <button onClick={logout} className="w-full py-5 bg-yellow-500/10 hover:bg-yellow-500/20 dark:bg-yellow-500/5 dark:hover:bg-yellow-500/10 border border-[#fbc111]/30 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#fbc111] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#fbc111]/5">
-                        <FiLogOut size={16} /> Logout Platform
+                        <FiLogOut size={20} /> Logout Account
                       </button>
                     </div>
                   </div>

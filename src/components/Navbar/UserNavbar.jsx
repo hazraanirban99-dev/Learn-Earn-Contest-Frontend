@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../index';
 import ProfileModal from '../Modals/ProfileModal';
-import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2, FiRefreshCw, FiBell, FiCheck, FiXCircle } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiTrash2, FiRefreshCw, FiBell, FiCheck, FiXCircle, FiChevronLeft } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
@@ -12,6 +12,7 @@ const UserNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showNotifInProfile, setShowNotifInProfile] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
@@ -68,6 +69,7 @@ const UserNavbar = () => {
     { label: 'Home', path: '/student/dashboard' },
     { label: 'Contests', path: '/student/contests' },
     { label: 'Submissions', path: '/student/submissions' },
+    { label: 'Notifications', path: '/student/notifications' },
   ];
 
   const firstName = currentUser?.name ? currentUser.name.split(' ')[0] : 'Student';
@@ -76,6 +78,7 @@ const UserNavbar = () => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
          setIsDropdownOpen(false);
+         setShowNotifInProfile(false);
       }
       if (notifRef.current && !notifRef.current.contains(event.target)) {
          setIsNotifOpen(false);
@@ -153,6 +156,7 @@ const UserNavbar = () => {
         <div className="hidden lg:flex items-center gap-12">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
+            const isNotifLink = link.path === '/student/notifications';
             return (
               <Link
                 key={link.label}
@@ -162,6 +166,11 @@ const UserNavbar = () => {
                 }`}
               >
                 {link.label}
+                {isNotifLink && notifications.length > 0 && (
+                  <span className="absolute -top-2 -right-4 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
+                    {notifications.length}
+                  </span>
+                )}
                 {isActive && (
                   <span className="absolute -bottom-1 left-0 w-full h-[2.5px] bg-[#8cc63f] rounded-full shadow-[0_2px_8px_rgba(140,198,63,0.4)]" />
                 )}
@@ -263,7 +272,10 @@ const UserNavbar = () => {
 
           <div className="hidden lg:flex items-center gap-3 relative" ref={dropdownRef}>
             <button 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => {
+                setIsDropdownOpen(!isDropdownOpen);
+                if (isDropdownOpen) setShowNotifInProfile(false);
+              }}
               className="flex items-center gap-3 hover:bg-white/ dark:bg-gray-800/ p-1.5 pr-4 rounded-full transition-all border border-transparent hover:border-gray-200 dark:border-gray-700"
             >
               <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black text-xs">
@@ -278,36 +290,111 @@ const UserNavbar = () => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-               <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                     <div className="w-8 h-8 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-[10px]">
-                        {currentUser.avatar?.url ? (
-                            <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
-                        ) : (
-                            getInitials(currentUser.name)
-                        )}
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-sm font-black text-slate-800 dark:text-gray-100 leading-none">{currentUser.name}</span>
-                        <span className="text-[10px] text-gray-400 font-bold uppercase mt-1">Student</span>
-                     </div>
-                  </div>
-                  
-                  <button 
-                     onClick={() => {
-                         setIsDropdownOpen(false);
-                         setIsProfileModalOpen(true);
-                     }} 
-                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 transition-colors"
-                  >
-                     <FiSettings size={16} /> View Profile
-                  </button>
-                  <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors">
-                     <FiTrash2 size={16} /> Delete Account
-                  </button>
-                  <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:text-[#fbc111] hover:bg-gray-50 dark:bg-gray-800 transition-colors border-t border-gray-50 dark:border-gray-700">
-                     <FiLogOut size={16} /> Logout
-                  </button>
+               <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[110]">
+                  {showNotifInProfile ? (
+                    <div className="flex flex-col max-h-[400px]">
+                        <div className="p-3 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/50">
+                            <button 
+                                onClick={() => setShowNotifInProfile(false)}
+                                className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f] flex items-center gap-1 hover:scale-105 transition-transform"
+                            >
+                                <FiChevronLeft size={14} /> Back
+                            </button>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Alerts</span>
+                        </div>
+                        <div className="overflow-y-auto custom-scrollbar p-2 space-y-2">
+                            {notifications.length === 0 ? (
+                                <div className="py-8 text-center">
+                                    <FiBell className="mx-auto text-gray-200 mb-2" size={24} />
+                                    <p className="text-[9px] font-black uppercase text-gray-400">All caught up!</p>
+                                </div>
+                            ) : (
+                                notifications.map(notif => (
+                                    <div key={notif._id} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600">
+                                        <p className="text-[10px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-2">
+                                            {notif.type === 'TEAM_INVITE' ? (
+                                                <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                            ) : notif.message}
+                                        </p>
+                                        {notif.type === 'TEAM_INVITE' && (
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')} className="flex-1 bg-[#8cc63f] text-white py-1.5 rounded-lg text-[8px] font-black uppercase">Accept</button>
+                                                <button onClick={() => handleNotificationAction(notif._id, 'DECLINED')} className="flex-1 bg-red-50 text-red-500 py-1.5 rounded-lg text-[8px] font-black uppercase">Deny</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                  ) : (
+                    <>
+                        <div className="px-4 py-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3 bg-gradient-to-r from-gray-50/50 to-transparent">
+                            <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-xs shadow-lg shadow-[#8cc63f]/20">
+                                {currentUser.avatar?.url ? (
+                                    <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
+                                ) : (
+                                    getInitials(currentUser.name)
+                                )}
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-sm font-black text-slate-800 dark:text-gray-100 leading-none">{currentUser.name}</span>
+                                <span className="text-[10px] text-gray-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Student Account
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="p-2 flex flex-col gap-1">
+                            <Link 
+                                to="/student/dashboard"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+                            >
+                                <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiRefreshCw size={16} /></div> 
+                                <span>Dashboard</span>
+                            </Link>
+
+                            <button 
+                                onClick={() => {
+                                    setIsDropdownOpen(false);
+                                    setIsProfileModalOpen(true);
+                                }} 
+                                className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+                            >
+                                <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiUser size={16} /></div> 
+                                <span>View Profile</span>
+                            </button>
+
+                            <button 
+                                onClick={() => setShowNotifInProfile(true)}
+                                className="w-full flex items-center justify-between gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#fbc111] hover:bg-[#fbc111]/5 dark:hover:bg-[#fbc111]/10 rounded-xl transition-all group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#fbc111] group-hover:rotate-12 transition-all"><FiBell size={16} /></div> 
+                                    <span>Notification</span>
+                                </div>
+                                {notifications.length > 0 && (
+                                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 animate-bounce">
+                                    {notifications.length}
+                                    </span>
+                                )}
+                            </button>
+
+                            <div className="h-px bg-gray-100 dark:bg-gray-700 my-2 mx-2"></div>
+
+                            <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all group">
+                                <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-xl text-red-500 group-hover:scale-110 transition-all"><FiTrash2 size={16} /></div> 
+                                <span>Delete Account</span>
+                            </button>
+
+                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10 rounded-xl transition-all group">
+                                <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-amber-600 group-hover:scale-110 transition-all"><FiLogOut size={16} /></div> 
+                                <span>Logout Account</span>
+                            </button>
+                        </div>
+                    </>
+                  )}
                </div>
             )}
           </div>
@@ -340,50 +427,121 @@ const UserNavbar = () => {
              </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-sm font-black uppercase tracking-widest py-2 ${
-                  location.pathname === link.path ? 'text-[#8cc63f]' : 'text-gray-500'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          
-          <div className="flex flex-col gap-4 pt-4 border-t border-gray-50 dark:border-gray-700">
-            <button 
-              onClick={() => window.location.reload()}
-              className="flex sm:hidden items-center gap-3 text-sm font-black text-gray-500 hover:text-[#8cc63f] uppercase tracking-widest text-left"
-            >
-              <FiRefreshCw size={18} /> Refresh Page
-            </button>
-            <button 
-              onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsProfileModalOpen(true);
-              }}
-              className="flex items-center gap-3 text-sm font-black text-gray-500 uppercase tracking-widest text-left"
-            >
-              <FiSettings size={18} /> View Profile
-            </button>
-            <button 
-              onClick={handleDelete}
-              className="flex items-center gap-3 text-sm font-black text-red-500 uppercase tracking-widest text-left"
-            >
-              <FiTrash2 size={18} /> Delete Account
-            </button>
-            <button 
-               onClick={handleLogout}
-              className="flex items-center gap-3 text-sm font-black text-gray-500 hover:text-[#fbc111] uppercase tracking-widest text-left"
-            >
-              <FiLogOut size={18} /> Logout
-            </button>
-          </div>
+          {showNotifInProfile ? (
+            <div className="flex flex-col animate-in slide-in-from-right duration-300">
+               <div className="flex items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                  <button 
+                     onClick={() => setShowNotifInProfile(false)}
+                     className="flex items-center gap-1 text-[#8cc63f] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform"
+                  >
+                     <FiChevronLeft size={16} /> Back
+                  </button>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-gray-100">Notifications</p>
+               </div>
+               
+               <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                  {notifications.length === 0 ? (
+                     <div className="py-10 text-center">
+                        <FiBell className="mx-auto text-gray-200 mb-4" size={32} />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">No new alerts</p>
+                     </div>
+                  ) : (
+                     notifications.map(notif => (
+                        <div key={notif._id} className="bg-gray-50/ dark:bg-gray-800/ p-4 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-3">
+                           <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'TEAM_INVITE' ? 'bg-[#fbc111]/20' : 'bg-[#8cc63f]/20'}`}>
+                                 {notif.type === 'TEAM_INVITE' ? <FiUser className="text-[#ebaa00]" size={14} /> : <FiCheck className="text-[#8cc63f]" size={14} />}
+                              </div>
+                              <p className="text-[10px] font-medium text-slate-700 dark:text-gray-200 leading-tight">
+                                 {notif.type === 'TEAM_INVITE' ? (
+                                    <><span className="font-black">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                 ) : notif.message}
+                              </p>
+                           </div>
+                           {notif.type === 'TEAM_INVITE' && (
+                              <div className="flex gap-2">
+                                 <button onClick={() => { handleNotificationAction(notif._id, 'ACCEPTED'); setIsMobileMenuOpen(false); }} className="flex-1 bg-[#8cc63f] text-white py-2 rounded-lg text-[9px] font-black uppercase">Accept</button>
+                                 <button onClick={() => { handleNotificationAction(notif._id, 'DECLINED'); }} className="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-[9px] font-black uppercase">Deny</button>
+                              </div>
+                           )}
+                        </div>
+                     ))
+                  )}
+               </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-4">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.path;
+                  return (
+                    <Link
+                      key={link.label}
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center justify-between text-sm font-black uppercase tracking-widest py-2 ${
+                        isActive ? 'text-[#8cc63f]' : 'text-gray-500'
+                      }`}
+                    >
+                      <span>{link.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+              
+              <div className="flex flex-col gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <Link 
+                  to="/student/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-4 px-4 py-3 text-sm font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 rounded-2xl transition-all"
+                >
+                  <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-[#8cc63f]"><FiRefreshCw size={18} /></div> 
+                  <span>Dashboard</span>
+                </Link>
+                <button 
+                  onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsProfileModalOpen(true);
+                  }}
+                  className="flex items-center gap-4 px-4 py-3 text-sm font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 rounded-2xl transition-all text-left"
+                >
+                  <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600"><FiUser size={18} /></div> 
+                  <span>View Profile</span>
+                </button>
+                <button 
+                  onClick={() => setShowNotifInProfile(true)}
+                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm font-black text-slate-700 dark:text-gray-200 hover:text-[#fbc111] hover:bg-[#fbc111]/5 rounded-2xl transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600"><FiBell size={18} /></div> 
+                    <span>Notification</span>
+                  </div>
+                  {notifications.length > 0 && (
+                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/20 animate-bounce">
+                      {notifications.length}
+                    </span>
+                  )}
+                </button>
+                
+                <div className="h-px bg-gray-100 dark:bg-gray-700 my-2 mx-4"></div>
+
+                <button 
+                  onClick={handleDelete}
+                  className="flex items-center gap-4 px-4 py-3 text-sm font-black text-red-500 hover:bg-red-50 rounded-2xl transition-all text-left"
+                >
+                  <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-xl text-red-500"><FiTrash2 size={18} /></div> 
+                  <span>Delete Account</span>
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center gap-4 px-4 py-3 text-sm font-black text-amber-600 hover:bg-amber-50 rounded-2xl transition-all text-left"
+                >
+                  <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-amber-600"><FiLogOut size={18} /></div> 
+                  <span>Logout Account</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
       </nav>

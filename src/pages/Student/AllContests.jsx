@@ -14,6 +14,7 @@ import ContestCard from '../../components/Cards/ContestCard';
 import { toast } from 'react-toastify';
 import PageTransition from '../../components/Common/PageTransition';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import { getActualStatus } from '../../utils/statusUtils';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { FiSearch, FiCode, FiLayout, FiTrendingUp, FiFilter, FiGlobe, FiCheckCircle, FiPlusCircle } from 'react-icons/fi';
@@ -80,20 +81,27 @@ const AllContests = () => {
             // Fetch All Contests Data first
             const contestsRes = await api.get('/contests');
             if (contestsRes.data.success) {
-               const allData = contestsRes.data.data;
+               const allData = contestsRes.data.data.map(c => ({
+                  ...c,
+                  realStatus: getActualStatus(c)
+               }));
 
-               // 1. Carousel Data (Latest 5 UPCOMING)
-               const upcomingContests = allData
-                  .filter(c => c.status === 'UPCOMING')
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+               // 1. Carousel Data (Latest 5 UPCOMING or ONGOING)
+               const featuredContests = allData
+                  .filter(c => c.realStatus === 'UPCOMING' || c.realStatus === 'ONGOING')
+                  .sort((a, b) => {
+                     if (a.realStatus === 'ONGOING' && b.realStatus !== 'ONGOING') return -1;
+                     if (a.realStatus !== 'ONGOING' && b.realStatus === 'ONGOING') return 1;
+                     return new Date(b.createdAt) - new Date(a.createdAt);
+                  });
                
-               const mappedCarousel = upcomingContests.slice(0, 5).map(c => ({
+               const mappedCarousel = featuredContests.slice(0, 5).map(c => ({
                   id: c._id,
                   title: c.title,
                   subtitle: c.description.substring(0, 100) + "...",
                   thumbnailUrl: c.thumbnail?.url,
-                  tag: "Coming Soon",
-                  buttonText: "Join Contest"
+                  tag: c.realStatus === 'ONGOING' ? "Live Now" : "Coming Soon",
+                  buttonText: c.realStatus === 'ONGOING' ? "Join Now" : "View Details"
                }));
                setCarouselData(mappedCarousel);
 
@@ -110,9 +118,9 @@ const AllContests = () => {
                   title: c.title,
                   desc: c.description,
                   domain: domainMap[c.domain] || c.domain || 'General',
-                  status: c.status,
+                  status: c.realStatus,
                   prize: c.cashPrize && c.cashPrize > 0 ? `₹${c.cashPrize}` : null,
-                  dateInfo: c.status === 'ONGOING' ? "ENDS SOON" : c.status === 'UPCOMING' ? "STARTS" : "COMPLETED ON",
+                  dateInfo: c.realStatus === 'ONGOING' ? "ENDS SOON" : c.realStatus === 'UPCOMING' ? "STARTS" : "COMPLETED ON",
                   dateValue: formatDateDDMMYYYY(c.endDate),
                   thumbnail: c.thumbnail?.url || null,
                   winnerName: c.isWinnerDeclared ? (c.winner?.name || "TBA") : null,

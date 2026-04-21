@@ -19,6 +19,7 @@ import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import PageTransition from '../../components/Common/PageTransition';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import { getActualStatus } from '../../utils/statusUtils';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -69,32 +70,40 @@ const StudentDashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // 1. Upcoming Contests (Hero Carousel er jonno)
+        // 1. Upcoming & Ongoing Contests (Hero Carousel er jonno)
         const contestsRes = await api.get('/contests');
         if (contestsRes.data.success) {
-           const upcomingContests = contestsRes.data.data
-              .filter(c => c.status === 'UPCOMING')
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-           const mappedHero = upcomingContests.map(c => ({
+           const processedContests = contestsRes.data.data.map(c => ({
+              ...c,
+              realStatus: getActualStatus(c)
+           }));
+
+           const featuredContests = processedContests
+              .filter(c => c.realStatus === 'UPCOMING' || c.realStatus === 'ONGOING')
+              .sort((a, b) => {
+                  if (a.realStatus === 'ONGOING' && b.realStatus !== 'ONGOING') return -1;
+                  if (a.realStatus !== 'ONGOING' && b.realStatus === 'ONGOING') return 1;
+                  return new Date(b.createdAt) - new Date(a.createdAt);
+              });
+
+           const mappedHero = featuredContests.map(c => ({
               id: c._id,
               title: c.title,
               subtitle: c.description.substring(0, 100) + "...",
               thumbnailUrl: c.thumbnail?.url,
-              tag: "Coming Soon",
-              buttonText: "View Details"
+              tag: c.realStatus === 'ONGOING' ? "Live Now" : "Coming Soon",
+              buttonText: c.realStatus === 'ONGOING' ? "Join Now" : "View Details"
            }));
-           setHeroContests(mappedHero.slice(0, 5)); // Hero page e max 5 ta coming soon contest dekhabo
-        }
+           setHeroContests(mappedHero.slice(0, 5));
 
-        // 2. Popular Contests (ONGOING contests jeguloy sobcheye beshi participant)
-        if (contestsRes.data.success) {
-           const activeContests = contestsRes.data.data.filter(c => c.status === 'ONGOING');
+           // 2. Popular Contests (ONGOING contests jeguloy sobcheye beshi participant)
+           const activeContests = processedContests.filter(c => c.realStatus === 'ONGOING');
            const sortedPop = activeContests.sort((a,b) => (b.participantsCount || 0) - (a.participantsCount || 0));
            const mappedPop = sortedPop.slice(0, 3).map(c => ({
               id: c._id,
               title: c.title,
               desc: c.description,
-              status: c.status,
+              status: c.realStatus,
               domain: c.domain || "General",
               prize: c.cashPrize && c.cashPrize > 0 ? `₹${c.cashPrize}` : null,
               icon: c.domain === 'MERN' || c.domain === 'Development' ? "💻" : c.domain === 'UI/UX' ? "🎨" : "🏛️",

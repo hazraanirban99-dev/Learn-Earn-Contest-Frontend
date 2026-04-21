@@ -39,6 +39,7 @@ const AllContests = React.lazy(() => import('./pages/Student').then(module => ({
 const ContestDetails = React.lazy(() => import('./pages/Student').then(module => ({ default: module.ContestDetails })));
 const StudentSubmission = React.lazy(() => import('./pages/Student').then(module => ({ default: module.StudentSubmission })));
 const Leaderboard = React.lazy(() => import('./pages/Student').then(module => ({ default: module.Leaderboard })));
+const StudentNotifications = React.lazy(() => import('./pages/Student').then(module => ({ default: module.StudentNotifications })));
 
 // Page load hote time lagle ei FallbackLoader spinner show korbe - Suspense er jonno dorkar
 const FallbackLoader = () => (
@@ -95,6 +96,7 @@ function App() {
                   <Route path="/student/contests" element={<AllContests />} />
                   <Route path="/student/submissions" element={<StudentSubmission />} />
                   <Route path="/student/leaderboard/:id" element={<Leaderboard />} />
+                  <Route path="/student/notifications" element={<StudentNotifications />} />
                 </Route>
               </Routes>
             </Suspense>
