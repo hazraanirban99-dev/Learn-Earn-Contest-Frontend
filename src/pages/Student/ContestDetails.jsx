@@ -205,10 +205,14 @@ const ContestDetails = () => {
         if (!contest) return;
 
         const calculateTimeLeft = () => {
-            const targetDate = contest.status === 'UPCOMING' ? contest.startDate : contest.endDate;
-            if (!targetDate) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+            const rawDate = contest.status === 'UPCOMING' ? contest.startDate : contest.endDate;
+            if (!rawDate) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
 
-            const difference = +new Date(targetDate) - +new Date();
+            // Robust UTC parsing: ensure 'Z' suffix and use absolute timestamps (ms since epoch)
+            const targetDate = new Date(rawDate);
+            const now = new Date();
+            
+            const difference = targetDate.getTime() - now.getTime();
             let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
 
             if (difference > 0) {

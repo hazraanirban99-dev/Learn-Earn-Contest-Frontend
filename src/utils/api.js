@@ -57,7 +57,8 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Check if error is 401 (Unauthorized), we haven't retried this request yet, and it's NOT the login request!
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/users/login') {
+    // Also check if the request explicitly asks to skip redirection (useful for session checks)
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/users/login' && !originalRequest._skipRedirect) {
       if (originalRequest.url === '/users/refresh-token') {
         const currentPath = window.location.pathname;
         if (currentPath !== '/login' && currentPath !== '/register' && !currentPath.startsWith('/password/reset')) {

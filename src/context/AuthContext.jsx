@@ -21,7 +21,8 @@ export const AuthProvider = ({ children }) => {
     const checkLoginStatus = async () => {
       try {
         // /users/me endpoint theke current user fetch kora hocche
-        const { data } = await api.get('/users/me');
+        // _skipRedirect flag dewa hocche jate guest user holeo interceptor login e redirect na kore
+        const { data } = await api.get('/users/me', { _skipRedirect: true });
         // Jodi session valid thake, user data set koro
         if (data.success && data.data) {
           setUser(data.data);
