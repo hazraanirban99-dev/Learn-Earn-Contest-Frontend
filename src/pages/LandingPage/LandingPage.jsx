@@ -96,12 +96,14 @@ const TypewriterHeader = () => {
    }, [text, isDeleting, loopNum, typingSpeed]);
 
    return (
-      <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight flex flex-wrap items-center justify-center gap-x-2 gap-y-0 text-center leading-[1.2]">
-         <span className="text-slate-900 dark:text-gray-100">{text.substring(0, 15)}</span>
-         <span className="text-[#8cc63f]">{text.substring(15, 23)}</span>
-         <span className="text-[#fbc111]">{text.substring(23)}</span>
-         <span className="w-1 h-8 sm:h-12 bg-[#8cc63f] animate-pulse ml-1 rounded-full shrink-0"></span>
-      </h2>
+      <div className="flex justify-center items-center min-h-[60px] sm:min-h-[100px]">
+         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight flex flex-wrap items-center justify-center gap-x-2 gap-y-0 text-center leading-[1.2]">
+            <span className="text-slate-900 dark:text-gray-100 whitespace-pre">{text.substring(0, 15)}</span>
+            <span className="text-[#8cc63f] whitespace-pre">{text.substring(15, 23)}</span>
+            <span className="text-[#fbc111] whitespace-pre">{text.substring(23)}</span>
+            <span className="w-1 h-[0.8em] bg-[#8cc63f] animate-pulse ml-1 rounded-full shrink-0"></span>
+         </h2>
+      </div>
    );
 };
 

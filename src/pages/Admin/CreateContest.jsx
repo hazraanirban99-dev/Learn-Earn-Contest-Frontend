@@ -236,8 +236,9 @@ const CreateContest = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-[#f8faf6]/50 dark:bg-gray-800/50 p-2 rounded-[28px] flex gap-2 border border-white dark:border-gray-700 shadow-inner min-h-[70px]">
                   {[
-                    { id: 'Solo', icon: FiUser, label: 'Solo Project' },
-                    { id: 'Team', icon: FiUsers, label: 'Team Project' }
+                    { id: 'Solo', icon: FiUser, label: 'Solo' },
+                    { id: 'Team', icon: FiUsers, label: 'Team' },
+                    { id: 'Both', icon: FiUsers, label: 'Both' }
                   ].map((type) => (
                     <button
                       key={type.id}
@@ -246,7 +247,7 @@ const CreateContest = () => {
                       className={`flex-1 flex items-center justify-center gap-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
                         projectType === type.id 
                           ? 'bg-[#8cc63f] text-white shadow-lg scale-[1.02]' 
-                          : 'text-gray-400 hover:text-slate-800 dark:text-gray-100 hover:bg-white/ dark:hover:bg-gray-700/'
+                          : 'text-gray-400 hover:text-slate-800 dark:text-gray-100'
                       }`}
                     >
                       <type.icon size={18} />
@@ -255,7 +256,7 @@ const CreateContest = () => {
                   ))}
                 </div>
 
-                <div className={`transition-all duration-500 overflow-hidden ${projectType === 'Team' ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
+                <div className={`transition-all duration-500 overflow-hidden ${['Team', 'Both'].includes(projectType) ? 'opacity-100 max-h-40 translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 pointer-events-none'}`}>
                   <div className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f]/10 rounded-[20px] sm:rounded-[28px] p-2 flex items-center justify-between shadow-sm hover:border-[#8cc63f]/30 transition-all">
                     <div className="flex flex-col px-3 sm:px-6">
                        <span className="text-[8px] sm:text-[9px] font-black text-[#8cc63f] uppercase tracking-widest block mb-1">Max Team Capacity</span>

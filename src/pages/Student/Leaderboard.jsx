@@ -118,12 +118,12 @@ const Leaderboard = () => {
     const rest = leaderboard.slice(3);
 
     return (
-        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 selection:bg-[#8cc63f]/20 pt-16 sm:pt-20">
+        <div className="min-h-screen bg-[#f8faf2] dark:bg-gray-900 selection:bg-[#8cc63f]/20 pt-14 sm:pt-16">
             <PageTransition>
-                <section className="max-w-6xl mx-auto px-6 py-12 lg:py-20">
+                <section className="max-w-6xl mx-auto px-6 py-8 lg:py-12">
 
                     {/* ── PAGE HEADER ─────────────────────────── */}
-                    <div className="mb-14">
+                    <div className="mb-10">
                         <Link to="/student/submissions" className="inline-flex items-center gap-2 text-[#8cc63f] font-black text-xs uppercase tracking-widest hover:-translate-x-1 transition-transform mb-8">
                             <FiArrowLeft size={14} /> Back to Submissions
                         </Link>

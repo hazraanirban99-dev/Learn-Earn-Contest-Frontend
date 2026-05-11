@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FiUsers, FiZap, FiAward, FiTrendingUp, FiActivity } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
 import { FaTrophy } from 'react-icons/fa';
+import api from '../../utils/api';
 
 const useCountUp = (target, duration = 2000, start = false) => {
     const [count, setCount] = useState(0);
@@ -83,23 +84,43 @@ const TickerItem = ({ icon, text, color }) => (
 const LiveStats = ({ stats }) => {
     const sectionRef = useRef(null);
     const [inView, setInView] = useState(false);
-
-    // Default placeholder stats — replace with API data via cronjob
-    const defaultStats = {
+    const [liveData, setLiveData] = useState({
         totalStudents: 840,
         activeContests: 3,
         contestsCompleted: 12,
         totalPrize: 48000,
-        reviewedSubmissions: 267,
+        activeContestTitles: []
+    });
+
+    const fetchStats = async () => {
+        try {
+            const res = await api.get('/contests/stats');
+            if (res.data.success) {
+                setLiveData({
+                    totalStudents: res.data.data.totalStudents,
+                    activeContests: res.data.data.activeContests,
+                    contestsCompleted: res.data.data.completedContests,
+                    totalPrize: res.data.data.totalPrize,
+                    activeContestTitles: res.data.data.activeContestTitles
+                });
+            }
+        } catch (err) {
+            console.error("Stats fetch error:", err);
+        }
     };
 
-    const data = stats || defaultStats;
+    useEffect(() => {
+        fetchStats();
+        const interval = setInterval(fetchStats, 60000);
+        return () => clearInterval(interval);
+    }, []);
 
-    // IntersectionObserver — jokhon user scroll kore section-e asbe tokhon animation shuru hobe
+    const data = liveData;
+
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => { if (entry.isIntersecting) setInView(true); },
-            { threshold: 0.2 } // 20% visible holei animation start hobe
+            { threshold: 0.2 }
         );
         if (sectionRef.current) observer.observe(sectionRef.current);
         return () => observer.disconnect();
@@ -144,15 +165,21 @@ const LiveStats = ({ stats }) => {
         },
     ];
 
+    const dynamicTickerItems = data.activeContestTitles.length > 0 
+        ? data.activeContestTitles.map(c => ({
+            icon: '⚡',
+            text: `${c.domain}: ${c.title} — Now Live`,
+            color: '#fbc111'
+        }))
+        : [
+            { icon: '🚀', text: 'New contests launching soon — Stay tuned!', color: '#8cc63f' },
+            { icon: '💰', text: '₹48,000+ in prizes distributed to date', color: '#8b5cf6' },
+        ];
+
     const tickerItems = [
-        { icon: '🏆', text: 'MERN Stack Challenge — Winners Announced!', color: '#8cc63f' },
-        { icon: '⚡', text: 'UI/UX Design Contest — Now Live', color: '#fbc111' },
-        { icon: '🚀', text: 'New contest launching soon — Digital Marketing Sprint', color: '#8cc63f' },
-        { icon: '🎯', text: '50+ students submitted in the last 24 hours', color: '#f97316' },
-        { icon: '✅', text: 'Review complete — Leaderboard updated', color: '#0ea5e9' },
-        { icon: '💰', text: '₹48,000+ in prizes distributed to date', color: '#8b5cf6' },
-        { icon: '🏆', text: 'MERN Stack Challenge — Winners Announced!', color: '#8cc63f' },
-        { icon: '⚡', text: 'UI/UX Design Contest — Now Live', color: '#fbc111' },
+        ...dynamicTickerItems,
+        { icon: '🎯', text: 'Join the competitive learning ecosystem', color: '#f97316' },
+        { icon: '✅', text: 'Expert Certification & Internship Opportunities', color: '#0ea5e9' },
     ];
 
     return (

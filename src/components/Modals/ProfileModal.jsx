@@ -212,6 +212,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                     onChange={handleChange}
                                     icon={FiBookOpen}
                                     options={['MERN', 'UI/UX', 'Digital Marketing']}
+                                    disabled={user?.role === 'admin'}
                                 />
 
                                 <div className="flex flex-col gap-1.5 w-full mb-4">
@@ -253,7 +254,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                                     name="contactNumber"
                                     value={formData.contactNumber}
                                     onChange={handleChange}
-                                    placeholder="+1 (555) 000-8266"
+                                    placeholder="+91 98765 43210"
                                     icon={FiPhone}
                                 />
                                 <div className="flex flex-col gap-1.5 w-full mb-4">

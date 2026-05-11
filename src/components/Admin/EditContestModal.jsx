@@ -334,8 +334,12 @@ const EditContestModal = ({ isOpen, onClose, contestId }) => {
                       <input 
                         type="number"
                         placeholder="0.00"
+                        min="0"
                         value={formData.cashPrize}
-                        onChange={(e) => setFormData({...formData, cashPrize: e.target.value})}
+                        onChange={(e) => {
+                          const val = Math.max(0, Number(e.target.value));
+                          setFormData({...formData, cashPrize: val.toString()});
+                        }}
                         className="w-full bg-[#f1f8e8]/30 border border-green-50 rounded-2xl pl-10 pr-4 py-4 font-bold text-slate-700 dark:text-gray-100 placeholder-green-200 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-900 focus:border-[#8cc63f]/20 transition-all shadow-sm"
                       />
                     </div>

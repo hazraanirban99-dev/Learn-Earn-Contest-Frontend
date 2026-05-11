@@ -115,6 +115,14 @@ const Header = ({ onMenuClick }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Auto-close all menus on route change or mount
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setIsProfileOpen(false);
+    setIsNotifOpen(false);
+    setShowMobileNotifs(false);
+  }, [location.pathname]);
+
   return (
     <header className="fixed top-0 right-0 left-0 lg:left-[300px] z-50 bg-white/ dark:bg-gray-800/0 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 px-6 lg:px-8 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -128,9 +136,8 @@ const Header = ({ onMenuClick }) => {
           </svg>
         </button>
 
-        {/* Mobile Logo */}
         <div className="lg:hidden">
-          <Logo size="xs" />
+          <Logo size="xs" to="/" />
         </div>
       </div>
 
@@ -389,12 +396,17 @@ const Header = ({ onMenuClick }) => {
                       <span>Refresh System</span>
                     </button>
                     <button 
-                      onClick={() => setShowMobileNotifs(true)}
-                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowMobileNotifs(true);
+                      }}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-600 hover:text-[#8cc63f] transition-all cursor-pointer bg-transparent border-0 w-full text-left active:scale-95"
                     >
-                      <FiBell size={18} />
-                      <span>Notifications</span>
-                      {notifications.length > 0 && <span className="ml-auto w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
+                      <FiBell size={18} className="pointer-events-none" />
+                      <span className="pointer-events-none">Notifications</span>
+                      {notifications.length > 0 && <span className="ml-auto w-2 h-2 bg-red-500 rounded-full animate-pulse pointer-events-none" />}
                     </button>
                     <button 
                       onClick={() => toast.info("You can't do the operation right now", { className: "border-2 border-[#fbc111] !bg-[#f8faf6] font-black text-[10px] tracking-tight uppercase" })}

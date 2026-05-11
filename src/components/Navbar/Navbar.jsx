@@ -62,6 +62,14 @@ const Navbar = ({ showAuth = true }) => {
     }
   }, [user]);
 
+  // Auto-close all menus on route change or mount to prevent "open by default"
+  useEffect(() => {
+    setIsProfileOpen(false);
+    setIsNotifOpen(false);
+    setIsMobileMenuOpen(false);
+    setShowNotifInProfile(false);
+  }, [location.pathname]);
+
   const handleNotificationAction = async (notifId, action, type) => {
     try {
       if (user.role === 'admin') {
@@ -203,7 +211,7 @@ const Navbar = ({ showAuth = true }) => {
                 <FiMenu size={20} />
               </button>
             )}
-            <Logo size="md" />
+            <Logo size="md" to="/" />
           </div>
 
           {/* 2. CENTER LINKS (Desktop) */}
@@ -229,83 +237,90 @@ const Navbar = ({ showAuth = true }) => {
             {showAuth ? (
               user ? (
                 <div className="flex items-center gap-3 sm:gap-6">
-                  {/* Admin Tools (Hidden on Mobile top bar per user request) */}
-                  {user?.role === 'admin' && (
-                    <div className="hidden lg:flex items-center gap-4 border-r border-gray-100 dark:border-gray-700 pr-6 mr-2">
-                      {/* Refresh */}
-                      {user.role === 'admin' && (
-                        <button
-                          onClick={handleRefresh}
-                          className="p-2 text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all group"
-                          title="Refresh System"
-                        >
-                          <FiRefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
-                        </button>
-                      )}
+                  {/* Desktop Quick Actions (Refresh, Notifications) */}
+                  <div className="hidden lg:flex items-center gap-4 border-r border-gray-100 dark:border-gray-700 pr-6 mr-2">
+                    {/* Refresh (Admin Only) */}
+                    {user.role === 'admin' && (
+                      <button
+                        onClick={handleRefresh}
+                        className="p-2 text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all group"
+                        title="Refresh Platform"
+                      >
+                        <FiRefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
+                      </button>
+                    )}
 
-                      {/* Notifications */}
-                      <div className="relative" ref={notifRef}>
-                        <button
-                          onClick={() => setIsNotifOpen(!isNotifOpen)}
-                          className={`p-2 rounded-xl transition-all relative ${isNotifOpen ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'}`}
-                        >
-                          <FiBell size={18} />
-                          {notifications.length > 0 && (
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
-                          )}
-                        </button>
+                    {/* Notifications */}
+                    <div className="relative" ref={notifRef}>
+                      <button
+                        onClick={() => {
+                          if (user.role === 'admin') {
+                            setIsNotifOpen(!isNotifOpen);
+                          } else {
+                            // Student: Open profile dropdown in notification mode
+                            setIsProfileOpen(true);
+                            setShowNotifInProfile(true);
+                            setIsNotifOpen(false);
+                          }
+                        }}
+                        className={`p-2 rounded-xl transition-all relative group ${isNotifOpen || (showNotifInProfile && isProfileOpen) ? 'bg-[#8cc63f]/10 text-[#8cc63f]' : 'text-gray-400 hover:text-[#8cc63f] hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'}`}
+                      >
+                        <FiBell size={18} className="group-hover:rotate-12 transition-transform" />
+                        {notifications.length > 0 && (
+                          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
+                        )}
+                      </button>
 
-                        {isNotifOpen && (
-                          <div className="absolute top-full right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in slide-in-from-top-2 duration-300">
-                            <div className="px-5 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-100 dark:border-gray-600 flex items-center justify-between">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-gray-100">Notifications ({notifications.length})</span>
-                            </div>
-                            <div className="max-h-[350px] overflow-y-auto">
-                              {notifications.length > 0 ? (
-                                notifications.map((n, idx) => (
-                                  <div key={idx} className="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/ dark:bg-gray-800/ dark:hover:bg-gray-700/50 transition-colors">
-                                    <div className="flex gap-3">
-                                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${(n.type === 'TEAM_CREATION_REQUEST' || n.type === 'TEAM_INVITE') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-500' : 'bg-purple-50 dark:bg-purple-900/30 text-purple-500'
-                                        }`}>
-                                        <FiUser size={16} />
-                                      </div>
-                                      <div className="flex-1">
-                                        <p className="text-[12px] font-bold text-slate-800 dark:text-gray-100 leading-tight mb-2">
-                                          {user.role === 'admin' ? n.message : (
-                                            n.type === 'TEAM_INVITE' ? `${n.sender?.name} invited you to team "${n.team?.name}"` : n.message
-                                          )}
-                                        </p>
-                                        <div className="flex gap-2">
-                                          {user.role === 'admin' ? (
+                      {isNotifOpen && (
+                        <div className="absolute top-full right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[150] animate-in fade-in slide-in-from-top-2 duration-300">
+                          <div className="px-5 py-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-gray-100">
+                              {user.role === 'admin' ? 'Admin Alerts' : 'Notifications'} ({notifications.length})
+                            </span>
+                          </div>
+                          <div className="max-h-[350px] overflow-y-auto custom-scrollbar">
+                            {notifications.length > 0 ? (
+                              notifications.map((n, idx) => (
+                                <div key={idx} className="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/ dark:hover:bg-gray-50 dark:bg-gray-800/ dark:hover:bg-gray-700/50 transition-colors">
+                                  <div className="flex gap-3 text-left">
+                                    <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${n.type === 'TEAM_INVITE' ? 'bg-[#fbc111]/20 text-[#ebaa00]' : 'bg-[#8cc63f]/20 text-[#8cc63f]'}`}>
+                                      {n.type === 'TEAM_INVITE' ? <FiUser size={16} /> : <FiCheck size={16} />}
+                                    </div>
+                                    <div className="flex-1">
+                                      <p className="text-[12px] font-bold text-slate-800 dark:text-gray-100 leading-tight mb-2">
+                                        {user.role === 'admin' ? n.message : (
+                                          n.type === 'TEAM_INVITE' ? `${n.sender?.name} invited you to team "${n.team?.name}"` : n.message
+                                        )}
+                                      </p>
+                                      <div className="flex gap-2">
+                                        {user.role === 'admin' ? (
+                                          <>
+                                            <button onClick={() => handleNotificationAction(n._id, 'ALLOW', n.type)} className="bg-[#8cc63f] text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332]">Allow</button>
+                                            <button onClick={() => handleNotificationAction(n._id, 'DENY', n.type)} className="bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-200">Deny</button>
+                                          </>
+                                        ) : (
+                                          n.type === 'TEAM_INVITE' ? (
                                             <>
-                                              <button onClick={() => handleNotificationAction(n._id, 'ALLOW', n.type)} className="bg-[#8cc63f] text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332]">Allow</button>
-                                              <button onClick={() => handleNotificationAction(n._id, 'DENY', n.type)} className="bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-gray-50 dark:bg-gray-8000">Deny</button>
+                                              <button onClick={() => handleNotificationAction(n._id, 'ACCEPTED', n.type)} className="bg-[#8cc63f] text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332]">Accept</button>
+                                              <button onClick={() => handleNotificationAction(n._id, 'DECLINED', n.type)} className="bg-red-50 dark:bg-red-900/30 text-red-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100">Decline</button>
                                             </>
                                           ) : (
-                                            n.type === 'TEAM_INVITE' ? (
-                                              <>
-                                                <button onClick={() => handleNotificationAction(n._id, 'ACCEPTED', n.type)} className="bg-[#8cc63f] text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-[#7ab332]">Accept</button>
-                                                <button onClick={() => handleNotificationAction(n._id, 'DECLINED', n.type)} className="bg-red-50 dark:bg-red-900/30 text-red-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-900/50">Decline</button>
-                                              </>
-                                            ) : (
-                                              <button onClick={() => handleNotificationAction(n._id, 'OK', n.type)} className="bg-slate-800 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 dark:hover:bg-gray-50 dark:bg-gray-8000">Understood</button>
-                                            )
-                                          )}
-                                        </div>
+                                            <button onClick={() => handleNotificationAction(n._id, 'OK', n.type)} className="bg-slate-800 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-900">Understood</button>
+                                          )
+                                        )}
                                       </div>
                                     </div>
                                   </div>
-                                ))
-                              ) : (
-                                <div className="p-8 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest font-black italic">No requests</div>
-                              )}
-                            </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="p-8 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest font-black italic">No new notifications</div>
+                            )}
                           </div>
-                        )}
-                      </div>
-
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
 
                   {/* Profile Section - Hidden on Mobile (Moved to 3-dots) */}
                   <div className="relative hidden lg:block" ref={profileDropdownRef}>
@@ -490,152 +505,212 @@ const Navbar = ({ showAuth = true }) => {
         {/* MOBILE MENU (Slide Down) */}
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700 shadow-2xl p-5 flex flex-col gap-5 animate-in slide-in-from-top-2 duration-200 z-[99] max-h-[calc(100vh-80px)] overflow-y-auto">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.path}
-                  onClick={(e) => handleNavClick(e, link)}
-                  className={`text-sm font-black uppercase tracking-widest py-2 ${(location.pathname === link.path || (link.id === 'participants' && user?.role === 'student' && location.pathname === '/student/dashboard'))
-                      ? 'text-[#8cc63f]' : 'text-gray-500 dark:text-gray-400'}`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-3 py-2 text-gray-500 dark:text-gray-400 text-sm font-black uppercase tracking-widest"
-              >
-                {isDark ? <FiSun size={18} /> : <FiMoon size={18} />} {isDark ? 'Light Mode' : 'Dark Mode'}
-              </button>
-            </div>
-
-            {showAuth && (
-              <div className="flex flex-col gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                {user ? (
-                  <div className="flex flex-col gap-4">
-                    {user.role === 'admin' && (
-                      <div className="flex flex-col gap-3 mb-2">
-                        {/* Quick Action Grid */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <button onClick={handleRefresh} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl flex flex-col items-center gap-2">
-                            <FiRefreshCw className="text-gray-400" />
-                            <span className="text-[9px] font-black uppercase text-gray-400">Refresh</span>
-                          </button>
-                          <button onClick={() => navigate('/admin/dashboard')} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl flex flex-col items-center gap-2">
-                            <FiSettings className="text-gray-400" />
-                            <span className="text-[9px] font-black uppercase text-gray-400">Tools</span>
-                          </button>
-                        </div>
-
-                        {/* Mobile Notification Panel */}
-                        <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-                          <div className="px-4 py-3 flex items-center gap-2 border-b border-gray-100 dark:border-gray-700">
-                            <FiBell size={14} className="text-[#8cc63f]" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-gray-200">
-                              Notifications ({notifications.length})
-                            </span>
-                            {notifications.length > 0 && (
-                              <span className="ml-auto w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            )}
-                          </div>
-                          <div className="max-h-[240px] overflow-y-auto">
-                            {notifications.length > 0 ? (
-                              notifications.map((n, idx) => (
-                                <div key={idx} className="p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                                  <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 mb-2 leading-tight">{n.message}</p>
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => handleNotificationAction(n._id, 'ALLOW', n.type)}
-                                      className="flex-1 bg-[#8cc63f] text-white py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
-                                    >
-                                      <FiCheck size={10} /> Allow
-                                    </button>
-                                    <button
-                                      onClick={() => handleNotificationAction(n._id, 'DENY', n.type)}
-                                      className="flex-1 bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
-                                    >
-                                      <FiXCircle size={10} /> Deny
-                                    </button>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="p-6 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest italic">
-                                No pending requests
-                              </div>
-                            )}
-                          </div>
+            {showNotifInProfile ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-50 dark:border-gray-700">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setShowNotifInProfile(false); }}
+                    className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f] flex items-center gap-1"
+                  >
+                    <FiChevronLeft size={18} /> Back to Menu
+                  </button>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Notifications</span>
+                </div>
+                
+                <div className="flex flex-col gap-3 py-2">
+                  {notifications.length === 0 ? (
+                    <div className="py-12 text-center bg-gray-50 dark:bg-gray-800 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
+                      <FiBell className="mx-auto text-gray-200 dark:text-gray-700 mb-3" size={32} />
+                      <p className="text-[10px] font-black uppercase text-gray-400 italic">No new notifications</p>
+                    </div>
+                  ) : (
+                    notifications.map(notif => (
+                      <div key={notif._id} className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-4">
+                          {notif.type === 'TEAM_INVITE' ? (
+                            <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                          ) : notif.message}
+                        </p>
+                        <div className="flex gap-2">
+                          {notif.type === 'TEAM_INVITE' ? (
+                            <>
+                              <button onClick={() => handleNotificationAction(notif._id, 'ACCEPTED', notif.type)} className="flex-1 bg-[#8cc63f] text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[#8cc63f]/20">Accept</button>
+                              <button onClick={() => handleNotificationAction(notif._id, 'DECLINED', notif.type)} className="flex-1 bg-red-50 dark:bg-red-900/20 text-red-500 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest">Deny</button>
+                            </>
+                          ) : (
+                            <button 
+                              onClick={() => handleNotificationAction(notif._id, 'OK', notif.type)}
+                              className="w-full bg-slate-800 dark:bg-gray-700 text-white py-3 rounded-xl text-[9px] font-black uppercase tracking-widest"
+                            >
+                              Understood
+                            </button>
+                          )}
                         </div>
                       </div>
-                    )}
-                    <Link
-                      to={user?.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="bg-[#8cc63f] text-white text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 mt-2"
-                    >
-                      <div className="w-2 h-2 rounded-full bg-white dark:bg-gray-800 animate-pulse" />
-                      {user?.role === 'admin' ? 'Open Admin Panel' : 'My Dashboard'}
-                    </Link>
-
-                    {/* Common Account Actions (For both Student & Admin on Mobile) */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-3">
-                      <button 
-                        onClick={() => { navigate(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'); setIsMobileMenuOpen(false); }}
-                        className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all"
-                      >
-                        <FiGrid size={20} className="text-[#8cc63f]" /> Dashboard
-                      </button>
-
-                      {user.role === 'student' && (
-                        <button onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
-                          <FiUser size={20} className="text-slate-400" /> View Profile
-                        </button>
-                      )}
-
-                      {user.role === 'student' && (
-                        <button onClick={() => setShowNotifInProfile(true)} className="w-full flex items-center justify-between gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
-                          <div className="flex items-center gap-4">
-                            <FiBell size={20} className="text-slate-400" /> Notification
-                          </div>
-                          {notifications.length > 0 && (
-                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                          )}
-                        </button>
-                      )}
-
-                      <div className="h-px bg-gray-100 dark:bg-gray-700 my-1 mx-2" />
-                      
-                      {user.role === 'student' && (
-                        <button onClick={() => { handleDeleteAccount(); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-red-500 bg-red-50/50 dark:bg-red-900/20 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
-                          <FiTrash2 size={20} /> Delete Account
-                        </button>
-                      )}
-                      
-                      <button onClick={logout} className="w-full py-5 bg-yellow-500/10 hover:bg-yellow-500/20 dark:bg-yellow-500/5 dark:hover:bg-yellow-500/10 border border-[#fbc111]/30 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#fbc111] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#fbc111]/5">
-                        <FiLogOut size={20} /> Logout Account
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-sm font-black text-gray-500 uppercase tracking-widest text-center"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="bg-[#8cc63f] text-white text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                    ))
+                  )}
+                </div>
               </div>
+            ) : (
+              <>
+                <div className="flex flex-col gap-4">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      to={link.path}
+                      onClick={(e) => handleNavClick(e, link)}
+                      className={`text-sm font-black uppercase tracking-widest py-2 ${(location.pathname === link.path || (link.id === 'participants' && user?.role === 'student' && location.pathname === '/student/dashboard'))
+                          ? 'text-[#8cc63f]' : 'text-gray-500 dark:text-gray-400'}`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <button
+                    onClick={toggleTheme}
+                    className="flex items-center gap-3 py-2 text-gray-500 dark:text-gray-400 text-sm font-black uppercase tracking-widest"
+                  >
+                    {isDark ? <FiSun size={18} /> : <FiMoon size={18} />} {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </button>
+                </div>
+
+                {showAuth && (
+                  <div className="flex flex-col gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    {user ? (
+                      <div className="flex flex-col gap-4">
+                        {user.role === 'admin' && (
+                          <div className="flex flex-col gap-3 mb-2">
+                            {/* Quick Action Grid */}
+                            <div className="grid grid-cols-2 gap-3">
+                              <button onClick={handleRefresh} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl flex flex-col items-center gap-2">
+                                <FiRefreshCw className="text-gray-400" />
+                                <span className="text-[9px] font-black uppercase text-gray-400">Refresh</span>
+                              </button>
+                              <button onClick={() => navigate('/admin/dashboard')} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl flex flex-col items-center gap-2">
+                                <FiSettings className="text-gray-400" />
+                                <span className="text-[9px] font-black uppercase text-gray-400">Tools</span>
+                              </button>
+                            </div>
+
+                            {/* Mobile Notification Panel */}
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                              <div className="px-4 py-3 flex items-center gap-2 border-b border-gray-100 dark:border-gray-700">
+                                <FiBell size={14} className="text-[#8cc63f]" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-gray-200">
+                                  Notifications ({notifications.length})
+                                </span>
+                                {notifications.length > 0 && (
+                                  <span className="ml-auto w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                )}
+                              </div>
+                              <div className="max-h-[240px] overflow-y-auto">
+                                {notifications.length > 0 ? (
+                                  notifications.map((n, idx) => (
+                                    <div key={idx} className="p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                                      <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 mb-2 leading-tight">{n.message}</p>
+                                      <div className="flex gap-2">
+                                        <button
+                                          onClick={() => handleNotificationAction(n._id, 'ALLOW', n.type)}
+                                          className="flex-1 bg-[#8cc63f] text-white py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
+                                        >
+                                          <FiCheck size={10} /> Allow
+                                        </button>
+                                        <button
+                                          onClick={() => handleNotificationAction(n._id, 'DENY', n.type)}
+                                          className="flex-1 bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
+                                        >
+                                          <FiXCircle size={10} /> Deny
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="p-6 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest italic">
+                                    No pending requests
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        <Link
+                          to={user?.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="bg-[#8cc63f] text-white text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 mt-2"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-white dark:bg-gray-800 animate-pulse" />
+                          {user?.role === 'admin' ? 'Open Admin Panel' : 'My Dashboard'}
+                        </Link>
+
+                        {/* Common Account Actions (For both Student & Admin on Mobile) */}
+                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-3">
+                          <button 
+                            onClick={() => { navigate(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'); setIsMobileMenuOpen(false); }}
+                            className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all"
+                          >
+                            <FiGrid size={20} className="text-[#8cc63f]" /> Dashboard
+                          </button>
+
+                          {user.role === 'student' && (
+                            <button onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+                              <FiUser size={20} className="text-slate-400" /> View Profile
+                            </button>
+                          )}
+
+                          {user.role === 'student' && (
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowNotifInProfile(true);
+                              }}
+                              className="w-full flex items-center justify-between gap-4 px-4 py-3 text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer active:scale-95"
+                            >
+                              <div className="flex items-center gap-4 pointer-events-none">
+                                <FiBell size={20} className="text-slate-400" /> Notification
+                              </div>
+                              {notifications.length > 0 && (
+                                <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                  {notifications.length}
+                                </span>
+                              )}
+                            </button>
+                          )}
+
+                          <div className="h-px bg-gray-100 dark:bg-gray-700 my-1 mx-2" />
+                          
+                          {user.role === 'student' && (
+                            <button onClick={() => { handleDeleteAccount(); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-4 px-4 py-3 text-red-500 bg-red-50/50 dark:bg-red-900/20 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+                              <FiTrash2 size={20} /> Delete Account
+                            </button>
+                          )}
+                          
+                          <button onClick={logout} className="w-full py-5 bg-yellow-500/10 hover:bg-yellow-500/20 dark:bg-yellow-500/5 dark:hover:bg-yellow-500/10 border border-[#fbc111]/30 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#fbc111] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#fbc111]/5">
+                            <FiLogOut size={20} /> Logout Account
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <Link
+                          to="/login"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="text-sm font-black text-gray-500 uppercase tracking-widest text-center"
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/register"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="bg-[#8cc63f] text-white text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg"
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -661,7 +736,7 @@ const Navbar = ({ showAuth = true }) => {
               className="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-gray-900 z-[1001] shadow-2xl border-r border-gray-100 dark:border-gray-700 flex flex-col p-6 sm:p-8 overflow-y-auto overflow-x-hidden scrollbar-hide"
             >
               <div className="flex items-center justify-between mb-12">
-                <Logo size="md" />
+                <Logo size="md" to="/" />
                 <button onClick={closeSidebar} className="p-2 text-gray-400 hover:text-slate-900 dark:text-gray-100 dark:hover:text-gray-100 transition-colors">
                   <FiX size={24} />
                 </button>

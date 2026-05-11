@@ -20,7 +20,9 @@ import api from '../../utils/api';
 const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) => {
     const { user: activeUser, updateUser } = useAuth();
 
-    const isTeamContest = contest?.projectType === 'Team';
+    const isBoth = contest?.projectType === 'Both';
+    const [choice, setChoice] = useState(isBoth ? null : (contest?.projectType === 'Team' ? 'Team' : 'Solo'));
+    const isTeamContest = choice === 'Team';
     const [teamData, setTeamData] = useState(null);
     const [checkingTeam, setCheckingTeam] = useState(false);
     const [hasChecked, setHasChecked] = useState(false);
@@ -258,7 +260,56 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                     {/* Scrollable Body */}
                     <div className="flex-1 overflow-y-auto px-6 md:px-8 lg:px-12 custom-scrollbar pb-8">
 
-                        {!isTeamContest ? (
+                        {isBoth && !choice ? (
+                            <div className="h-full flex flex-col justify-center items-center py-10 space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                                <div className="text-center space-y-2">
+                                    <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-gray-100">Choose Your Path</h3>
+                                    <p className="text-gray-500 text-sm font-medium">How would you like to participate in this contest?</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-md">
+                                    <button
+                                        onClick={() => setChoice('Solo')}
+                                        className="group p-6 bg-[#8cc63f]/5 border-2 border-[#8cc63f]/20 hover:border-[#8cc63f] rounded-3xl transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center gap-4 text-center"
+                                    >
+                                        <div className="w-16 h-16 rounded-2xl bg-[#8cc63f] flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                                            <FiUserPlus size={32} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">Solo Entry</h4>
+                                            <p className="text-[10px] font-bold text-gray-400 mt-1">Work independently and prove your skills.</p>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => setChoice('Team')}
+                                        className="group p-6 bg-[#fbc111]/5 border-2 border-[#fbc111]/20 hover:border-[#fbc111] rounded-3xl transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center gap-4 text-center"
+                                    >
+                                        <div className="w-16 h-16 rounded-2xl bg-[#fbc111] flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                                            <FiUsers size={32} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">Team Squad</h4>
+                                            <p className="text-[10px] font-bold text-gray-400 mt-1">Collaborate with fellow scholars.</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {isBoth && (
+                                    <button 
+                                        onClick={() => {
+                                            setChoice(null);
+                                            setHasChecked(false);
+                                            setTeamData(null);
+                                        }}
+                                        className="mb-6 flex items-center gap-2 text-[10px] font-black text-[#8cc63f] uppercase tracking-widest hover:translate-x-[-4px] transition-transform"
+                                    >
+                                        <span>← Change Participation Type</span>
+                                    </button>
+                                )}
+                                {!isTeamContest ? (
                             <div className="mb-10 animate-in fade-in duration-500">
                                 <div className="bg-[#8cc63f]/5 border border-[#8cc63f]/20 rounded-2xl p-6 flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-[#8cc63f] flex items-center justify-center text-white shadow-lg">
@@ -421,10 +472,13 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                                 )}
                             </div>
                         )}
+                        </>
+                        )}
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0">
+                    {(choice || !isBoth) && (
+                        <div className="px-6 md:px-8 lg:px-12 py-4 md:py-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0">
                         {!isTeamContest && (
                             <label className="flex items-start gap-4 p-4 bg-[#f8faf2] dark:bg-gray-900 rounded-2xl cursor-pointer hover:bg-[#ecf0e6] dark:hover:bg-gray-700/50 transition-colors mb-4 md:mb-6">
                                 <input
@@ -453,6 +507,7 @@ const ApplyContestModal = ({ isOpen, onClose, contestId, contest, onSuccess }) =
                             {!isSubmitting && <FiArrowRight size={16} className="shrink-0" />}
                         </button>
                     </div>
+                    )}
 
                 </div>
             </div>

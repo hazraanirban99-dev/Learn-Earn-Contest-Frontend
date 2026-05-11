@@ -88,6 +88,14 @@ const UserNavbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Auto-close all menus on route change to prevent "open by default" issues
+  useEffect(() => {
+    setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsNotifOpen(false);
+    setShowNotifInProfile(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
@@ -149,7 +157,7 @@ const UserNavbar = () => {
         
         {/* 1. BRANDING (Left) */}
         <div className="flex-shrink-0">
-          <Logo size="md" />
+          <Logo size="md" to="/" />
         </div>
 
         {/* 2. CENTER LINKS (Desktop) */}
@@ -180,33 +188,38 @@ const UserNavbar = () => {
         </div>
 
         {/* 3. USER ACTIONS (Right) */}
-        <div className="flex items-center gap-1 sm:gap-4">
-          <button 
-            onClick={() => window.location.reload()}
-            className="hidden sm:flex p-2.5 text-slate-500 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
-            title="Refresh Page"
-          >
-            <FiRefreshCw size={18} className="transition-transform duration-500 group-hover:rotate-180 group-active:scale-95" />
-          </button>
+        <div className="flex items-center gap-2 sm:gap-4">
+          
+          {/* Desktop-only Actions: Refresh, Notification, Profile */}
+          <div className="hidden lg:flex items-center gap-4 relative">
+            
+            {/* 3a. Refresh Button */}
+            <button 
+              onClick={() => window.location.reload()}
+              className="p-2 text-slate-500 hover:text-[#8cc63f] hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+              title="Refresh Page"
+            >
+              <FiRefreshCw size={18} className="transition-transform duration-500 group-hover:rotate-180" />
+            </button>
 
-          {/* Notifications Bell */}
-          <div className="relative" ref={notifRef}>
-             <button 
+            {/* 3b. Desktop Notification Bell */}
+            <div className="relative" ref={notifRef}>
+              <button 
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
-                className="p-2.5 text-slate-500 hover:text-[#fbc111] hover:bg-[#fbc111]/10 rounded-xl transition-all relative group"
-                title="Notifications"
-             >
-                <FiBell size={20} className="group-hover:rotate-12 transition-transform" />
+                className={`p-2.5 rounded-xl transition-all relative group ${isNotifOpen ? 'bg-[#fbc111]/10 text-[#fbc111]' : 'text-slate-500 hover:text-[#fbc111] hover:bg-[#fbc111]/10'}`}
+              >
+                <FiBell size={22} className="group-hover:rotate-12 transition-transform" />
                 {notifications.length > 0 && (
-                   <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-[#f8faf2] animate-bounce">
-                      {notifications.length}
-                   </span>
+                  <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-[#f8faf2] animate-bounce">
+                    {notifications.length}
+                  </span>
                 )}
-             </button>
+              </button>
 
-             {isNotifOpen && (
-                <div className="fixed sm:absolute top-20 sm:top-full left-4 sm:left-auto right-4 sm:right-0 mt-3 sm:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200">
-                    <div className="p-4 bg-gray-50/ dark:bg-gray-800/ border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+              {/* Desktop Notification Dropdown */}
+              {isNotifOpen && (
+                <div className="absolute top-full right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[150] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-gray-100">Notifications</h3>
                         {notifications.length > 0 && <span className="text-[10px] font-bold text-[#8cc63f]">{notifications.length} Pending</span>}
                     </div>
@@ -219,12 +232,12 @@ const UserNavbar = () => {
                         ) : (
                             <div className="divide-y divide-gray-50">
                                 {notifications.map(notif => (
-                                    <div key={notif._id} className="p-4 hover:bg-gray-50/ dark:bg-gray-800/ transition-colors">
+                                    <div key={notif._id} className="p-4 hover:bg-gray-50 transition-colors">
                                         <div className="flex gap-3">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'TEAM_INVITE' ? 'bg-[#fbc111]/20' : 'bg-[#8cc63f]/20'}`}>
                                                 {notif.type === 'TEAM_INVITE' ? <FiUser className="text-[#ebaa00]" size={14} /> : <FiCheck className="text-[#8cc63f]" size={14} />}
                                             </div>
-                                            <div className="flex-1">
+                                            <div className="flex-1 text-left">
                                                 <p className="text-[11px] font-medium text-slate-700 leading-tight">
                                                     {notif.type === 'TEAM_INVITE' ? (
                                                         <>
@@ -267,139 +280,126 @@ const UserNavbar = () => {
                         )}
                     </div>
                 </div>
-             )}
+              )}
+            </div>
+
+            {/* 3c. Desktop Profile Button & Menu */}
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => {
+                  setIsDropdownOpen(!isDropdownOpen);
+                  if (!isDropdownOpen) setShowNotifInProfile(false);
+                }}
+                className={`flex items-center gap-3 p-1.5 pr-4 rounded-full transition-all border ${isDropdownOpen ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:bg-gray-50'}`}
+              >
+                <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black text-xs overflow-hidden">
+                   {currentUser.avatar?.url ? (
+                      <img src={currentUser.avatar.url} alt="User" className="w-full h-full object-cover" />
+                   ) : (
+                      getInitials(currentUser.name)
+                   )}
+                </div>
+                <span className="text-sm font-black text-slate-800 dark:text-gray-100 tracking-wide">Hi, {firstName}</span>
+              </button>
+
+              {/* Profile Dropdown */}
+              {isDropdownOpen && (
+                 <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[150]">
+                    {showNotifInProfile ? (
+                      <div className="flex flex-col max-h-[400px]">
+                          <div className="p-3 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/50">
+                              <button 
+                                  onClick={() => setShowNotifInProfile(false)}
+                                  className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f] flex items-center gap-1 hover:scale-105 transition-transform"
+                              >
+                                  <FiChevronLeft size={14} /> Back
+                              </button>
+                              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Alerts</span>
+                          </div>
+                          <div className="overflow-y-auto custom-scrollbar p-2 space-y-2">
+                              {notifications.length === 0 ? (
+                                  <div className="py-8 text-center">
+                                      <FiBell className="mx-auto text-gray-200 mb-2" size={24} />
+                                      <p className="text-[9px] font-black uppercase text-gray-400">All caught up!</p>
+                                  </div>
+                              ) : (
+                                  notifications.map(notif => (
+                                      <div key={notif._id} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600">
+                                          <p className="text-[10px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-2">
+                                              {notif.type === 'TEAM_INVITE' ? (
+                                                  <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                              ) : notif.message}
+                                          </p>
+                                          {notif.type === 'TEAM_INVITE' && (
+                                              <div className="flex gap-2">
+                                                  <button onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')} className="flex-1 bg-[#8cc63f] text-white py-1.5 rounded-lg text-[8px] font-black uppercase">Accept</button>
+                                                  <button onClick={() => handleNotificationAction(notif._id, 'DECLINED')} className="flex-1 bg-red-50 text-red-500 py-1.5 rounded-lg text-[8px] font-black uppercase">Deny</button>
+                                              </div>
+                                          )}
+                                      </div>
+                                  ))
+                              )}
+                          </div>
+                      </div>
+                    ) : (
+                      <>
+                          <div className="px-4 py-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3 bg-gradient-to-r from-gray-50/50 to-transparent">
+                              <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-xs shadow-lg shadow-[#8cc63f]/20">
+                                  {currentUser.avatar?.url ? (
+                                      <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
+                                  ) : (
+                                      getInitials(currentUser.name)
+                                  )}
+                              </div>
+                              <div className="flex flex-col">
+                                  <span className="text-sm font-black text-slate-800 dark:text-gray-100 leading-none">{currentUser.name}</span>
+                                  <span className="text-[10px] text-gray-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Student Account
+                                  </span>
+                              </div>
+                          </div>
+                          
+                          <div className="p-2 flex flex-col gap-1">
+                              <Link 
+                                  to="/student/dashboard"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+                              >
+                                  <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiRefreshCw size={16} /></div> 
+                                  <span>Dashboard</span>
+                              </Link>
+
+                              <button 
+                                  onClick={() => {
+                                      setIsDropdownOpen(false);
+                                      setIsProfileModalOpen(true);
+                                  }} 
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
+                              >
+                                  <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiUser size={16} /></div> 
+                                  <span>View Profile</span>
+                              </button>
+
+                              <div className="h-px bg-gray-100 dark:bg-gray-700 my-2 mx-2"></div>
+
+                              <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all group">
+                                  <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-xl text-red-500 group-hover:scale-110 transition-all"><FiTrash2 size={16} /></div> 
+                                  <span>Delete Account</span>
+                              </button>
+
+                              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10 rounded-xl transition-all group">
+                                  <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-amber-600 group-hover:scale-110 transition-all"><FiLogOut size={16} /></div> 
+                                  <span>Logout Account</span>
+                              </button>
+                          </div>
+                      </>
+                    )}
+                 </div>
+              )}
+            </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-3 relative" ref={dropdownRef}>
-            <button 
-              onClick={() => {
-                setIsDropdownOpen(!isDropdownOpen);
-                if (isDropdownOpen) setShowNotifInProfile(false);
-              }}
-              className="flex items-center gap-3 hover:bg-white/ dark:bg-gray-800/ p-1.5 pr-4 rounded-full transition-all border border-transparent hover:border-gray-200 dark:border-gray-700"
-            >
-              <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#8cc63f]/30 font-black text-xs">
-                 {currentUser.avatar?.url ? (
-                    <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
-                 ) : (
-                    getInitials(currentUser.name)
-                 )}
-              </div>
-              <span className="text-sm font-black text-slate-800 dark:text-gray-100 tracking-wide">Hi, {currentUser.name}</span>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-               <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[110]">
-                  {showNotifInProfile ? (
-                    <div className="flex flex-col max-h-[400px]">
-                        <div className="p-3 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/50">
-                            <button 
-                                onClick={() => setShowNotifInProfile(false)}
-                                className="text-[10px] font-black uppercase tracking-widest text-[#8cc63f] flex items-center gap-1 hover:scale-105 transition-transform"
-                            >
-                                <FiChevronLeft size={14} /> Back
-                            </button>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Alerts</span>
-                        </div>
-                        <div className="overflow-y-auto custom-scrollbar p-2 space-y-2">
-                            {notifications.length === 0 ? (
-                                <div className="py-8 text-center">
-                                    <FiBell className="mx-auto text-gray-200 mb-2" size={24} />
-                                    <p className="text-[9px] font-black uppercase text-gray-400">All caught up!</p>
-                                </div>
-                            ) : (
-                                notifications.map(notif => (
-                                    <div key={notif._id} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600">
-                                        <p className="text-[10px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-2">
-                                            {notif.type === 'TEAM_INVITE' ? (
-                                                <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
-                                            ) : notif.message}
-                                        </p>
-                                        {notif.type === 'TEAM_INVITE' && (
-                                            <div className="flex gap-2">
-                                                <button onClick={() => handleNotificationAction(notif._id, 'ACCEPTED')} className="flex-1 bg-[#8cc63f] text-white py-1.5 rounded-lg text-[8px] font-black uppercase">Accept</button>
-                                                <button onClick={() => handleNotificationAction(notif._id, 'DECLINED')} className="flex-1 bg-red-50 text-red-500 py-1.5 rounded-lg text-[8px] font-black uppercase">Deny</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                  ) : (
-                    <>
-                        <div className="px-4 py-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3 bg-gradient-to-r from-gray-50/50 to-transparent">
-                            <div className="w-10 h-10 bg-[#8cc63f] text-white rounded-full flex items-center justify-center font-black text-xs shadow-lg shadow-[#8cc63f]/20">
-                                {currentUser.avatar?.url ? (
-                                    <img src={currentUser.avatar.url} alt="User" className="w-full h-full rounded-full object-cover" />
-                                ) : (
-                                    getInitials(currentUser.name)
-                                )}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm font-black text-slate-800 dark:text-gray-100 leading-none">{currentUser.name}</span>
-                                <span className="text-[10px] text-gray-400 font-bold uppercase mt-1.5 flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Student Account
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div className="p-2 flex flex-col gap-1">
-                            <Link 
-                                to="/student/dashboard"
-                                onClick={() => setIsDropdownOpen(false)}
-                                className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
-                            >
-                                <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiRefreshCw size={16} /></div> 
-                                <span>Dashboard</span>
-                            </Link>
-
-                            <button 
-                                onClick={() => {
-                                    setIsDropdownOpen(false);
-                                    setIsProfileModalOpen(true);
-                                }} 
-                                className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#8cc63f] hover:bg-[#8cc63f]/5 dark:hover:bg-[#8cc63f]/10 rounded-xl transition-all group"
-                            >
-                                <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#8cc63f] group-hover:scale-110 transition-all"><FiUser size={16} /></div> 
-                                <span>View Profile</span>
-                            </button>
-
-                            <button 
-                                onClick={() => setShowNotifInProfile(true)}
-                                className="w-full flex items-center justify-between gap-3 px-4 py-3 text-[14px] font-black text-slate-700 dark:text-gray-200 hover:text-[#fbc111] hover:bg-[#fbc111]/5 dark:hover:bg-[#fbc111]/10 rounded-xl transition-all group"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600 group-hover:text-[#fbc111] group-hover:rotate-12 transition-all"><FiBell size={16} /></div> 
-                                    <span>Notification</span>
-                                </div>
-                                {notifications.length > 0 && (
-                                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 animate-bounce">
-                                    {notifications.length}
-                                    </span>
-                                )}
-                            </button>
-
-                            <div className="h-px bg-gray-100 dark:bg-gray-700 my-2 mx-2"></div>
-
-                            <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all group">
-                                <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-xl text-red-500 group-hover:scale-110 transition-all"><FiTrash2 size={16} /></div> 
-                                <span>Delete Account</span>
-                            </button>
-
-                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-black text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10 rounded-xl transition-all group">
-                                <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-amber-600 group-hover:scale-110 transition-all"><FiLogOut size={16} /></div> 
-                                <span>Logout Account</span>
-                            </button>
-                        </div>
-                    </>
-                  )}
-               </div>
-            )}
-          </div>
-
-          {/* Mobile Menu Toggle */}
+          {/* 3d. Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2.5 text-slate-800 dark:text-gray-100 hover:bg-gray-100 rounded-xl transition-all"
@@ -509,15 +509,20 @@ const UserNavbar = () => {
                   <span>View Profile</span>
                 </button>
                 <button 
-                  onClick={() => setShowNotifInProfile(true)}
-                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm font-black text-slate-700 dark:text-gray-200 hover:text-[#fbc111] hover:bg-[#fbc111]/5 rounded-2xl transition-all"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowNotifInProfile(true);
+                  }}
+                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm font-black text-slate-700 dark:text-gray-200 hover:text-[#fbc111] hover:bg-[#fbc111]/5 rounded-2xl transition-all cursor-pointer active:scale-95 bg-transparent border-0 w-full text-left"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 pointer-events-none">
                     <div className="p-2 bg-slate-100 dark:bg-gray-700 rounded-xl text-slate-600"><FiBell size={18} /></div> 
                     <span>Notification</span>
                   </div>
                   {notifications.length > 0 && (
-                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/20 animate-bounce">
+                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/20 animate-bounce pointer-events-none">
                       {notifications.length}
                     </span>
                   )}
