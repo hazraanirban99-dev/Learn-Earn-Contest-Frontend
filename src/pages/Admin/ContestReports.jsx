@@ -16,13 +16,14 @@ import {
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import { toast } from 'react-toastify';
 import StatusUpdateMenu from '../../components/Admin/StatusUpdateMenu';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { Loader } from '../../components/index';
+import EditContestModal from '../../components/Admin/EditContestModal';
 
 // Table Row Component - Memoized for performance
-const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
+const ContestRow = React.memo(({ contest, index, onStatusUpdate, onEdit, onDelete }) => {
   const getStatusStyle = (status) => {
     switch (status) {
       case 'UPCOMING':
@@ -76,8 +77,8 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate }) => {
       </td>
       <td className="py-6 px-10 text-right">
         <StatusUpdateMenu
-          currentStatus={contest.status}
-          onStatusUpdate={(newStatus) => onStatusUpdate(contest.id, newStatus)}
+          onEdit={() => onEdit(contest.id)}
+          onDelete={() => onDelete(contest.id)}
         />
       </td>
     </tr>
@@ -93,38 +94,42 @@ const ContestReports = () => {
   const [visibleCount, setVisibleCount] = useState(10);
   const itemsPerBatch = 10;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+
   // Infinite scroll sentinel ref
   const sentinelRef = useRef(null);
 
+  const fetchContests = useCallback(async () => {
+    if (authLoading) return;
+    if (!user || user.role !== 'admin') return;
+    setLoading(true);
+    try {
+      const { data } = await api.get('/admin/contests/admin');
+      if (data.success) {
+        const mapped = data.data.map(c => ({
+          id: c._id,
+          title: c.title,
+          domain: c.domain || 'General',
+          status: c.status,
+          participants: c.participantsCount || 0,
+          dateInfo: formatDateDDMMYYYY(c.startDate)
+        }));
+        setContests(mapped);
+      }
+    } catch (error) {
+      if (error.response?.status !== 401) {
+        toast.error('Failed to load contest reports');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [authLoading, user?.role, user?._id]);
+
   // Backend theke contests fetch kora hocche
   useEffect(() => {
-    const fetchContests = async () => {
-      if (authLoading) return;
-      if (!user || user.role !== 'admin') return;
-      setLoading(true);
-      try {
-        const { data } = await api.get('/admin/contests/admin');
-        if (data.success) {
-          const mapped = data.data.map(c => ({
-            id: c._id,
-            title: c.title,
-            domain: c.domain || 'General',
-            status: c.status,
-            participants: c.participantsCount || 0,
-            dateInfo: formatDateDDMMYYYY(c.startDate)
-          }));
-          setContests(mapped);
-        }
-      } catch (error) {
-        if (error.response?.status !== 401) {
-          toast.error('Failed to load contest reports');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchContests();
-  }, [user?.role, user?._id, authLoading]);
+  }, [fetchContests]);
 
   // Derived unique domains
   const domains = useMemo(() => {
@@ -147,6 +152,7 @@ const ContestReports = () => {
   // Reset visible count when domain filter changes
   useEffect(() => {
     setVisibleCount(itemsPerBatch);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [selectedDomain]);
 
   // Infinite scroll with IntersectionObserver
@@ -180,6 +186,48 @@ const ContestReports = () => {
       setLoading(false);
     }
   }, []);
+
+  const handleDelete = useCallback(async (id) => {
+    const ConfirmToast = ({ closeToast }) => (
+      <div className="p-1">
+        <p className="text-sm font-black text-slate-800 dark:text-gray-100 mb-3 uppercase tracking-tight">Delete this contest?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={async () => {
+              try {
+                await api.delete(`/admin/contests/${id}`);
+                setContests(prev => prev.filter(c => c.id !== id));
+                toast.success("Contest deleted successfully!");
+              } catch (err) {
+                toast.error("Deletion failed");
+              }
+              closeToast();
+            }}
+            className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors"
+          >
+            Confirm
+          </button>
+          <button onClick={closeToast} className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">Cancel</button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast />, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      theme: "light",
+      className: "border-2 border-[#fbc111] !bg-[#f3f4f6] dark:!bg-gray-900 dark:!border-[#fbc111] shadow-2xl"
+    });
+  }, []);
+
+  const handleEdit = useCallback((id) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('edit', id);
+    setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
+
+
 
   return (
     <AdminLayout>
@@ -253,6 +301,8 @@ const ContestReports = () => {
                       contest={contest}
                       index={idx}
                       onStatusUpdate={handleStatusUpdate}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
                     />
                   ))
                 ) : (
@@ -283,6 +333,19 @@ const ContestReports = () => {
         </div>
 
       </div>
+
+      {editId && (
+        <EditContestModal
+          isOpen={!!editId}
+          contestId={editId}
+          onClose={() => {
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete('edit');
+            setSearchParams(newParams);
+            fetchContests(); // Refetch data after edit
+          }}
+        />
+      )}
     </AdminLayout>
   );
 };

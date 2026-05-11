@@ -82,6 +82,11 @@ const ManageContests = () => {
     setCurrentPage(1);
   }, [domainFilter, statusFilter, searchQuery]);
 
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentPage]);
+
   const filteredContests = React.useMemo(() => {
     return contests.filter(c => {
       if (domainFilter !== 'ALL' && c.domain !== domainFilter) return false;
@@ -157,12 +162,18 @@ const ManageContests = () => {
           >
             Confirm
           </button>
-          <button onClick={closeToast} className="bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 transition-colors">Cancel</button>
+          <button onClick={closeToast} className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">Cancel</button>
         </div>
       </div>
     );
 
-    toast(<ConfirmToast />, { autoClose: false, closeOnClick: false, draggable: false, theme: "light" });
+    toast(<ConfirmToast />, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      theme: "light",
+      className: "border-2 border-[#fbc111] !bg-[#f3f4f6] dark:!bg-gray-900 dark:!border-[#fbc111] shadow-2xl"
+    });
   }, [contests]);
 
   const getStatusColor = React.useCallback((status) => {

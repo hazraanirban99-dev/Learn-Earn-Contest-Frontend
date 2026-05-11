@@ -101,6 +101,7 @@ const ManageUsers = () => {
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(itemsPerBatch);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [selectedDomain, selectedContest, searchTerm, selectedFilter]);
 
   // Infinite scroll with IntersectionObserver
@@ -161,7 +162,7 @@ const ManageUsers = () => {
           </button>
           <button
             onClick={closeToast}
-            className="bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 transition-colors"
+            className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             Cancel
           </button>
@@ -174,7 +175,7 @@ const ManageUsers = () => {
       closeOnClick: false,
       draggable: false,
       theme: "light",
-      className: "border-2 border-[#fbc111] !bg-[#f3f4f6]"
+      className: "border-2 border-[#fbc111] !bg-[#f3f4f6] dark:!bg-gray-900 dark:!border-[#fbc111] shadow-2xl"
     });
   }, [deleteUser]);
 

@@ -6,17 +6,11 @@
 // ============================================================
 
 import React, { useState, useRef, useEffect } from 'react';
-import { FiMoreVertical, FiClock, FiPlay, FiCheckCircle } from 'react-icons/fi';
+import { FiMoreVertical, FiClock, FiPlay, FiCheckCircle, FiEdit2, FiTrash2 } from 'react-icons/fi';
 
-const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
+const StatusUpdateMenu = ({ onEdit, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
-
-  const statuses = [
-    { id: 'UPCOMING', label: 'Mark as Upcoming', icon: FiClock, color: 'text-amber-500', bg: 'hover:bg-amber-50 dark:hover:bg-amber-900/20' },
-    { id: 'ONGOING', label: 'Mark as Ongoing', icon: FiPlay, color: 'text-[#8cc63f]', bg: 'hover:bg-green-50 dark:hover:bg-[#8cc63f]/10' },
-    { id: 'COMPLETED', label: 'Mark as Completed', icon: FiCheckCircle, color: 'text-gray-500', bg: 'hover:bg-gray-50 dark:hover:bg-gray-700' },
-  ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,26 +32,31 @@ const StatusUpdateMenu = ({ currentStatus, onStatusUpdate }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 w-max bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-right-2 duration-300 flex items-center gap-1 px-2">
-          {statuses.map((status) => (
+        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 w-max bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-right-2 duration-300 flex items-center gap-1 px-3">
+          <div className="flex items-center gap-1">
             <button
-              key={status.id}
-              disabled={currentStatus === status.id}
               onClick={() => {
-                onStatusUpdate(status.id);
+                onEdit();
                 setIsOpen(false);
               }}
-              className={`p-2.5 rounded-xl flex items-center gap-2 transition-all group/item ${status.bg} ${
-                currentStatus === status.id ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:scale-105 active:scale-95'
-              }`}
-              title={status.label}
+              className="p-2.5 rounded-xl flex items-center gap-2 transition-all hover:bg-amber-50 dark:hover:bg-amber-900/20 text-amber-500 hover:scale-105 active:scale-95 group/edit"
+              title="Edit Contest"
             >
-              <status.icon className={`${status.color} group-hover/item:scale-110 transition-transform`} size={16} />
-              <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${currentStatus === status.id ? 'text-gray-400' : 'text-slate-700 dark:text-gray-300'}`}>
-                {status.id}
-              </span>
+              <FiEdit2 size={16} className="group-hover/edit:rotate-12 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest leading-none">Edit</span>
             </button>
-          ))}
+            <button
+              onClick={() => {
+                onDelete();
+                setIsOpen(false);
+              }}
+              className="p-2.5 rounded-xl flex items-center gap-2 transition-all hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 hover:scale-105 active:scale-95 group/delete"
+              title="Delete Contest"
+            >
+              <FiTrash2 size={16} className="group-hover/delete:shake transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest leading-none">Delete</span>
+            </button>
+          </div>
         </div>
       )}
     </div>
