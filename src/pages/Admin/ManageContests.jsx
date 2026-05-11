@@ -15,7 +15,7 @@ import EditContestModal from '../../components/Admin/EditContestModal';
 import EnrolledParticipantsModal from '../../components/Admin/EnrolledParticipantsModal';
 import {
   FiUsers, FiClipboard, FiCheckCircle,
-  FiCalendar, FiEdit2, FiTrash2, FiPlus, FiChevronLeft, FiChevronRight, FiZap, FiAward
+  FiCalendar, FiEdit2, FiTrash2, FiPlus, FiChevronLeft, FiChevronRight, FiZap, FiAward, FiSearch
 } from 'react-icons/fi';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import { FaTrophy } from 'react-icons/fa';
@@ -74,20 +74,22 @@ const ManageContests = () => {
 
   const [domainFilter, setDomainFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [domainFilter, statusFilter]);
+  }, [domainFilter, statusFilter, searchQuery]);
 
   const filteredContests = React.useMemo(() => {
     return contests.filter(c => {
       if (domainFilter !== 'ALL' && c.domain !== domainFilter) return false;
       if (statusFilter !== 'ALL' && c.status !== statusFilter) return false;
+      if (searchQuery.trim() !== '' && !c.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
-  }, [contests, domainFilter, statusFilter]);
+  }, [contests, domainFilter, statusFilter, searchQuery]);
 
   const totalPages = Math.ceil(filteredContests.length / itemsPerPage);
   const currentContests = filteredContests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -241,27 +243,43 @@ const ManageContests = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 mb-2">
-            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-              <select
-                value={domainFilter}
-                onChange={(e) => setDomainFilter(e.target.value)}
-                className="bg-white dark:bg-gray-800 border-2 border-[#fbc111] focus:border-[#fbc111] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#8cc63f] outline-none w-1/2 sm:w-48 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
-              >
-                <option value="ALL">All Domains</option>
-                <option value="MERN">MERN</option>
-                <option value="UIUX">UI/UX</option>
-                <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f] focus:border-[#8cc63f] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#fbc111] outline-none w-1/2 sm:w-40 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
-              >
-                <option value="ALL">All Status</option>
-                <option value="ONGOING">Ongoing</option>
-                <option value="UPCOMING">Upcoming</option>
-                <option value="COMPLETED">Completed</option>
-              </select>
+            <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+              <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                <select
+                  value={domainFilter}
+                  onChange={(e) => setDomainFilter(e.target.value)}
+                  className="bg-white dark:bg-gray-800 border-2 border-[#fbc111] focus:border-[#fbc111] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#8cc63f] outline-none w-1/2 md:w-48 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
+                >
+                  <option value="ALL">All Domains</option>
+                  <option value="MERN">MERN</option>
+                  <option value="UIUX">UI/UX</option>
+                  <option value="DIGITAL MARKETING">DIGITAL MARKETING</option>
+                </select>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="bg-white dark:bg-gray-800 border-2 border-[#8cc63f] focus:border-[#8cc63f] rounded-xl px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm font-black text-[#fbc111] outline-none w-1/2 md:w-40 shadow-sm cursor-pointer appearance-none transition-all dark:hover:bg-gray-700"
+                >
+                  <option value="ALL">All Status</option>
+                  <option value="ONGOING">Ongoing</option>
+                  <option value="UPCOMING">Upcoming</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative w-full md:w-auto md:flex-1 md:max-w-md ml-auto">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <FiSearch className="text-gray-400 group-focus-within:text-[#8cc63f] transition-colors" size={18} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="SEARCH CONTESTS..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 focus:border-[#8cc63f] rounded-xl pl-12 pr-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-gray-200 outline-none shadow-sm transition-all placeholder:text-gray-400 placeholder:font-black placeholder:uppercase placeholder:tracking-widest"
+                />
+              </div>
             </div>
           </div>
 
