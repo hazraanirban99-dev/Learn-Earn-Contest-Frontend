@@ -17,6 +17,7 @@ import ContestCard from '../../components/Cards/ContestCard';
 import PageTransition from '../../components/Common/PageTransition';
 import api from '../../utils/api';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import { getActualStatus } from '../../utils/statusUtils';
 
 const StudentSubmission = () => {
     const navigate = useNavigate();
@@ -65,21 +66,24 @@ const StudentSubmission = () => {
             
             const filteredEnrolled = enrolled
                 .filter(c => !submittedContestIds.includes(c._id))
-                .map(c => ({
-                    id: c._id,
-                    title: c.title,
-                    desc: c.description,
-                    domain: domainMap[c.domain] || c.domain || 'General',
-                    status: c.status,
-                    enrollmentStatus: c.enrollmentStatus,
-                    teamName: c.teamName || null,
-                    teamStatus: c.teamStatus || null,
-                    projectType: c.projectType || null,
-                    dateInfo: c.status === 'ONGOING' ? "ENDS SOON" : "STARTS",
-                    dateValue: formatDateDDMMYYYY(c.endDate),
-                    thumbnail: c.thumbnail?.url || null,
-                    participantsCount: c.participantsCount || 0
-                }));
+                .map(c => {
+                    const actualStatus = getActualStatus(c);
+                    return {
+                        id: c._id,
+                        title: c.title,
+                        desc: c.description,
+                        domain: domainMap[c.domain] || c.domain || 'General',
+                        status: actualStatus,
+                        enrollmentStatus: c.enrollmentStatus,
+                        teamName: c.teamName || null,
+                        teamStatus: c.teamStatus || null,
+                        projectType: c.projectType || null,
+                        dateInfo: actualStatus === 'ONGOING' ? "ENDS SOON" : actualStatus === 'UPCOMING' ? "STARTS" : "COMPLETED ON",
+                        dateValue: formatDateDDMMYYYY(c.endDate),
+                        thumbnail: c.thumbnail?.url || null,
+                        participantsCount: c.participantsCount || 0
+                    };
+                });
 
             setAppliedContests(filteredEnrolled);
         } catch (err) {

@@ -289,7 +289,7 @@ const Navbar = ({ showAuth = true }) => {
                                     <div className="flex-1">
                                       <p className="text-[12px] font-bold text-slate-800 dark:text-gray-100 leading-tight mb-2">
                                         {user.role === 'admin' ? n.message : (
-                                          n.type === 'TEAM_INVITE' ? `${n.sender?.name} invited you to team "${n.team?.name}"` : n.message
+                                          n.type === 'TEAM_INVITE' ? `@${n.sender?.name} invited you to join team "${n.team?.name}" for contest "${n.contest?.title}"` : n.message
                                         )}
                                       </p>
                                       <div className="flex gap-2">
@@ -367,7 +367,7 @@ const Navbar = ({ showAuth = true }) => {
                                         <div key={notif._id} className="p-4 rounded-2xl bg-gray-50/ dark:bg-gray-700/50 border border-gray-50 dark:border-gray-600">
                                             <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-3">
                                                 {notif.type === 'TEAM_INVITE' ? (
-                                                    <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                                    <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span></>
                                                 ) : notif.message}
                                             </p>
                                             {notif.type === 'TEAM_INVITE' ? (
@@ -528,7 +528,7 @@ const Navbar = ({ showAuth = true }) => {
                       <div key={notif._id} className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
                         <p className="text-[11px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-4">
                           {notif.type === 'TEAM_INVITE' ? (
-                            <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                            <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span></>
                           ) : notif.message}
                         </p>
                         <div className="flex gap-2">

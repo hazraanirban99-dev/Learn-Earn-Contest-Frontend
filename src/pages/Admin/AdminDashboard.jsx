@@ -142,7 +142,7 @@ const AdminDashboard = () => {
 
         {/* Stats Grid — 4 cards in one row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-          {stats.map((stat, idx) => (
+          {stats.filter(s => s.title !== 'Completed Contests').map((stat, idx) => (
             <StatCard
               key={idx}
               {...stat}

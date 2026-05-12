@@ -247,7 +247,7 @@ const Header = ({ onMenuClick }) => {
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-[11px] font-medium text-slate-700 leading-tight">
                                                         {notif.type === 'TEAM_CREATION_REQUEST' ? (
-                                                            <><span className="font-black">{notif.sender?.name}</span> created a team for <span className="font-black">"{notif.contest?.title}"</span></>
+                                                            <><span className="font-black">{notif.sender?.name}</span> created team <span className="font-black text-[#8cc63f]">"{notif.team?.name || 'Unknown'}"</span> for <span className="font-black">"{notif.contest?.title}"</span></>
                                                         ) : (
                                                             <><span className="font-black">{notif.sender?.name}</span> requested to change team for <span className="font-black">"{notif.contest?.title}"</span></>
                                                         )}

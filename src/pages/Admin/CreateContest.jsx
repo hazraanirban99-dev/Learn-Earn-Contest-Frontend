@@ -62,6 +62,9 @@ const CreateContest = () => {
     if (!files.thumbnail) {
       return toast.error("Thumbnail is required");
     }
+    if (!files.syllabus) {
+      return toast.error("Project PDF (Syllabus) is required");
+    }
 
     setLoading(true);
     try {

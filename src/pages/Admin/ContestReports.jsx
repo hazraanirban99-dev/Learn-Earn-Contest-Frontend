@@ -1,17 +1,14 @@
 // ============================================================
 // ContestReports.jsx — Admin e sob contest er status r report dekhar page
 // Backend theke all contests fetch hoy (admin endpoint).
-// Domain filter dropdown diye specific domain er contest filter korte para jay.
-// Infinite scrolling ache — scroll korle aro contests load hobe.
-// StatusUpdateMenu diye UPCOMING → ONGOING → COMPLETED status change kora jay,
-// setar API call o ekhane handle kora hoy.
-// ContestRow component React.memo diye wrapped — performance er jonno.
+// Side domain filter dropdown diye specific domain er contest filter korte para jay.
+// Export CSV feature ache — filtered data download kora jay.
 // ============================================================
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
 import {
-  FiSearch, FiFilter, FiTrendingUp, FiDownload, FiPlus
+  FiSearch, FiFilter, FiTrendingUp, FiDownload, FiPlus, FiChevronRight, FiGrid, FiFileText
 } from 'react-icons/fi';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import { toast } from 'react-toastify';
@@ -20,6 +17,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { Loader } from '../../components/index';
+import { getActualStatus } from '../../utils/statusUtils';
 import EditContestModal from '../../components/Admin/EditContestModal';
 
 // Table Row Component - Memoized for performance
@@ -71,6 +69,14 @@ const ContestRow = React.memo(({ contest, index, onStatusUpdate, onEdit, onDelet
         </span>
       </td>
       <td className="py-6 px-4">
+        <div className="flex items-center gap-2">
+           <span className={`w-2 h-2 rounded-full ${contest.projectType === 'Solo' ? 'bg-indigo-500' : contest.projectType === 'Team' ? 'bg-[#8cc63f]' : 'bg-[#fbc111]'}`}></span>
+           <span className="text-[13px] font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">
+             {contest.projectType}
+           </span>
+        </div>
+      </td>
+      <td className="py-6 px-4">
         <span className="text-[16px] font-black text-slate-800 dark:text-gray-100">
           {contest.participants.toLocaleString()}
         </span>
@@ -107,14 +113,18 @@ const ContestReports = () => {
     try {
       const { data } = await api.get('/admin/contests/admin');
       if (data.success) {
-        const mapped = data.data.map(c => ({
-          id: c._id,
-          title: c.title,
-          domain: c.domain || 'General',
-          status: c.status,
-          participants: c.participantsCount || 0,
-          dateInfo: formatDateDDMMYYYY(c.startDate)
-        }));
+        const mapped = data.data.map(c => {
+          const actualStatus = getActualStatus(c);
+          return {
+            id: c._id,
+            title: c.title,
+            domain: c.domain || 'General',
+            status: actualStatus,
+            projectType: c.projectType || 'Solo',
+            participants: c.participantsCount || 0,
+            dateInfo: formatDateDDMMYYYY(c.startDate)
+          };
+        });
         setContests(mapped);
       }
     } catch (error) {
@@ -227,111 +237,163 @@ const ContestReports = () => {
     setSearchParams(newParams);
   }, [searchParams, setSearchParams]);
 
+  // --- Export to CSV Logic ---
+  const handleExportCSV = () => {
+    if (filteredContests.length === 0) {
+      toast.warn("No data available to export.");
+      return;
+    }
 
+    const headers = ["ID", "Contest Title", "Domain", "Status", "Type", "Total Enrolled", "Start Date"];
+    const csvRows = filteredContests.map((c, i) => [
+      i + 1,
+      `"${c.title.replace(/"/g, '""')}"`,
+      c.domain,
+      c.status,
+      c.projectType,
+      c.participants,
+      c.dateInfo
+    ]);
+
+    const csvContent = [headers, ...csvRows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Contest_Report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success("Report exported successfully!");
+  };
 
   return (
     <AdminLayout>
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1440px] mx-auto space-y-12">
 
-        {/* --- Header & Filter Toolbar --- */}
-        <div className="flex flex-col gap-10">
-          {/* Section Title Group */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-[2px] bg-[#fbc111]"></div>
-                <h4 className="text-[#fbc111] text-[13px] font-black tracking-[0.3em] uppercase">Academic Dashboard</h4>
-              </div>
-              <h1 className="text-5xl lg:text-6xl font-black text-slate-800 dark:text-gray-100 tracking-tighter leading-none">
-                Contest <span className="text-[#5c8a14]">Archives</span>
-              </h1>
+        {/* --- Header & Title --- */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-[2px] bg-[#fbc111]"></div>
+              <h4 className="text-[#fbc111] text-[13px] font-black tracking-[0.3em] uppercase">Academic Archives</h4>
             </div>
+            <h1 className="text-5xl lg:text-6xl font-black text-slate-800 dark:text-gray-100 tracking-tighter leading-none">
+              Contest <span className="text-[#5c8a14]">Reports</span>
+            </h1>
+          </div>
 
-            {/* Controls Toolbar */}
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-              {/* Domain Filter Dropdown */}
-              <div className="relative flex-1 sm:flex-none flex items-center bg-[#fbc111] rounded-2xl px-6 py-1 shadow-md border border-[#fbc111]/20 hover:shadow-lg transition-all group">
-                <label className="text-[11px] font-black text-slate-900 uppercase tracking-widest mr-2 whitespace-nowrap">Domain:</label>
-                <select
-                  value={selectedDomain}
-                  onChange={(e) => {
-                    setSelectedDomain(e.target.value);
-                  }}
-                  className="appearance-none bg-transparent border-none py-3 text-[13px] font-black text-slate-900 focus:outline-none w-full min-w-[140px] cursor-pointer pr-8 transition-all"
-                >
-                  {domains.map(domain => (
-                    <option key={domain} value={domain} className="bg-white text-slate-900 dark:bg-gray-800 dark:text-gray-100">
-                      {domain}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-slate-900">
-                  <FiFilter size={16} strokeWidth={3} />
+          <button 
+            onClick={handleExportCSV}
+            className="flex items-center gap-3 bg-[#5c8a14] hover:bg-[#8cc63f] text-white px-8 py-5 rounded-[24px] font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-[#8cc63f]/20 transition-all group"
+          >
+            <FiDownload size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+            Export CSV
+          </button>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* --- LEFT SIDEBAR: Domain Filter --- */}
+          <aside className="w-full lg:w-72 shrink-0">
+             <div className="bg-white dark:bg-gray-800 p-8 rounded-[40px] border border-[#e8efe0] dark:border-gray-700 shadow-sm sticky top-24">
+                <div className="flex items-center gap-3 mb-8">
+                   <div className="w-8 h-8 rounded-xl bg-[#fbc111]/10 flex items-center justify-center text-[#fbc111]">
+                      <FiFilter size={18} strokeWidth={3} />
+                   </div>
+                   <h3 className="text-sm font-black text-slate-800 dark:text-gray-100 uppercase tracking-widest">Filters</h3>
                 </div>
+
+                <div className="space-y-3">
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Select Domain</p>
+                   {domains.map(domain => (
+                      <button
+                         key={domain}
+                         onClick={() => setSelectedDomain(domain)}
+                         className={`w-full text-left px-5 py-4 rounded-2xl text-[13px] font-bold transition-all flex items-center justify-between group ${
+                            selectedDomain === domain 
+                               ? 'bg-[#8cc63f] text-white shadow-lg shadow-[#8cc63f]/20' 
+                               : 'bg-gray-50 dark:bg-gray-900/50 text-slate-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                         }`}
+                      >
+                         {domain}
+                         {selectedDomain === domain && <FiChevronRight size={16} />}
+                      </button>
+                   ))}
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-gray-50 dark:border-gray-700">
+                   <div className="bg-[#fbc111]/5 p-6 rounded-[32px] border border-[#fbc111]/10">
+                      <FiGrid className="text-[#fbc111] mb-4" size={24} />
+                      <h4 className="text-xs font-black text-slate-800 dark:text-gray-100 uppercase mb-2">Total Contests</h4>
+                      <p className="text-3xl font-black text-[#5c8a14]">{filteredContests.length}</p>
+                   </div>
+                </div>
+             </div>
+          </aside>
+
+          {/* --- MAIN CONTENT: Table --- */}
+          <div className="flex-1 min-w-0">
+            <div className="bg-white dark:bg-gray-900 rounded-[48px] border border-[#e8efe0] dark:border-gray-700 overflow-hidden shadow-2xl shadow-[#8cc63f]/5">
+              <div className="overflow-x-auto w-full scrollbar-hide">
+                <table className="w-full text-left border-collapse min-w-[1000px]">
+                  <thead>
+                    <tr className="bg-[#f8faea]/50 dark:bg-gray-800/50 border-b border-[#e8efe0] dark:border-gray-700">
+                      <th className="py-7 px-10 text-[11px] font-black tracking-widest text-slate-400 uppercase">#</th>
+                      <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Contest Name</th>
+                      <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Domain</th>
+                      <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Status</th>
+                      <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Type</th>
+                      <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Participants</th>
+                      <th className="py-7 px-10 text-right text-[11px] font-black tracking-widest text-slate-400 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50/50">
+                    {loading ? (
+                      <tr>
+                        <td colSpan="7" className="py-24 text-center">
+                          <Loader size="sm" text="Loading contests..." />
+                        </td>
+                      </tr>
+                    ) : visibleContests.length > 0 ? (
+                      visibleContests.map((contest, idx) => (
+                        <ContestRow
+                          key={contest.id}
+                          contest={contest}
+                          index={idx}
+                          onStatusUpdate={handleStatusUpdate}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                        />
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="py-20 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">
+                          No contests found in this domain.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
+
+              {/* --- Infinite Scroll Sentinel & Footer --- */}
+              <div ref={sentinelRef} className="py-1" />
+              {hasMore && !loading && (
+                <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-8 border-t border-[#e8efe0] dark:border-gray-700 flex flex-col items-center justify-center gap-4">
+                  <Loader size="xs" text="Loading more contests..." />
+                </div>
+              )}
+              {!hasMore && filteredContests.length > 0 && !loading && (
+                <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-6 border-t border-[#e8efe0] dark:border-gray-700 flex items-center justify-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">
+                    Showing all {filteredContests.length} contests
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
-
-        {/* --- Main Table Container --- */}
-        <div className="bg-[#fbfcfa] dark:bg-gray-900 rounded-[48px] border border-[#e8efe0] dark:border-gray-700 overflow-hidden shadow-2xl shadow-[#8cc63f]/5">
-          <div className="overflow-x-auto w-full scrollbar-hide">
-            <table className="w-full text-left border-collapse min-w-[1000px]">
-              <thead>
-                <tr className="bg-[#f8faea]/50 dark:bg-gray-800/50 border-b border-[#e8efe0] dark:border-gray-700">
-                  <th className="py-7 px-10 text-[11px] font-black tracking-widest text-slate-400 uppercase">#</th>
-                  <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Contest Name</th>
-                  <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Domain</th>
-                  <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Status</th>
-                  <th className="py-7 px-4 text-[11px] font-black tracking-widest text-slate-400 uppercase">Total Enrolled</th>
-                  <th className="py-7 px-10 text-right text-[11px] font-black tracking-widest text-slate-400 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50/50">
-                {loading ? (
-                  <tr>
-                    <td colSpan="6" className="py-24 text-center">
-                      <Loader size="sm" text="Loading contests..." />
-                    </td>
-                  </tr>
-                ) : visibleContests.length > 0 ? (
-                  visibleContests.map((contest, idx) => (
-                    <ContestRow
-                      key={contest.id}
-                      contest={contest}
-                      index={idx}
-                      onStatusUpdate={handleStatusUpdate}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="py-20 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">
-                      No contests found in this domain.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* --- Infinite Scroll Sentinel & Footer --- */}
-          <div ref={sentinelRef} className="py-1" />
-          {hasMore && !loading && (
-            <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-8 border-t border-[#e8efe0] dark:border-gray-700 flex flex-col items-center justify-center gap-4">
-              <Loader size="xs" text="Loading more contests..." />
-            </div>
-          )}
-          {!hasMore && filteredContests.length > 0 && !loading && (
-            <div className="bg-[#f8faea]/40 dark:bg-gray-800/30 px-10 py-6 border-t border-[#e8efe0] dark:border-gray-700 flex items-center justify-center">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">
-                Showing all {filteredContests.length} contests
-              </span>
-            </div>
-          )}
-        </div>
-
       </div>
 
       {editId && (

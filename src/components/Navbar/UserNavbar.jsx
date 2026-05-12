@@ -241,7 +241,7 @@ const UserNavbar = () => {
                                                 <p className="text-[11px] font-medium text-slate-700 leading-tight">
                                                     {notif.type === 'TEAM_INVITE' ? (
                                                         <>
-                                                            <span className="font-black">{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span>
+                                                            <span className="font-black text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span>
                                                         </>
                                                     ) : (
                                                         <span className="font-bold">{notif.message}</span>
@@ -327,7 +327,7 @@ const UserNavbar = () => {
                                       <div key={notif._id} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600">
                                           <p className="text-[10px] font-bold text-slate-700 dark:text-gray-200 leading-tight mb-2">
                                               {notif.type === 'TEAM_INVITE' ? (
-                                                  <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                                   <><span className="text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span></>
                                               ) : notif.message}
                                           </p>
                                           {notif.type === 'TEAM_INVITE' && (
@@ -454,7 +454,7 @@ const UserNavbar = () => {
                               </div>
                               <p className="text-[10px] font-medium text-slate-700 dark:text-gray-200 leading-tight">
                                  {notif.type === 'TEAM_INVITE' ? (
-                                    <><span className="font-black">@{notif.sender?.name}</span> invited you to <span className="font-black">"{notif.team?.name}"</span></>
+                                     <><span className="font-black text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team <span className="font-black">"{notif.team?.name}"</span> for contest <span className="font-black">"{notif.contest?.title}"</span></>
                                  ) : notif.message}
                               </p>
                            </div>

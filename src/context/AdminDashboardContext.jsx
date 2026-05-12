@@ -10,6 +10,7 @@ import { FiUsers, FiCalendar, FiZap } from 'react-icons/fi';
 import { FaTrophy } from 'react-icons/fa';
 import api from '../utils/api';
 import { useAuth } from './AuthContext';
+import { getActualStatus } from '../utils/statusUtils';
 
 const AdminDashboardContext = createContext();
 
@@ -60,17 +61,22 @@ export const AdminDashboardProvider = ({ children }) => {
         setStats(mappedStats);
 
         // Recent contests ke frontend er expected format e map kora hocche
-        setContests(statsRes.data.recentContests.map(c => ({
-          _id: c._id,
-          name: c.title,
-          domain: c.domain,
-          status: c.status,
-          participants: Math.max(0, c.participantsCount || 0).toString(),
-          // Status dekhe color decide kora hocche
-          color: c.status === 'ONGOING'
-            ? 'text-green-600 bg-green-100/50'
-            : 'text-amber-600 bg-amber-100/50',
-        })));
+        setContests(statsRes.data.recentContests.map(c => {
+          const actualStatus = getActualStatus(c);
+          return {
+            _id: c._id,
+            name: c.title,
+            domain: c.domain,
+            status: actualStatus,
+            participants: Math.max(0, c.participantsCount || 0).toString(),
+            // Status dekhe color decide kora hocche
+            color: actualStatus === 'ONGOING'
+              ? 'text-green-600 bg-green-100/50'
+              : actualStatus === 'UPCOMING'
+              ? 'text-blue-600 bg-blue-100/50'
+              : 'text-amber-600 bg-amber-100/50',
+          };
+        }));
         setSkills(statsRes.data.skillsDistribution);
       }
 

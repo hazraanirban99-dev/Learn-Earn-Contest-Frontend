@@ -12,6 +12,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminDashboard } from '../../context/AdminDashboardContext';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
+import { getActualStatus } from '../../utils/statusUtils';
 
 // ─── Launch Card ──────────────────────────────────────────────────────────────
 export const LaunchCard = () => {
@@ -158,7 +159,7 @@ export const UpcomingContestCard = ({ onViewAll }) => {
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/ dark:bg-gray-800/ rounded-full -translate-y-12 translate-x-12 blur-xl transition-all group-hover:scale-150 duration-700" />
       <div className="flex justify-between items-start z-10">
         <span className="bg-white/ dark:bg-gray-800/ text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full w-fit shadow-sm border border-white/20">
-          {activeContest?.status === 'ONGOING' ? 'Active Contest' : 'Upcoming Contest'}
+          {activeContest ? (getActualStatus(activeContest) === 'ONGOING' ? 'Active Contest' : getActualStatus(activeContest) === 'UPCOMING' ? 'Upcoming Contest' : 'Completed') : 'Contest'}
         </span>
         {onViewAll && (
           <button 

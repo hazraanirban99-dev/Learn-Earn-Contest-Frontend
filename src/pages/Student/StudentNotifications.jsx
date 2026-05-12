@@ -36,6 +36,8 @@ const StudentNotifications = () => {
 
     useEffect(() => {
         fetchNotifications();
+        const interval = setInterval(fetchNotifications, 30000); // Real-time polling every 30s
+        return () => clearInterval(interval);
     }, [fetchNotifications]);
 
     const handleAction = async (notifId, status) => {
@@ -166,7 +168,7 @@ const StudentNotifications = () => {
                                                     <p className="text-sm font-medium text-slate-700 dark:text-gray-200 leading-snug">
                                                         {notif.type === 'TEAM_INVITE' ? (
                                                             <>
-                                                                <span className="font-black">{notif.sender?.name}</span> invited you to join team{' '}
+                                                                <span className="font-black text-[#8cc63f]">@{notif.sender?.name}</span> invited you to join team{' '}
                                                                 <span className="font-black text-[#8cc63f]">"{notif.team?.name}"</span> for contest{' '}
                                                                 <span className="font-black">"{notif.contest?.title}"</span>
                                                             </>

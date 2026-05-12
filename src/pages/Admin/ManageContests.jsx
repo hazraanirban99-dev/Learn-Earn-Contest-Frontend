@@ -17,6 +17,7 @@ import {
   FiUsers, FiClipboard, FiCheckCircle,
   FiCalendar, FiEdit2, FiTrash2, FiPlus, FiChevronLeft, FiChevronRight, FiZap, FiAward, FiSearch
 } from 'react-icons/fi';
+import { getActualStatus } from '../../utils/statusUtils';
 import { formatDateDDMMYYYY } from '../../utils/dateUtils';
 import { FaTrophy } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -61,11 +62,11 @@ const ManageContests = () => {
     let filtered = [];
 
     if (type.includes('UPCOMING')) {
-      filtered = all.filter(c => c.status === 'UPCOMING');
+      filtered = all.filter(c => getActualStatus(c) === 'UPCOMING');
     } else if (type.includes('ACTIVE')) {
-      filtered = all.filter(c => c.status === 'ONGOING');
+      filtered = all.filter(c => getActualStatus(c) === 'ONGOING');
     } else if (type.includes('COMPLETED')) {
-      filtered = all.filter(c => c.status === 'COMPLETED');
+      filtered = all.filter(c => getActualStatus(c) === 'COMPLETED');
     }
 
     setModalContests(filtered);
@@ -110,10 +111,10 @@ const ManageContests = () => {
       if (data.success) {
         setContests(data.data);
 
-        // Stats derive kora hocche
-        const active = data.data.filter(c => c.status === 'ONGOING').length;
-        const upcoming = data.data.filter(c => c.status === 'UPCOMING').length;
-        const completed = data.data.filter(c => c.status === 'COMPLETED').length;
+        // Stats derive kora hocche using actual status
+        const active = data.data.filter(c => getActualStatus(c) === 'ONGOING').length;
+        const upcoming = data.data.filter(c => getActualStatus(c) === 'UPCOMING').length;
+        const completed = data.data.filter(c => getActualStatus(c) === 'COMPLETED').length;
 
         setStats({ active, upcoming, completed });
       }
@@ -304,7 +305,11 @@ const ManageContests = () => {
                 <div key={contest._id} className="bg-white dark:bg-gray-900 p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all flex flex-col lg:flex-row gap-8 group border border-transparent dark:border-gray-800">
                   <div className="relative w-full lg:w-[360px] h-[220px] rounded-[24px] overflow-hidden shrink-0">
                     <img src={contest.thumbnail.url} alt={contest.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4"><span className={`${getStatusColor(contest.status)} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md`}>{contest.status}</span></div>
+                    <div className="absolute top-4 left-4">
+                      <span className={`${getStatusColor(getActualStatus(contest))} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md`}>
+                        {getActualStatus(contest)}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center py-2 relative w-full">
